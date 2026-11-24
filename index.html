@@ -227,6 +227,17 @@ textarea.jtitle{min-height:0;border:0;border-bottom:1px solid var(--line);border
 .rtx .rk{display:block;font:600 15px Lora,Georgia,serif;color:var(--gold);margin-bottom:2px}#rc-sp-bible .rtx b{font-size:24px}
 .cbig{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(245,236,216,.55);background:none;color:#1a1408;font-size:16px;flex:none;padding:0}.cbig.on{background:var(--gold);border-color:var(--gold)}
 .rbody .hgrid{margin:14px 0 0}.rbody .hgrid .card{border:1px solid var(--gline);padding:16px;background:var(--card);border-radius:var(--r);margin:0}.rbody .hgrid .card .lbl{color:var(--gold)}
+.spk{width:34px;height:34px;flex:none;color:var(--gold);display:grid;place-items:center}.spk svg{width:26px;height:26px}
+#capsheet{z-index:25}.capcard{max-height:86vh;overflow:auto;padding:16px 16px 14px}.caphd{display:flex;align-items:center;gap:10px;margin-bottom:8px}.caphd h2{margin:0;font-size:20px}.caphd small{color:var(--gold);font-size:12px;letter-spacing:.12em;text-transform:uppercase}.caphd .x{margin-left:auto}
+.capit{border:1px solid var(--gline);border-radius:12px;padding:8px 10px;margin:8px 0;background:rgba(0,0,0,.18)}.capit.off{opacity:.55}
+.capit .cr1{display:flex;align-items:flex-start;gap:6px}.capit .capt{flex:1;border:0;background:transparent;min-height:40px;padding:8px 2px;font-size:16px;color:var(--cream)}
+.capstar{background:none;border:0;color:var(--mute);font-size:18px;width:36px;height:40px;flex:none}.capstar.on{color:var(--gold)}
+.capit .cr2{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px 44px}.capit .cr2 label{display:flex;flex-direction:column;font-size:11px;color:var(--mute);gap:2px}.capit .cr2 select,.capit .cr2 input{min-height:36px;padding:4px 8px;font-size:14px;width:auto}
+.capnote{margin:2px 0 2px 44px;font-size:12px;color:var(--gold)}.capsrc{margin:2px 0 0 44px;font:italic 13px/1.4 Lora,Georgia,serif;color:var(--mute)}
+.capkept{margin-top:8px;font-size:13px;color:var(--mute)}.capkept summary{cursor:pointer;min-height:36px;display:flex;align-items:center}.capkept p{margin:4px 0;font-family:Lora,Georgia,serif}
+.orgbtn{display:inline-flex;align-items:center;gap:6px}.orgbtn svg{width:16px;height:16px;color:var(--gold)}
+#captoast{position:fixed;left:12px;right:12px;bottom:calc(150px + env(safe-area-inset-bottom));z-index:24;display:none;align-items:center;gap:8px;max-width:560px;margin:0 auto;padding:10px 12px;border:1px solid var(--gline2);border-radius:14px;background:#1a1712;color:var(--cream);font-size:14px}
+#captoast.show{display:flex}#captoast .ctx{flex:1;display:flex;align-items:center;gap:8px}#captoast .ctx svg{width:18px;height:18px;color:var(--gold);flex:none}#captoast button{background:none;border:1px solid var(--gline);border-radius:10px;color:var(--gold);font-weight:600;min-height:34px;padding:0 10px}
 .dleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--mute)}.dleg span{display:inline-flex;align-items:center;gap:6px}.dleg i{width:12px;height:12px;border-radius:3px;display:inline-block}
 .wkrow{border-left:3px solid transparent;padding-left:10px}
 .dcols{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:6px}.dcols label{display:flex;align-items:center;gap:10px;font-size:15px}.dcols input[type=color]{width:44px;height:36px;min-height:0;padding:2px;border-radius:8px;flex:none}
@@ -394,6 +405,7 @@ details.more>summary small{color:var(--mute);font-weight:400}
 </div></nav>
 <div id="sheet" class="sheet hide"></div>
 <div id="cap" class="sheet hide"></div>
+<div id="capsheet" class="sheet hide"></div>
 <button class="fab" id="fab" aria-label="Jot something down">+</button>
 <script>
 {
@@ -537,6 +549,164 @@ async function qShare(i,btn){const [c,t]=PQ[i];const text=`“${t}”`;
 let LASTDAY=today();
 function checkDay(){const t=today();if(t===LASTDAY)return;const prev=LASTDAY;LASTDAY=t;if(S.date===prev)S.date=t;const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}
 setInterval(checkDay,60000);document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='qsaved')S.qOpen=e.target.open},true);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkDay()});
+// ================= Smart Capture: From Thought to Action =================
+// Everything here runs on this device. Notes are never sent anywhere.
+const SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>';
+const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',skip:'Don’t add'};
+const CAPCAT={general:'General',spiritual:'Spiritual',movement:'Movement',journal:'Journal',reset:'Reset'};
+function capMode(){return get('settings',setDef).capMode||'review'}
+function capReg(){const r=get('capture',{items:[]});r.items=r.items||[];return r.items}
+function capHash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+const capNorm=t=>(t||'').toLowerCase().replace(/[^a-z0-9 ]+/g,' ').replace(/\b(the|a|an|my|to|for|on|at|in|by)\b/g,' ').replace(/\s+/g,' ').trim();
+
+// ---------- dates ----------
+const WDN=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const WDRE='(sun|mon|tue|tues|wed|thu|thur|thurs|fri|sat)(?:day|nesday|sday|urday|rsday)?';
+const MONN=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+const NUMW={a:1,an:1,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10};
+const wdIdx=w=>{w=w.toLowerCase().slice(0,3);return ['sun','mon','tue','wed','thu','fri','sat'].indexOf(w)};
+function nextWd(base,wd,strictAfter){const b=parse(base);let n=(wd-b.getDay()+7)%7;if(n===0&&strictAfter)n=7;return addDays(base,n)}
+function nextDayType(base,types){for(let i=1;i<=60;i++){const d=addDays(base,i);if(types.includes(dayType(d)))return d}return ''}
+function capDate(s,base){const low=s.toLowerCase();const r={date:'',time:'',win:'',phrase:[],unclear:'',deadline:false,recur:''};let m;
+  const take=re=>{const mm=low.match(re);if(mm){r.phrase.push(mm[0]);return mm}return null};
+  if(take(/\b(every|each)\s+(day|morning|night|evening|week|weekday|weekend|month|sunday|monday|tuesday|wednesday|thursday|friday|saturday)s?\b|\b(daily|weekly|monthly)\b/))r.recur=r.phrase[r.phrase.length-1];
+  if(/\bby\b/.test(low))r.deadline=true;
+  if(take(/\bday after tomorrow\b/))r.date=addDays(base,2);
+  else if((m=take(/\btomorrow(\s+(morning|afternoon|evening|night))?\b/))){r.date=addDays(base,1);if(m[2])r.win=m[2]==='night'?'evening':m[2]}
+  else if((m=take(/\b(tonight|this (morning|afternoon|evening)|today|when i get home|later today)\b/))){r.date=base;if(m[1]==='tonight'||m[1]==='when i get home')r.win='evening';else if(m[2])r.win=m[2]}
+  else if((m=take(/\bin\s+(\d+|a|an|one|two|three|four|five|six|seven|eight|nine|ten)\s+(day|days|week|weeks)\b/))){const n=NUMW[m[1]]||Number(m[1]);r.date=addDays(base,/week/.test(m[2])?n*7:n)}
+  else if(take(/\b(this|next) weekend\b/)){const sat=nextWd(base,6,false);r.date=/next/.test(r.phrase[r.phrase.length-1])&&sat<=addDays(base,6)?addDays(sat,7):sat}
+  else if((m=take(new RegExp('\\b(this|next|on|by|before|until|coming)?\\s*'+WDRE+'\\b')))&&!r.recur){const wd=wdIdx(m[2]);if(m[1]==='next'){const thisOne=nextWd(base,wd,true);const mon=monday(base);r.date=thisOne<addDays(mon,7)?addDays(thisOne,7):thisOne}else r.date=nextWd(base,wd,true)}
+  else if((m=take(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/))){const y=m[3]?(m[3].length===2?2000+Number(m[3]):Number(m[3])):Number(base.slice(0,4));r.date=y+'-'+pad(m[1])+'-'+pad(m[2]);if(r.date<base&&!m[3])r.date=(y+1)+r.date.slice(4)}
+  else if((m=take(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b/))){const y=Number(base.slice(0,4));r.date=y+'-'+pad(MONN.indexOf(m[1].slice(0,3))+1)+'-'+pad(m[2]);if(r.date<base)r.date=(y+1)+r.date.slice(4)}
+  else if(take(/\b(on )?my next day off\b|\bnext day off\b/)){r.date=nextDayType(base,['O','W']);if(!r.date)r.unclear='Next day off isn’t on your schedule yet'}
+  else if(take(/\b(on )?my next shift\b|\bnext shift\b/)){r.date=nextDayType(base,['S']);if(!r.date)r.unclear='Next shift isn’t on your schedule yet'}
+  else if(take(/\b(next|during my next|at my next|in my next)\s+(session|appointment with my therapist)\b/)){const na=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=base).sort((a,b)=>a.s<b.s?-1:1)[0]:null;if(na)r.date=na.date;else r.unclear='Next session date isn’t known'}
+  else if(take(/\b(next week|soon|later|sometime|when i get a chance|before the meeting|after the meeting|this week|end of the week)\b/)){r.unclear='“'+r.phrase[r.phrase.length-1]+'” — no exact date'}
+  // times: only when clear (am/pm, 24h, noon/midnight)
+  if((m=take(/\b(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)/))){let h=Number(m[1])%12;if(/p/.test(m[3]))h+=12;r.time=pad(h)+':'+(m[2]||'00')}
+  else if((m=take(/\b(?:at\s+)?([01]?\d|2[0-3]):([0-5]\d)\b/))){r.time=pad(m[1])+':'+m[2]}
+  else if((m=take(/\b(?:at\s+)?(noon|midnight)\b/))){r.time=m[1]==='noon'?'12:00':'00:00'}
+  else if((m=low.match(/\bat\s+(\d{1,2})\b(?!\s*(?:am|pm|:))/))){r.unclear=(r.unclear?r.unclear+' · ':'')+'Time “at '+m[1]+'” — am or pm?'}
+  if(!r.win&&(m=low.match(/\b(morning|afternoon|evening)\b/)))r.win=m[1];
+  if(r.time&&!r.win){const h=Number(r.time.slice(0,2));r.win=h<8?'early':h<12?'morning':h<17?'afternoon':'evening'}
+  return r}
+
+// ---------- sentence analysis ----------
+const ACT_RE=/\b(need to|needs to|have to|has to|got to|gotta|must|should|remember to|don'?t forget to|make sure (to|i)|i'?ll|i will|i'?m going to|i am going to|going to|plan to|planning to|want to|to-?do:?|reminder:?)\b/i;
+const IMP_RE=/^(please\s+)?(call|email|text|buy|get|grab|pick up|drop off|pay|renew|schedule|book|finish|send|fix|clean|prepare|prep|read|study|review|order|return|sign|submit|write|update|check|ask|bring|plan|start|cancel|reply|follow up|set up|make|take|go|visit|register|print|wash|mow|research|practice|memorize|outline|run|jog|walk|lift|work out|workout|stretch|swim|hike|bike|ride|pray|meditate|rest|nap|try|work on)\b/i;
+const APPT_RE=/\b(appointment|appt|meeting with|dentist|doctor|dr\.?\s+\w+|interview|lunch with|dinner with|haircut|vet|conference|physical therapy|pt appointment|parent.teacher|meet (with )?\w+ at)\b/i;
+const NEG_RE=/\b(don'?t need to|do not need to|no need to|won'?t|will not|not going to|never mind|didn'?t need|don'?t have to|no longer need)\b/i;
+const HYPO_RE=/^(maybe|perhaps|if i|if we|i wonder|what if|i wish|it would be nice|someday|one day|i could|could i)\b|\b(might|maybe i|would be nice|someday)\b/i;
+const DONE_RE=/\b(i|we)\s+(already\s+)?(did|finished|completed|went|ran|walked|read|called|talked|met|had|was|were|got|made|took|spent|saw|started|tried|cleaned|wrote|studied)\b|\b(already|yesterday|last night|this morning i)\b/i;
+const FEEL_RE=/\b(i feel|i felt|felt|feeling|grateful|thankful|frustrat|anxious|happy|sad|tired|proud|overwhelm|stressed|i'?m glad|i am glad|i realized|i noticed|i learned|i think i|it was|it felt|love|blessed|encourag|discourag|worried|nervous|excited|peaceful|angry|upset|lonely)\b/i;
+const SESS_RE=/\b(therapist|counsel(or|ing)|my session|next session|in session|bring up|talk about|discuss|ask (her|him|them|my)|dr\.?\s+\w+ about)\b/i;
+const SPIR_RE=/\b(bible|watchtower|wt study|meeting prep|midweek|weekend meeting|meeting part|field service|ministry|return visit|bible study|family worship|public talk|my talk|talk prep|congregation|kingdom hall|daily text|smpw|cart witnessing|shepherding|publications?|jw\.org|pray|prayer|personal study|research)\b/i;
+const MOVE_RE=/\b(run|running|jog|workout|work out|gym|lift|lifting|walk|walking|bike|cycling|miles|stretch|stretching|pt exercises|physical therapy|swim|hike|5k|10k|push-?ups|squats|cardio)\b/i;
+const RESET_RE=/\b(rest|nap|sleep|clean|tidy|declutter|organize|laundry|meal prep|prep for|plan (my|the|next) week|reset|recharge|unplug|day off)\b/i;
+const PRI_RE=/\b(urgent|asap|important|priority|critical|top priority|first thing|can'?t forget|must)\b/i;
+function capSentences(text){return (text||'').split(/\n+/).flatMap(l=>l.replace(/^\s*[-•*\d.)]+\s+/,'').split(/(?<=[.!?])\s+(?=[A-Z0-9"“])/)).map(x=>x.trim()).filter(x=>x.replace(/[^a-z]/gi,'').length>=4)}
+function capTitle(s,dt){let t=s;
+  t=t.replace(/^(and\s+|also\s+|then\s+|so\s+)/i,'').replace(/^(i\s+)?(really\s+)?(need to|needs to|have to|got to|gotta|must|should|want to|plan to|planning to|am going to|'m going to|going to|will|'ll)\s+/i,'').replace(/^i\s+/i,'');
+  t=t.replace(/^(remember to|don'?t forget to|make sure to|make sure i|reminder:?|to-?do:?|todo:?|please)\s*/i,'');
+  t=t.replace(/^(ask (my )?(therapist|counselor|dr\.?\s*\w+)( about)?|bring up|talk about|discuss)\s*/i,'');
+  (dt.phrase||[]).forEach(p=>{t=t.replace(new RegExp('\\s*\\b(on|by|this|next|before|until)?\\s*'+p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i'),' ')});
+  t=t.replace(/,?\s*(it'?s|this is|that'?s)\s+(really\s+|very\s+|super\s+)?(important|urgent|a priority|critical)\b/ig,'').replace(/\b(asap|urgent(ly)?)\b/ig,'').replace(/\s+([,.;:])/g,'$1');
+  t=t.replace(/\s+(at|on|by)\s*$/i,'').replace(/[\s,;:.!]+$/,'').replace(/\s{2,}/g,' ').trim();
+  return t?t[0].toUpperCase()+t.slice(1):s}
+function capCat(s){return SPIR_RE.test(s)?'spiritual':MOVE_RE.test(s)?'movement':RESET_RE.test(s)?'reset':'general'}
+function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
+  capSentences(text).forEach(s=>{const low=s.toLowerCase();const dt=capDate(s,base);
+    const neg=NEG_RE.test(s)&&!/don'?t forget/i.test(s),hypo=HYPO_RE.test(s),appt=APPT_RE.test(s);let act=ACT_RE.test(s)||IMP_RE.test(s);
+    const done=DONE_RE.test(s)&&!ACT_RE.test(s)&&!/\b(tomorrow|next|tonight|will|going to)\b/i.test(s),feel=FEEL_RE.test(s);
+    const isQ=/\?\s*$/.test(s),sess=SESS_RE.test(s);
+    const it={id:uid(),src:s,title:'',dest:'skip',cat:capCat(s),date:dt.date,time:dt.time,win:dt.win,imp:PRI_RE.test(s),conf:'high',notes:[],recur:dt.recur,sel:true};
+    if(dt.unclear){it.notes.push(dt.unclear);it.conf='medium'}
+    if(neg){kept.push({s,why:'not needed'});return}
+    if((ctx.kind==='session'&&(isQ||sess))||(sess&&(isQ||/\b(ask|bring up|talk about|discuss)\b/i.test(s)))){it.dest='question';it.title=capTitle(s,dt);if(!/[?]$/.test(it.title)&&isQ)it.title+='?';it.date='';it.time='';out.push(it);return}
+    if(done){kept.push({s,why:'already done'});return}
+    // short plans with a future date and no feelings ("Bible reading tonight", "Laundry tomorrow evening")
+    if(!act&&!feel&&!/^(felt|feel|was|were|had|went|did|got|ran|walked|spent|saw|good|great|hard|rough|tough|long)\b/i.test(s)&&(dt.recur||dt.date>base||(dt.date===base&&dt.win))&&s.split(/\s+/).length<=12)act=true;
+    if(hypo&&!act){it.dest='idea';it.title=s.replace(/[\s.]+$/,'');it.conf='low';it.sel=false;it.notes.push('Sounds like an idea, not a commitment');out.push(it);return}
+    if(appt||act){it.title=capTitle(s,dt);
+      if(appt&&(it.date||it.time)){it.dest=MCP&&it.time?'cal':'plan';if(!it.date){it.date=base;it.notes.push('Day assumed: today');it.conf='medium'}}
+      else if(it.cat==='spiritual'&&it.date&&/\b(read|study|prep|field service|ministry|family worship|meeting|bible|research|pray)\b/i.test(low))it.dest='spir';
+      else if((it.cat==='movement'||it.cat==='reset')&&it.date)it.dest='plan';
+      else{it.dest='task';if(it.imp&&(it.date===today()||(!it.date&&/\btoday\b/i.test(low)))){it.dest='top3';it.date=today()}}
+      if(it.recur){it.notes.push('Repeats ('+it.recur+'): added for the next one');it.conf='medium';if(!it.date){const wdm=it.recur.match(new RegExp(WDRE));it.date=wdm?nextWd(base,wdIdx(wdm[0]),true):addDays(base,1)}}
+      if(hypo){it.conf='low';it.sel=false;it.notes.push('Includes “maybe” — check before adding')}
+      out.push(it);return}
+    if(feel||ctx.kind!=='journal'){if(ctx.kind==='inbox'||ctx.kind==='dump'){it.dest='journal';it.title=s;it.cat='journal';it.conf='medium';it.date='';out.push(it);return}}
+    kept.push({s,why:feel?'reflection':'kept in your note'})});
+  // merge consecutive reflections from a brain dump into one journal entry
+  const refl=out.filter(x=>x.dest==='journal');if(refl.length>1){refl[0].title=refl.map(x=>x.src).join(' ');refl[0].src=refl[0].title;for(let i=1;i<refl.length;i++)out.splice(out.indexOf(refl[i]),1)}
+  // duplicates: already organized from this note, or already a task
+  const reg=capReg(),open=tasks().filter(t=>!t.done);
+  out.forEach(it=>{it.h=capHash((ctx.key||'')+'|'+(ctx.id||'')+'|'+capNorm(it.src));
+    if(reg.some(r=>r.h===it.h)){it.prev=true;it.sel=false;it.notes.unshift('Already organized from this note')}
+    if(['task','top3','plan','spir'].includes(it.dest)){const n=capNorm(it.title);const ex=open.find(t=>{const m=capNorm(t.t);return m&&(m===n||(n.length>8&&(m.includes(n)||n.includes(m))))});
+      if(ex){it.dup=ex.id;if(it.date&&it.date!==ex.due){it.dest='update';it.notes.push('Already in Tasks — update its date?')}else{it.dest='skip';it.sel=false;it.notes.push('Already in Tasks: “'+ex.t+'”')}}}});
+  return {items:out,kept}}
+
+// ---------- applying ----------
+function capApply(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,key:ctx.key||'',id:ctx.id||'',date:ctx.date||td,text:ctx.kind==='inbox'?(ctx.text||'').slice(0,400):''};
+  const addTask=(it,due)=>{const t={id:uid(),t:it.title,due:due||'',done:false,created:Date.now(),imp:!!it.imp,cat:it.cat,src:srcRef};tasks().push(t);save('tasks');created.push({type:'task',id:t.id});return t};
+  items.filter(x=>x.sel&&x.dest!=='skip'&&x.title.trim()).forEach(it=>{
+    if(it.dest==='task')addTask(it,it.date);
+    else if(it.dest==='top3'){const t=addTask(it,it.date||td);const dd=it.date||td,day=get('day-'+dd,dayDef(dd)),p=planOf(day),slot=p.top.find(x=>!x.tid&&!(x.t||'').trim());if(slot){slot.tid=t.id;slot.done=false;save('day-'+dd)}}
+    else if(it.dest==='update'){const t=findTask(it.dup);if(t){created.push({type:'upd',id:t.id,was:t.due});t.due=it.date||t.due;if(it.imp)t.imp=true;save('tasks')}}
+    else if(it.dest==='plan'||it.dest==='spir'||(it.dest==='cal'&&!MCP)){const dd=it.date||td,day=get('day-'+dd,dayDef(dd)),bl={id:uid(),win:it.win||'any',tm:it.time||'',dur:30,t:it.title,done:false,src:srcRef};if(it.dest==='spir'||it.cat==='spiritual')bl.spir=true;planOf(day).blocks.push(bl);save('day-'+dd);created.push({type:'block',key:'day-'+dd,id:bl.id})}
+    else if(it.dest==='cal'){const dd=it.date||td,inp=it.time?{summary:it.title,startTime:dd+'T'+it.time+':00',endTime:(addMin(it.time,60)<it.time?addDays(dd,1):dd)+'T'+addMin(it.time,60)+':00',description:'Added by KL Journal Smart Capture'}:{summary:it.title,allDay:true,startTime:dd+'T00:00:00',endTime:addDays(dd,1)+'T00:00:00',description:'Added by KL Journal Smart Capture'};
+      const rec={type:'cal',title:it.title,date:dd};created.push(rec);MCP.callTool(GC,'create_event',inp,{cache:false}).then(r=>{rec.gid=(r&&r.payload&&r.payload.id)||'';try{MCP.invalidate(GC,'list_events')}catch(e){}CAL={};RANGE={}}).catch(()=>{rec.failed=true;capToast('Couldn’t add “'+it.title+'” to Google Calendar. It wasn’t saved there.',null)})}
+    else if(it.dest==='question'){const q=get('sessq',{items:[]});q.items=q.items||[];const x={id:uid(),t:it.title,done:false,src:srcRef};q.items.push(x);save('sessq');created.push({type:'q',id:x.id})}
+    else if(it.dest==='journal'){const dd=ctx.date||td,day=get('day-'+dd,dayDef(dd));ents(day).push({id:uid(),title:'',text:it.title,cat:'',at:Date.now(),src:srcRef});syncText(day);save('day-'+dd);created.push({type:'entry',key:'day-'+dd,id:ents(day)[ents(day).length-1].id})}
+    else if(it.dest==='idea'){const st=get('settings',setDef);const line='• '+it.title;st.notes=(st.notes?st.notes.replace(/\s*$/,'')+'\n':'')+line;save('settings');created.push({type:'idea',line})}
+    const r={id:uid(),h:it.h,at:Date.now(),dest:it.dest,title:it.title,src:srcRef};capReg().push(r);created.push({type:'reg',id:r.id})});
+  save('capture');return created}
+function capUndo(created){(created||[]).forEach(c=>{
+  if(c.type==='task'){const l=tasks(),i=l.findIndex(t=>t.id===c.id);if(i>=0){tomb(get('tasks',{items:[]}),c.id);l.splice(i,1)}Object.keys(cache).filter(k=>k.startsWith('day-')).forEach(k=>{const p=cache[k].plan;if(p&&p.top)p.top.forEach(x=>{if(x.tid===c.id){x.tid='';save(k)}})});save('tasks')}
+  else if(c.type==='upd'){const t=findTask(c.id);if(t){t.due=c.was;save('tasks')}}
+  else if(c.type==='block'){const d=cache[c.key];if(d&&d.plan){d.plan.blocks=d.plan.blocks.filter(b=>b.id!==c.id);save(c.key)}}
+  else if(c.type==='q'){const q=get('sessq',{items:[]});const i=q.items.findIndex(x=>x.id===c.id);if(i>=0){tomb(q,c.id);q.items.splice(i,1);save('sessq')}}
+  else if(c.type==='entry'){const d=cache[c.key];if(d){const es=ents(d),i=es.findIndex(e=>e.id===c.id);if(i>=0){tomb(d,c.id);es.splice(i,1);syncText(d);save(c.key)}}}
+  else if(c.type==='idea'){const st=get('settings',setDef);st.notes=(st.notes||'').split('\n').filter((l,i,a)=>!(l===c.line&&a.lastIndexOf(c.line)===i)).join('\n');save('settings')}
+  else if(c.type==='cal'){capToast('“'+c.title+'” was added to Google Calendar. Remove it there if you don’t want it.',null)}
+  else if(c.type==='reg'){const r=get('capture',{items:[]}),i=r.items.findIndex(x=>x.id===c.id);if(i>=0){tomb(r,c.id);r.items.splice(i,1);save('capture')}}})}
+
+// ---------- entry points ----------
+let CAPS=null;
+function capRun(text,ctx,trigger){if(!(text||'').trim())return;const res=capAnalyze(text,ctx);const mode=capMode();
+  const useful=res.items.filter(x=>!x.prev&&x.dest!=='skip');
+  if(trigger==='save'&&mode==='manual')return;
+  if(trigger==='save'&&!useful.length)return;
+  if(trigger==='save'&&mode==='auto'){const safe=res.items.filter(x=>x.sel&&!x.prev&&x.conf==='high'&&['task','question'].includes(x.dest));
+    const rest=res.items.filter(x=>!safe.includes(x)&&!x.prev&&x.dest!=='skip');const created=safe.length?capApply(safe,ctx):[];
+    if(safe.length){const y=scrollY;render();scrollTo(0,y)}
+    if(safe.length||rest.length)capToast(`${SPARK}<span>${safe.length?`Added ${safe.length} item${safe.length>1?'s':''}`:'Smart Capture found something'}${rest.length?` · ${rest.length} to review`:''}</span>`,created,rest.length?{items:rest,kept:res.kept,ctx}:null);return}
+  CAPS={items:res.items,kept:res.kept,ctx};capSheet()}
+function capToast(html,created,review){let t=$('#captoast');if(!t){t=document.createElement('div');t.id='captoast';document.body.appendChild(t)}
+  t.innerHTML=`<div class="ctx">${html}</div>${review?'<button data-ct="review">Review</button>':''}${created&&created.length?'<button data-ct="undo">Undo</button>':''}<button data-ct="x" aria-label="Dismiss">×</button>`;t.className='show';
+  t.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.ct==='undo'){capUndo(created);t.className='';const y=scrollY;render();scrollTo(0,y)}else if(b.dataset.ct==='review'){t.className='';CAPS=review;capSheet()}else t.className=''};
+  clearTimeout(t._h);t._h=setTimeout(()=>{t.className=''},9000)}
+function capSheet(){const sh=$('#capsheet');if(!CAPS){sh.classList.add('hide');return}const {items,kept}=CAPS,n=items.filter(x=>x.sel&&x.dest!=='skip').length;
+  const destOpts=it=>Object.entries(CAPDEST).filter(([k])=>(k!=='update'||it.dup)&&(k!=='cal'||MCP)).map(([k,l])=>`<option value="${k}" ${it.dest===k?'selected':''}>${l}</option>`).join('');
+  const needsDate=d=>['task','top3','plan','spir','cal','update'].includes(d);
+  sh.innerHTML=`<div class="card capcard" role="dialog" aria-modal="true" aria-labelledby="caph2"><div class="caphd"><span class="spk">${SPARK}</span><div><h2 id="caph2">Smart Capture</h2><small>From Thought to Action</small></div><button class="x" data-cs="close" aria-label="Close">×</button></div>
+    ${items.length?`<p class="calnote" style="margin:0 0 6px">Check what to add. Tap any part to change it. Your note stays exactly as you wrote it.</p>`:'<p class="calnote">Nothing to organize here. It reads as a reflection, so it stays in your note as written.</p>'}
+    <div class="capitems">${items.map((it,i)=>`<div class="capit ${it.sel?'':'off'}"><div class="cr1"><button class="cb" data-cs="sel" data-i="${i}" aria-label="${it.sel?'Don’t add':'Add'}"><span>${it.sel?'✓':''}</span></button><textarea rows="1" class="awrap capt" data-ci="${i}" data-cf="title" aria-label="Title">${esc(it.title)}</textarea><button class="capstar ${it.imp?'on':''}" data-cs="imp" data-i="${i}" aria-label="Priority">★</button></div>
+      <div class="cr2"><label><span>To</span><select data-ci="${i}" data-cf="dest">${destOpts(it)}</select></label>${it.dest==='question'||it.dest==='journal'||it.dest==='idea'||it.dest==='skip'?'':`<label><span>Type</span><select data-ci="${i}" data-cf="cat">${Object.entries(CAPCAT).map(([k,l])=>`<option value="${k}" ${it.cat===k?'selected':''}>${l}</option>`).join('')}</select></label>`}${needsDate(it.dest)?`<label><span>Date</span><input type="date" data-ci="${i}" data-cf="date" value="${esc(it.date||'')}"></label>`:''}${it.dest==='cal'||it.dest==='plan'?`<label><span>Time</span><input type="time" data-ci="${i}" data-cf="time" value="${esc(it.time||'')}"></label>`:''}</div>
+      ${it.notes.length?`<div class="capnote">${it.notes.map(esc).join(' · ')}</div>`:''}<div class="capsrc">“${esc(it.src.length>140?it.src.slice(0,137)+'…':it.src)}”</div></div>`).join('')}</div>
+    ${kept.length?`<details class="capkept"><summary>${kept.length} sentence${kept.length>1?'s':''} left in your note</summary>${kept.map(k=>`<p>“${esc(k.s)}” <small>· ${esc(k.why)}</small></p>`).join('')}</details>`:''}
+    <div class="chips" style="margin-top:12px"><button class="btn pri" data-cs="add" ${n?'':'disabled'}>${n?`Add ${n} item${n>1?'s':''}`:'Nothing selected'}</button><button class="btn" data-cs="close">${items.length?'Cancel':'Close'}</button></div></div>`;
+  sh.classList.remove('hide');sh.querySelectorAll('textarea.awrap').forEach(asz)}
+function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump'}[src.kind]||'Note';
+  return `<button class="lnkg" data-gosrc="${esc(JSON.stringify(src))}" style="font-size:13px">${SPARK.replace('<svg','<svg style="width:13px;height:13px;vertical-align:-2px"')} From ${lbl} · ${esc(fmtDate(src.date||today(),{month:'short',day:'numeric'}))}</button>`}
+function capGoSrc(src){if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
+  else if(src.kind==='session'){S.tab='sessions';S.sess=src.date;S.rc=S.rc||{};S.rc['se-new']=true}
+  else if(src.kind==='note'){S.tab='spiritual';S.date=src.date;const x=cache[src.key];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};S.rc=S.rc||{};S.rc['sp-notes']=true}}
+  else{if(inbox().some(x=>x.id===src.id)){S.tab='home'}else{capToast('Original note: “'+esc(src.text||'')+'”',null);return}}
+  render();scrollTo(0,0)}
+
 function top3Home(d){const p=planOf(d),rows=p.top.map((x,i)=>{const t=x.tid&&findTask(x.tid);const txt=t?t.t:(x.t||'').trim();if(!txt)return '';const dn=t?t.done:x.done;
   return `<div class="t3 ${dn?'done':''}"><button class="rc" data-toptog="${i}" aria-label="${dn?'Mark not done':'Mark done'}">${dn?'✓':''}</button><button class="go" data-go="today"><span>${esc(txt)}</span></button></div>`}).join('');
   return rows||'<p class="calnote" style="margin:0">Nothing picked yet. Tap <b>Plan today</b> to choose, or add tasks and the journal will pick for you.</p>'}
@@ -602,12 +772,12 @@ function entTime(e){return e.at?new Date(e.at).toLocaleTimeString([],{hour:'nume
 function tickOn(d,k){d.anchors=d.anchors||{};const a=d.anchors[k]=d.anchors[k]||{l:0};if(!(a.l>0))a.l=1}
 function journalCard(d){
   const es=ents(d),showNew=S.jnew===S.date||(d.draft||'').trim()||(d.dtitle||'').trim();
-  const list=es.map(e=>S.jopen===e.id?`<div class="jopen"><textarea rows="1" class="awrap jtitle" data-je="${esc(e.id)}" data-k="title" placeholder="Title (optional)" aria-label="Entry title">${esc(e.title||'')}</textarea>${catChips(e.cat||'',e.id)}<textarea class="write" data-je="${esc(e.id)}" data-k="text" aria-label="Journal entry">${esc(e.text||'')}</textarea><div class="quick"><button class="btn sm pri" data-act="jdone">Done</button><button class="btn sm" data-jdel="${esc(e.id)}">Delete</button>${entTime(e)?`<span class="muted">Written ${esc(entTime(e))}</span>`:''}</div></div>`
+  const list=es.map(e=>S.jopen===e.id?`<div class="jopen"><textarea rows="1" class="awrap jtitle" data-je="${esc(e.id)}" data-k="title" placeholder="Title (optional)" aria-label="Entry title">${esc(e.title||'')}</textarea>${catChips(e.cat||'',e.id)}<textarea class="write" data-je="${esc(e.id)}" data-k="text" aria-label="Journal entry">${esc(e.text||'')}</textarea><div class="quick"><button class="btn sm pri" data-act="jdone">Done</button><button class="btn sm" data-jorg="${esc(e.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn sm" data-jdel="${esc(e.id)}">Delete</button>${entTime(e)?`<span class="muted">Written ${esc(entTime(e))}</span>`:''}</div></div>`
     :`<button class="entry jent" data-jopen="${esc(e.id)}"><b>${esc(entName(e))}</b>${e.cat?`<span class="jcat">${esc(catName(e.cat))}</span>`:''}${entTime(e)?`<span class="tk" style="color:var(--mute)">${esc(entTime(e))}</span>`:''}${entRest(e)?`<p>${esc(entRest(e))}</p>`:''}</button>`).join('');
   const comp=showNew?`<div class="${es.length?'jopen':''}"><div class="prompt">${S.pi>=0?`<i>${esc(PROMPTS[S.pi])}</i><button class="btn sm" data-act="prompt">Another</button><button class="btn sm" data-act="noprompt">Hide</button>`:`<button class="btn sm" data-act="prompt">Need a prompt?</button>`}</div>
     <textarea rows="1" class="awrap jtitle" data-jd="dtitle" placeholder="What's this one about? (optional)" aria-label="New entry title">${esc(d.dtitle||'')}</textarea>${catChips(d.dcat||'','new')}
     <textarea class="write" data-jd="draft" placeholder="Write anything. One line is a full entry." aria-label="New journal entry">${esc(d.draft||'')}</textarea>
-    <div class="quick"><button class="btn sm pri" data-act="jsave">Save entry</button><button class="btn sm" data-act="jcancel">${(d.draft||'').trim()?'Keep as draft':'Cancel'}</button><span class="muted">Saving folds it up. Tap it anytime to read or edit.</span></div></div>`
+    <div class="quick"><button class="btn sm pri" data-act="jsave">Save entry</button><button class="btn sm" data-act="jsaveorg"><span class="orgbtn">${SPARK}Save &amp; Organize</span></button><button class="btn sm" data-act="jcancel">${(d.draft||'').trim()?'Keep as draft':'Cancel'}</button><span class="muted">Saving folds it up. Tap it anytime to read or edit.</span></div></div>`
     :'';
   if(!es.length&&!showNew)return '';
   return `${showNew?`<div class="card" style="padding-top:12px">${comp.replace('<div class="jopen">','<div>')}</div>`:''}${es.length?`<div class="card" style="padding-top:12px"><div class="chd"><h2>${S.date===today()?'Today’s Entries':'Entries'}</h2><small>${es.length} entr${es.length>1?'ies':'y'}</small></div>${list}</div>`:''}`}
@@ -666,7 +836,7 @@ function noteForm(){const f=S.nform,br=f.type==='Bible reading',mp=f.type==='Mee
   <textarea rows="1" class="awrap jtitle" data-nf="ref" placeholder="${br?'Reading or scripture (Genesis 1–3)':mp?'Meeting or article (Watchtower study…)':'Topic, publication or scripture'}" aria-label="${br?'Reading or scripture':mp?'Meeting or article':'Topic or source'}">${esc(f.ref||'')}</textarea>
   <div class="chips jcats" style="display:flex;flex-wrap:wrap" role="group" aria-label="Note type">${NTYPES.map(t=>`<button class="chip" data-ntype="${t}" aria-pressed="${f.type===t}" style="padding:0 12px">${t}</button>`).join('')}</div>
   <textarea class="write" data-nf="text" placeholder="${br?'What stood out? What does it teach me about Jehovah? How can I apply it?':'What I learned, scriptures to remember, questions to research…'}" aria-label="Notes">${esc(f.text||'')}</textarea>
-  <div class="quick"><button class="btn sm pri" data-act="nsave">Save note</button><button class="btn sm" data-act="ncancel">Cancel</button>${f.id?'<button class="btn sm" data-act="ndel">Delete</button>':''}<input type="date" data-nf="date" value="${esc(f.date||S.date)}" style="width:auto;min-height:40px;margin-left:auto" aria-label="Date"></div></div>`}
+  <div class="quick"><button class="btn sm pri" data-act="nsave">Save note</button><button class="btn sm" data-act="nsaveorg"><span class="orgbtn">${SPARK}Save &amp; Organize</span></button><button class="btn sm" data-act="ncancel">Cancel</button>${f.id?'<button class="btn sm" data-act="ndel">Delete</button>':''}<input type="date" data-nf="date" value="${esc(f.date||S.date)}" style="width:auto;min-height:40px;margin-left:auto" aria-label="Date"></div></div>`}
 function vSpiritual(){
   migrateBnotes();
   const d=get('day-'+S.date,dayDef(S.date));planOf(d);
@@ -957,7 +1127,7 @@ function tasks(){const t=get('tasks',{items:[]});t.items=t.items||[];return t.it
 const findTask=id=>tasks().find(t=>t.id===id);
 function taskRow(t,why){const open=S.tkopen===t.id,id=esc(t.id);
   return `<div class="task ${t.done?'done':''} ${!t.done&&t.due&&t.due<today()?'over':''}"><button class="cb" data-tktog="${id}" aria-label="${t.done?'Mark not done':'Mark done'}"><span>${t.done?'✓':''}</span></button><div class="tk"><textarea rows="1" class="awrap tt" data-tkt="${id}" aria-label="Task">${esc(t.t)}</textarea><div class="tsub">${t.imp?'<span class="star" title="Important">★</span>':''}${why&&!t.done?`<span class="why">${esc(why)}</span>`:''}${t.quick&&!t.done?'<span class="why q">Quick</span>':''}<input type="date" class="td" data-tkd="${id}" value="${esc(t.due||'')}" aria-label="Due date"></div>${t.next&&!open&&!t.done?`<span class="tnext">Next: ${esc(t.next)}</span>`:''}</div><button class="x" data-tkopen="${id}" aria-label="${open?'Close details':'Details'}" aria-expanded="${open}">${open?'–':'⋯'}</button></div>
-  ${open?`<div class="tkdet"><label><span class="lbl">Next step</span><textarea rows="1" class="awrap" data-tkf="next" data-id="${id}" placeholder="The first physical step, e.g. open the laptop">${esc(t.next||'')}</textarea></label><label><span class="lbl">Done when</span><textarea rows="1" class="awrap" data-tkf="doneWhen" data-id="${id}" placeholder="When to stop, e.g. one page drafted">${esc(t.doneWhen||'')}</textarea></label><div class="chips"><button class="chip sm" data-tkflag="imp" data-id="${id}" aria-pressed="${!!t.imp}" style="padding:0 12px">★ Important</button><button class="chip sm" data-tkflag="quick" data-id="${id}" aria-pressed="${!!t.quick}" style="padding:0 12px">Quick · under 10 min</button><button class="btn sm" data-tkdel="${id}">Delete</button></div></div>`:''}`}
+  ${open?`<div class="tkdet"><label><span class="lbl">Next step</span><textarea rows="1" class="awrap" data-tkf="next" data-id="${id}" placeholder="The first physical step, e.g. open the laptop">${esc(t.next||'')}</textarea></label><label><span class="lbl">Done when</span><textarea rows="1" class="awrap" data-tkf="doneWhen" data-id="${id}" placeholder="When to stop, e.g. one page drafted">${esc(t.doneWhen||'')}</textarea></label><div class="chips"><button class="chip sm" data-tkflag="imp" data-id="${id}" aria-pressed="${!!t.imp}" style="padding:0 12px">★ Important</button><button class="chip sm" data-tkflag="quick" data-id="${id}" aria-pressed="${!!t.quick}" style="padding:0 12px">Quick · under 10 min</button><button class="btn sm" data-tkdel="${id}">Delete</button></div>${t.src?`<div>${capSrcLink(t.src)}</div>`:''}</div>`:''}`}
 // ----- prioritizer: ranks open tasks so the journal can choose for you
 const dDiff=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
 function taskScore(t,date){const age=Math.max(0,Math.floor((Date.now()-(t.created||Date.now()))/864e5));let s=0,why='';
@@ -982,8 +1152,8 @@ function startCard(d){if(S.date!==today())return '';const h=startHere(d);if(!h)r
 // ----- inbox: quick capture from anywhere, sort later
 function inbox(){const b=get('inbox',{items:[]});b.items=b.items||[];return b.items}
 function inboxCard(){const it=inbox();if(!it.length)return '';
-  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
-function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Jot it down</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind. Sort it later." aria-label="Inbox item"></textarea><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');const t=$('#cap-t');grow(t);t.focus()}
+  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
+function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Jot it down</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind. Sort it later." aria-label="Inbox item"></textarea><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="org"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');const t=$('#cap-t');grow(t);t.focus()}
 function closeCap(){$('#cap').classList.add('hide');if(S.tab==='home'||(S.tab==='today'&&(S.seg||'day')==='day')){const y=scrollY;render();scrollTo(0,y)}}
 
 function addTask(text,due){text=(text||'').trim();if(!text)return false;tasks().push({id:uid(),t:text,due:due||'',done:false,created:Date.now()});save('tasks');return true}
@@ -1462,6 +1632,7 @@ function vSessionsBody(items,cur){
     <div class="q" style="margin-top:12px">What we talked about</div><textarea class="write wsm" data-s="talked" aria-label="What we talked about">${esc(cur.talked)}</textarea>
     <div class="q">One thing that stuck with me</div><textarea class="write wsm" data-s="stuck" aria-label="One thing that stuck with me">${esc(cur.stuck)}</textarea>
     <div class="q">Something to try before next time</div><textarea class="write wsm" data-s="try" aria-label="Something to try before next time">${esc(cur.try)}</textarea>
+    <button class="btn sm" data-act="sessorg" style="margin-top:10px"><span class="orgbtn">${SPARK}Organize these notes</span></button>
     <p class="muted" style="margin:10px 0 0">A few words is enough. Skip any line. <button class="lnk" data-gojournal="${esc(S.sess)}">Show in Journal</button></p>
   </div>
   <div class="card" style="padding-top:12px">
@@ -1488,6 +1659,7 @@ function vHelp(){
   ${sec('Planner',`<p><b>On Today</b>, the Plan card has:</p><ul><li><b>Day type</b> (L, W, S, B, O). It's set from your schedule in Setup. Tap a letter to change just that day.</li><li><b>Top 3:</b> the three things that matter most. Tick them off.</li><li><b>Today’s schedule:</b> your routine (daily text, Bible reading, workout, focus block…) and ${window.claude?'your Google Calendar events ':''}in one time-ordered list, each with a checkbox. The routine for that day's type fills in by itself each day, grouped into windows (Early morning, Morning, Afternoon, Evening, Anytime). Tap the arrows on an item to move it to another part of the day.</li><li><b>Spiritual plan, spread across the week:</b> daily text, Bible reading, and time to meditate and write personal notes every morning. Bible reading follows the jw.org Bible Reading Schedule, one reading at a time: the whole Bible, or just the red-diamond (historical overview) or blue-dot (Christian congregation) readings, chosen in Setup → Schedule. It shows under Bible reading and only moves forward when you check it off, so a missed day simply picks up where you left off. Tap <b>Write notes</b> under Meditate to open a notes box. Your notes collect on the Spiritual tab under Study notes. plus one study item a day: Mon finish midweek prep · Tue midweek meeting · Wed personal study · Thu Watchtower prep (first half) · Fri Watchtower prep (second half) + field service meeting prep · Sat start midweek prep · Sun field service + weekend meeting. On a shift day the prep moves to the next day. Routine items have no clock times unless you turn on <b>Exact times</b> in Setup → Schedule, so nothing is ever “late.” All-day calendar items (like Daily Text) can be checked off too. If your calendar already has an item with the same name (like “Daily Text”), only the calendar one shows, so nothing appears twice. Edit times and names, add items, or remove them. The bar shows how much is done, and Week shows it for every day.${window.claude?' Tap the <b>calendar button</b> on a block to add it to Google Calendar.':''}</li><li><b>Tasks</b> due that day. Unfinished tasks from earlier days show as <b>Carried over</b>, with <b>Move all to today</b>.</li></ul><p><b>Today tab views:</b></p><ul><li><b>Tasks:</b> add with or without a date. No date puts it in your Inbox. Change a task's date to reschedule it. <b>Import tasks</b> brings in a pasted list (one per line, dates picked up) or a Google Tasks export from takeout.google.com.</li><li><b>Week:</b> each day's type, anchor ticks, Top 3, tasks${window.claude?' and calendar events':''}. With the shift cycle on, switch to the 15-day cycle view. Your weekly check-in is below.</li><li><b>Month:</b> a calendar grid. Tap a day to see its events, tasks and journal entry${window.claude?', or <b>+ Add event</b>':''}.</li></ul><p>Use <b>‹ ›</b> at the top to move between weeks, cycles, or months.</p>`)}
   ${sec('Spiritual',`<p>The <b>Spiritual</b> tab gathers everything spiritual for a day (use ‹ › to change days):</p><ul><li><b>Activities:</b> daily text, Bible reading, meditation, meeting prep, meetings and field service from your routine${window.claude?' and calendar':''}. Check them off here or on Today; they stay in sync. Add extra activities like family worship or research.</li><li><b>Bible reading:</b> your next reading from the schedule, <b>Mark as read</b>, progress, and under <b>Track, place and history</b> the red-diamond and blue-dot tracks, Set my place, and recent readings.</li><li><b>Study notes:</b> tap <b>+ New note</b>, choose Bible reading, Personal study, Meeting prep, Research or Other, add the scripture or topic, and write. Filter by type or search. Tap a note to edit it.</li></ul>`)}
   ${window.claude?'':sec('Google connection',`<p>The home-screen app can use your Google Calendar and back up to Google Drive through a small script that runs in your own Google account.</p><ol><li>On a computer, go to <b>script.google.com</b> → <b>New project</b>. Paste in the <b>KL Journal bridge</b> script (Code.gs) and save.</li><li>Choose <b>setup</b> in the toolbar and tap <b>Run</b>. Allow access. If Google says the app isn't verified, tap <b>Advanced → Go to KL Journal bridge</b>.</li><li><b>Deploy → New deployment</b> → gear → <b>Web app</b>. Execute as <b>Me</b>, access <b>Anyone</b>. Deploy and copy the Web app URL.</li><li>Here, open <b>More → Google connection</b>, paste the URL and the secret key from the top of the script, and tap <b>Connect</b>.</li></ol><p>Your journal saves to the phone first and copies to Drive a few seconds later, so it works without signal and catches up when you're back online.</p>`)}
+  ${sec('Smart Capture',`<p><b>From Thought to Action.</b> Write naturally; Smart Capture finds the tasks, dates, appointments, spiritual activities, workouts and session questions in what you wrote, and suggests where each belongs.</p><ul><li>Tap <b>✦ Organize</b> (or <b>Save &amp; Organize</b>) on a journal entry, study note, session notes, an Inbox note or the + capture.</li><li>Check what to add. You can change the title, where it goes, the type, date, time and priority first.</li><li>It skips things you already did, things you don't need to do, and “maybe” thoughts. Feelings and reflections stay in your note.</li><li>Dates like <i>tomorrow morning</i>, <i>this Friday</i>, <i>next Tuesday</i>, <i>in two weeks</i>, <i>on my next day off</i> or <i>every Monday</i> are understood. If a date or time is unclear, it's left blank for you to choose.</li><li>It won't add the same thing twice, and offers to update an existing task instead. Your original note never changes; tasks it creates show <b>From Journal entry</b> (or wherever) in their details so you can jump back.</li><li><b>Undo</b> appears after anything is added. Modes (Review first, Smart Auto, Manual) are in <b>More → Smart Capture</b>.</li><li>Everything is read on this device. Nothing is sent anywhere.</li></ul>`)}
   ${sec('Daily Perspective',`<p>Each day the top of <b>Home</b> shows one short perspective on discipline, purpose, resilience, leadership, balance, growth, emotional well-being, patience, self-awareness or consistency. It stays the same all day on every device and changes after midnight. You'll see all 445 before any repeats.</p><ul><li><b>☆ Save</b> keeps it. Find saved ones under <b>More → Saved perspectives</b>.</li><li><b>Share</b> opens your phone's share sheet, or copies the quote.</li><li><b>Reflect on this</b> starts a journal entry with the quote as its title.</li></ul>`)}
   ${sec('Home',`<p><b>Home</b> is organized around what matters today: your <b>Daily Perspective</b>, <b>My Daily Anchors</b> (tap Spiritual, Movement, Journal or Reset when you've done it), <b>Today’s Top 3</b>, and <b>Write a Quick Entry</b>. Below that, <b>Today at a glance</b> and <b>This week</b> open for the fuller picture: routine progress, tasks, Bible, journal, sessions, and your anchors across the week.</p>`)}
   ${sec('Letting the journal prioritize',`<p>When it feels like too much, let the journal choose.</p><ul><li><b>Top 3 fills itself.</b> Each morning, empty Top 3 spots fill with your most pressing tasks: overdue and due soon first, then ★ important, then quick wins. Tasks with no date rise the longer they wait.</li><li><b>It matches your day.</b> Shift days get 1 pick, between days 2, other days 3. A <b>Flex day</b> gets 1.</li><li><b>Start here</b> at the top of Today shows just the one next thing, with its next step and when you're done. <b>Not today</b> swaps in the next pick.</li><li>Empty spots you leave are yours to type in. <b>+ Pick one more for me</b> adds another when you have room. Turn the auto-pick off in More if you want.</li><li>In Tasks, <b>Do next</b> lists everything in that same order. Open a task with ⋯ to add a next step, a "done when," or mark it ★ important or quick.</li></ul>`)}
@@ -1560,6 +1732,9 @@ function vSetup(){
     <p class="muted" style="margin-top:0">Every day you wrote, ticked something, or took study or session notes.</p>
     <button class="btn" data-act="entries">Open in Journal</button>
   </div>`,false)}
+  ${rc('mo-capture',SPARK,'Smart Capture','From Thought to Action · '+({review:'Review first',auto:'Smart Auto',manual:'Manual'}[capMode()]),`<div class="chips" role="group" aria-label="Smart Capture mode">${[['review','Review first'],['auto','Smart Auto'],['manual','Manual']].map(([k,l])=>`<button class="chip" data-capmode="${k}" aria-pressed="${capMode()===k}">${l}</button>`).join('')}</div>
+    <p class="calnote" style="margin-top:8px">${{review:'After you save a journal entry, study note or Inbox note, Smart Capture shows what it found (tasks, dates, session questions) and adds only what you check.',auto:'Clear, low-risk items (plain tasks and session questions) are added right away, with Undo. Anything with an unclear date, a calendar event or a “maybe” waits for your review.',manual:'Nothing happens on its own. Tap ✦ Organize on a note when you want it sorted.'}[capMode()]}</p>
+    <p class="calnote">Your notes are read on this device only. Nothing is sent to any outside service. Your original note is never changed; anything Smart Capture adds links back to it.</p>`,false)}
   ${rc('mo-quotes',IC.bookmark,'Saved Perspectives',savedQ().length?`${savedQ().length} saved`:'Quotes you save on Home',savedQList(),false)}
   ${rc('mo-data',IC.cloud,'Data &amp; Sync',bridgeOn()?'Google connected · backup and restore':'Backup, restore, and device storage',`${bridgeCard()}
   <div class="card">
@@ -1623,6 +1798,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.tkopen){S.tkopen=S.tkopen===b.dataset.tkopen?null:b.dataset.tkopen;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.tkflag){const t=findTask(b.dataset.id);if(t){t[b.dataset.tkflag]=!t[b.dataset.tkflag];save('tasks')}const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.tsort){S.tsort=b.dataset.tsort;const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.inb==='org'){const x=inbox().find(y=>y.id===b.dataset.id);if(x)capRun(x.t,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t},'organize');return}
   if(b.dataset.inb){const l=inbox(),i=l.findIndex(x=>x.id===b.dataset.id);if(i<0)return;const x=l[i],k=b.dataset.inb,td=today();
     if(k==='today')addTask(x.t,td);else if(k==='task')addTask(x.t,'');
     else if(k==='journal'){const d=get('day-'+td,dayDef(td));ents(d).push({id:uid(),title:'',text:x.t,cat:'',at:Date.now()});syncText(d);save('day-'+td)}
@@ -1639,7 +1815,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.act==='nnew'){S.nform={id:null,type:'Bible reading',ref:portion(S.date)||'',date:S.date,text:''};const y=scrollY;render();scrollTo(0,y);const t=main.querySelector('[data-nf=text]');t&&t.focus();return}
   if(b.dataset.ntype){const f=S.nform;if(f.type==='Bible reading'&&f.ref===portion(f.date||S.date))f.ref='';f.type=b.dataset.ntype;if(f.type==='Bible reading'&&!f.ref)f.ref=portion(f.date||S.date)||'';const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='ncancel'){S.nform=null;const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.act==='nsave'){const f=S.nform;if(!(f.text||'').trim()&&!(f.ref||'').trim()){const t=main.querySelector('[data-nf=text]');t&&t.focus();return}const id=f.id||uid(),k='note-'+id,prev=cache[k]||{};cache[k]={id,date:f.date||S.date,type:f.type,ref:(f.ref||'').trim(),text:(f.text||'').trim(),created:prev.created||Date.now()};save(k);S.nform=null;const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.act==='nsave'||b.dataset.act==='nsaveorg'){const org=b.dataset.act==='nsaveorg';const f=S.nform;if(!(f.text||'').trim()&&!(f.ref||'').trim()){const t=main.querySelector('[data-nf=text]');t&&t.focus();return}const id=f.id||uid(),k='note-'+id,prev=cache[k]||{};cache[k]={id,date:f.date||S.date,type:f.type,ref:(f.ref||'').trim(),text:(f.text||'').trim(),created:prev.created||Date.now()};save(k);S.nform=null;const y=scrollY;render();scrollTo(0,y);capRun([cache[k].ref,cache[k].text].filter(Boolean).join('.\n'),{kind:'note',key:k,id,date:cache[k].date},org?'organize':'save');return}
   if(b.dataset.act==='ndel'){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);return}del('note-'+S.nform.id);S.nform=null;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.nedit){const x=cache[b.dataset.nedit];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};render();const t=main.querySelector('[data-nf=text]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
   if(b.dataset.nfilter){S.nfilter=b.dataset.nfilter;const y=scrollY;render();scrollTo(0,y);return}
@@ -1708,7 +1884,14 @@ main.addEventListener('click',e=>{
     if(cur&&b.dataset.for!=='new'){const t=main.querySelector(`[data-tick="${cur}"]`);if(t){t.setAttribute('aria-pressed','true');t.querySelector('.bx').textContent='✓'}}return}
   if(b.dataset.act==='jnew'){S.jnew=S.date;S.jopen=null;const y=scrollY;render();scrollTo(0,y);const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
   if(b.dataset.act==='jcancel'){S.jnew=null;const d=get('day-'+S.date,dayDef(S.date));if(!(d.draft||'').trim()){d.dtitle='';d.dcat='';save('day-'+S.date)}const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.act==='jsave'){const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim();if(!tx&&!ti){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
+  if(b.dataset.capmode){const st=get('settings',setDef);st.capMode=b.dataset.capmode;save('settings');const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.gosrc){try{capGoSrc(JSON.parse(b.dataset.gosrc))}catch(e){}return}
+  if(b.dataset.jorg){const d=get('day-'+S.date,dayDef(S.date)),e=ents(d).find(x=>x.id===b.dataset.jorg);if(e)capRun([e.title,e.text].filter(Boolean).join('.\n'),{kind:'journal',key:'day-'+S.date,id:e.id,date:S.date},'organize');return}
+  if(b.dataset.act==='jsaveorg'||b.dataset.act==='jsave'){const org=b.dataset.act==='jsaveorg';const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim();if(!tx&&!ti){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
+    const eid=uid();ents(d).push({id:eid,title:ti,text:tx,cat:d.dcat||'',at:Date.now()});if(d.dcat)tickOn(d,d.dcat);d.draft='';d.dtitle='';d.dcat='';S.jnew=null;S.jopen=null;S.pi=-1;syncText(d);save('day-'+S.date);render();
+    capRun([ti,tx].filter(Boolean).join('.\n'),{kind:'journal',key:'day-'+S.date,id:eid,date:S.date},org?'organize':'save');return}
+  if(b.dataset.act==='sessorg'){const c=cache['session-'+S.sess]||{};capRun([c.talked,c.stuck,c.try,c.notes].filter(x=>(x||'').trim()).join('\n'),{kind:'session',key:'session-'+S.sess,id:'session',date:S.sess},'organize');if(!(c.talked||c.stuck||c.try||c.notes))capToast('Write a few session notes first, then tap Organize.',null);return}
+  if(false&&b.dataset.act==='jsave'){const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim();if(!tx&&!ti){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
     ents(d).push({id:uid(),title:ti,text:tx,cat:d.dcat||'',at:Date.now()});if(d.dcat)tickOn(d,d.dcat);d.draft='';d.dtitle='';d.dcat='';S.jnew=null;S.jopen=null;S.pi=-1;syncText(d);save('day-'+S.date);render();return}
   if(b.dataset.jopen){S.jopen=b.dataset.jopen;const y=scrollY;render();scrollTo(0,y);const t=main.querySelector(`.jopen textarea[data-je="${CSS.escape(b.dataset.jopen)}"]`);if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}return}
   if(b.dataset.act==='jdone'){const d=get('day-'+S.date,dayDef(S.date)),es=ents(d),i=es.findIndex(e=>e.id===S.jopen);if(i>=0&&!(es[i].text||'').trim()&&!(es[i].title||'').trim()){tomb(d,es[i].id);es.splice(i,1);syncText(d);save('day-'+S.date)}S.jopen=null;const y=scrollY;render();scrollTo(0,y);return}
@@ -1767,8 +1950,15 @@ document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('clic
 function shift(n){if(S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')==='day')){S.date=addDays(S.date,n);S.nform=null}else if(S.seg==='month'){const d=parse(S.month+'-01');d.setMonth(d.getMonth()+n);S.month=ymd(d).slice(0,7);S.mday=''}else if(S.view==='cycle'&&schedule().mode==='cycle'&&schedule().s1)S.cyc=addDays(S.cyc,15*n);else S.week=addDays(S.week,7*n);render()}
 $('#prev').addEventListener('click',()=>shift(-1));
 $('#fab').addEventListener('click',openCap);
+$('#capsheet').addEventListener('click',e=>{if(e.target.id==='capsheet'){CAPS=null;capSheet();return}const b=e.target.closest('[data-cs]');if(!b||!CAPS)return;const it=CAPS.items[Number(b.dataset.i)];
+  if(b.dataset.cs==='close'){CAPS=null;capSheet();return}
+  if(b.dataset.cs==='sel'){it.sel=!it.sel;if(it.sel&&it.dest==='skip')it.dest='task';capSheet();return}
+  if(b.dataset.cs==='imp'){it.imp=!it.imp;capSheet();return}
+  if(b.dataset.cs==='add'){const ctx=CAPS.ctx,created=capApply(CAPS.items,ctx),n=CAPS.items.filter(x=>x.sel&&x.dest!=='skip').length;CAPS=null;capSheet();$('#cap').classList.add('hide');const y=scrollY;render();scrollTo(0,y);capToast(`${SPARK}<span>Added ${n} item${n>1?'s':''}</span>`,created,null)}});
+$('#capsheet').addEventListener('input',e=>{const t=e.target;if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];if(t.dataset.cf==='title'){it.title=t.value;asz(t)}});
+$('#capsheet').addEventListener('change',e=>{const t=e.target;if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];it[t.dataset.cf]=t.value;if(t.dataset.cf==='dest'){it.sel=t.value!=='skip';if(['task','top3','plan','spir','cal'].includes(t.value)&&!it.date&&t.value!=='task')it.date=today()}capSheet()});
 $('#cap').addEventListener('click',e=>{if(e.target.id==='cap'){closeCap();return}const b=e.target.closest('[data-cap]');if(!b)return;
-  if(b.dataset.cap==='add'){const t=$('#cap-t'),v=t.value.trim();if(!v){t.focus();return}inbox().push({id:uid(),t:v,at:Date.now()});save('inbox');t.value='';grow(t);$('#cap-m').textContent='Added. Jot another, or tap Done. ('+inbox().length+' in your inbox)';t.focus()}
+  if(b.dataset.cap==='add'||b.dataset.cap==='org'){const t=$('#cap-t'),v=t.value.trim();if(!v){t.focus();return}const nid=uid();inbox().push({id:nid,t:v,at:Date.now()});save('inbox');capRun(v,{kind:'inbox',key:'inbox',id:nid,date:today(),text:v},b.dataset.cap==='org'?'organize':'save');t.value='';grow(t);$('#cap-m').textContent='Added. Jot another, or tap Done. ('+inbox().length+' in your inbox)';t.focus()}
   else closeCap()});
 $('#cap').addEventListener('input',e=>{if(e.target.id==='cap-t')grow(e.target)});
 $('#cap').addEventListener('keydown',e=>{if(e.key==='Escape')closeCap()});
