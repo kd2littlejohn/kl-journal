@@ -1079,14 +1079,34 @@ function bridgeMCP(){const mem=new Map();return {
 let DQ=new Set(),dTimer=null,DSYNC={at:0,state:'',err:''};
 const driveOn=()=>bridgeOn()&&BRIDGE.drive!==false;
 function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTimer=setTimeout(drivePush,2500)}
-async function drivePush(){if(!driveOn()||!DQ.size)return;const keys=[...DQ];DQ.clear();const docs={};keys.forEach(k=>{docs[k]=cache[k]?JSON.parse(JSON.stringify(cache[k])):{_del:true,_u:Date.now()}});
+// Item-level merge so the same page edited on two devices keeps both sets of changes.
+const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
+const ikey=x=>x&&(x.id||('t:'+(x.t||'')));
+function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq')return['items'];return[]}
+function mergeDoc(key,a,b){if(!a||a._del===true)return b;if(!b||b._del===true)return a;
+  const lists=mergeLists(key);if(!lists.length)return (Number(a._u)||0)>=(Number(b._u)||0)?a:b;
+  const [nw,ol]=(Number(a._u)||0)>=(Number(b._u)||0)?[a,b]:[b,a];
+  const out=JSON.parse(JSON.stringify(nw)),del=Object.assign({},ol._gone||{},nw._gone||{});if(Object.keys(del).length)out._gone=del;
+  lists.forEach(f=>{const A=Array.isArray(nw[f])?nw[f]:[],B=Array.isArray(ol[f])?ol[f]:[];const seen=new Set(A.map(ikey));
+    out[f]=JSON.parse(JSON.stringify(A.concat(B.filter(x=>!seen.has(ikey(x)))))).filter(x=>!del[ikey(x)])});
+  if(/^day-/.test(key)&&Array.isArray(out.entries))syncText(out);
+  out._u=Math.max(Number(a._u)||0,Number(b._u)||0);return out}
+const same=(x,y)=>JSON.stringify(x)===JSON.stringify(y);
+async function drivePush(){if(!driveOn()||!DQ.size)return;const keys=[...DQ];DQ.clear();const docs={};let remote={},changed=false;
+  try{remote=(await bcall('load')).docs||{}}catch(e){keys.forEach(k=>DQ.add(k));DSYNC={at:DSYNC.at,state:'err',err:e.code};clearTimeout(dTimer);dTimer=setTimeout(drivePush,60000);return}
+  keys.forEach(k=>{if(!cache[k]){docs[k]={_del:true,_u:Date.now()};return}const rd=remote[k];let m=cache[k];
+    if(rd&&rd._del!==true&&mergeLists(k).length){const mg=mergeDoc(k,cache[k],rd);if(!same(mg,cache[k])&&!dirty.has(k)){cache[k]=mg;changed=true}m=mg}
+    const out=JSON.parse(JSON.stringify(m));out._u=Date.now();docs[k]=out;if(cache[k]===m)cache[k]._u=out._u});
+  if(changed){lsSave();const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}
   try{await bcall('save',{docs});DSYNC={at:Date.now(),state:'ok'};if(!dirty.size)setStatus('Saved · backed up to Drive '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))}
   catch(e){keys.forEach(k=>DQ.add(k));DSYNC={at:DSYNC.at,state:'err',err:e.code};setStatus('Saved on this device · Drive backup will retry',false);clearTimeout(dTimer);dTimer=setTimeout(drivePush,60000)}}
 async function drivePull(){if(!driveOn())return;
   try{const r=await bcall('load');const docs=r.docs||{};let ch=0;
     Object.keys(docs).forEach(k=>{if(dirty.has(k)||DQ.has(k))return;const rd=docs[k],ld=cache[k],ru=Number(rd&&rd._u)||0,lu=Number(ld&&ld._u)||0;
       if(rd&&rd._del){if(ld&&lu<ru){delete cache[k];ch++}return}
-      if(!ld||ru>lu){cache[k]=rd;ch++}});
+      if(!ld){cache[k]=rd;ch++;return}
+      if(mergeLists(k).length){const mg=mergeDoc(k,ld,rd);if(!same(mg,ld)){cache[k]=mg;ch++}if(!same(mg,rd))DQ.add(k);return}
+      if(ru>lu){cache[k]=rd;ch++}});
     // anything here that Drive doesn't have yet goes up
     Object.keys(cache).forEach(k=>{const rd=docs[k],lu=Number(cache[k]&&cache[k]._u)||0;if(!rd||(lu>(Number(rd._u)||0)))DQ.add(k)});
     if(ch){lsSave();const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}
@@ -1447,7 +1467,7 @@ main.addEventListener('click',e=>{
     if(k==='today')addTask(x.t,td);else if(k==='task')addTask(x.t,'');
     else if(k==='journal'){const d=get('day-'+td,dayDef(td));ents(d).push({id:uid(),title:'',text:x.t,cat:'',at:Date.now()});syncText(d);save('day-'+td)}
     else if(k==='note'){const id=uid();cache['note-'+id]={id,date:td,type:'Other',ref:'',text:x.t,created:Date.now()};save('note-'+id)}
-    l.splice(i,1);save('inbox');const y=scrollY;render();scrollTo(0,y);return}
+    tomb(get('inbox',{items:[]}),x.id);l.splice(i,1);save('inbox');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.bktog!=null){const d=get('day-'+S.date,dayDef(S.date)),x=planOf(d).blocks[Number(b.dataset.bktog)];x.done=!x.done;save('day-'+S.date);if(/^bible reading/i.test(x.t||'')){bibleDone(S.date,x.done);const y=scrollY;render();scrollTo(0,y)}else if(S.tab==='spiritual'){const y=scrollY;render();scrollTo(0,y)}else paintCal();return}
   if(b.dataset.evtog){const d=get('day-'+S.date,dayDef(S.date));d.evDone=d.evDone||{};if(d.evDone[b.dataset.evtog])delete d.evDone[b.dataset.evtog];else d.evDone[b.dataset.evtog]=true;save('day-'+S.date);if(S.tab==='spiritual'){const y=scrollY;render();scrollTo(0,y)}else paintCal();return}
   if(b.dataset.bkdel!=null){const d=get('day-'+S.date,dayDef(S.date)),pl=planOf(d);pl.blocks.splice(Number(b.dataset.bkdel),1);if(!pl.blocks.length)pl.cleared=true;save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
@@ -1485,9 +1505,9 @@ main.addEventListener('click',e=>{
     const r=importList(items);S.impOpen=true;render();$('#tkmsg').textContent=`Imported ${r.n} task${r.n===1?'':'s'}${r.skip?` · skipped ${r.skip} already in your list`:''}.`;return}
   if(b.dataset.act==='tkadd2'){const i=$('#tknew2');if(addTask(i.value,$('#tkdate2').value)){render();$('#tknew2').focus()}else i.focus();return}
   if(b.dataset.tktog){const t=findTask(b.dataset.tktog);if(t)setTaskDone(t,!t.done);const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.tkdel){const l=tasks(),i=l.findIndex(t=>t.id===b.dataset.tkdel);if(i>=0){l.splice(i,1);save('tasks')}const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.tkdel){const l=tasks(),i=l.findIndex(t=>t.id===b.dataset.tkdel);if(i>=0){tomb(get('tasks',{items:[]}),l[i].id);l.splice(i,1);save('tasks')}const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='carryall'){tasks().forEach(t=>{if(!t.done&&t.due&&t.due<today())t.due=today()});save('tasks');const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.act==='cleardone'){const t=get('tasks',{items:[]});t.items=t.items.filter(x=>!x.done);save('tasks');render();return}
+  if(b.dataset.act==='cleardone'){const t=get('tasks',{items:[]});t.items.filter(x=>x.done).forEach(x=>tomb(t,x.id));t.items=t.items.filter(x=>!x.done);save('tasks');render();return}
   if(b.dataset.seg){S.seg=b.dataset.seg;render();scrollTo(0,0);return}
   if(b.dataset.view){S.view=b.dataset.view;if(S.view==='cycle')S.cyc=cycStart(today());render();return}
   if(b.dataset.mday){S.mday=b.dataset.mday;const y=scrollY;render();scrollTo(0,y);return}
@@ -1509,8 +1529,8 @@ main.addEventListener('click',e=>{
   if(b.dataset.act==='logs'){S.tab='logs';render();scrollTo(0,0);return}
   if(b.dataset.act==='qadd'){addQ();return}
   if(b.dataset.qtog!=null){const q=get('sessq',{items:[]});const it=q.items[Number(b.dataset.qtog)];it.done=!it.done;save('sessq');const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.qdel!=null){const q=get('sessq',{items:[]});q.items.splice(Number(b.dataset.qdel),1);save('sessq');const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.act==='qclear'){const q=get('sessq',{items:[]});q.items=q.items.filter(i=>!i.done);save('sessq');const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.qdel!=null){const q=get('sessq',{items:[]});const it=q.items[Number(b.dataset.qdel)];if(it)tomb(q,ikey(it));q.items.splice(Number(b.dataset.qdel),1);save('sessq');const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.act==='qclear'){const q=get('sessq',{items:[]});q.items.filter(i=>i.done).forEach(i=>tomb(q,ikey(i)));q.items=q.items.filter(i=>!i.done);save('sessq');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.opens){S.sess=b.dataset.opens;render();scrollTo(0,0);return}
   if(b.dataset.tick){const d=get('day-'+S.date,dayDef(S.date));const a=d.anchors[b.dataset.tick]=d.anchors[b.dataset.tick]||{l:0};a.l=a.l>0?0:1;save('day-'+S.date);
     b.setAttribute('aria-pressed',a.l>0);b.querySelector('.bx').textContent=a.l>0?'✓':'';return}
@@ -1523,9 +1543,9 @@ main.addEventListener('click',e=>{
   if(b.dataset.act==='jsave'){const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim();if(!tx&&!ti){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
     ents(d).push({id:uid(),title:ti,text:tx,cat:d.dcat||'',at:Date.now()});if(d.dcat)tickOn(d,d.dcat);d.draft='';d.dtitle='';d.dcat='';S.jnew=null;S.jopen=null;S.pi=-1;syncText(d);save('day-'+S.date);render();return}
   if(b.dataset.jopen){S.jopen=b.dataset.jopen;const y=scrollY;render();scrollTo(0,y);const t=main.querySelector(`.jopen textarea[data-je="${CSS.escape(b.dataset.jopen)}"]`);if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}return}
-  if(b.dataset.act==='jdone'){const d=get('day-'+S.date,dayDef(S.date)),es=ents(d),i=es.findIndex(e=>e.id===S.jopen);if(i>=0&&!(es[i].text||'').trim()&&!(es[i].title||'').trim()){es.splice(i,1);syncText(d);save('day-'+S.date)}S.jopen=null;const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.act==='jdone'){const d=get('day-'+S.date,dayDef(S.date)),es=ents(d),i=es.findIndex(e=>e.id===S.jopen);if(i>=0&&!(es[i].text||'').trim()&&!(es[i].title||'').trim()){tomb(d,es[i].id);es.splice(i,1);syncText(d);save('day-'+S.date)}S.jopen=null;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.jdel){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);return}
-    const d=get('day-'+S.date,dayDef(S.date)),es=ents(d),i=es.findIndex(e=>e.id===b.dataset.jdel);if(i>=0)es.splice(i,1);S.jopen=null;syncText(d);save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
+    const d=get('day-'+S.date,dayDef(S.date)),es=ents(d),i=es.findIndex(e=>e.id===b.dataset.jdel);if(i>=0){tomb(d,es[i].id);es.splice(i,1)}S.jopen=null;syncText(d);save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='prompt'){let n;do{n=Math.floor(Math.random()*PROMPTS.length)}while(n===S.pi&&PROMPTS.length>1);S.pi=n;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='noprompt'){S.pi=-1;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.set){const d=get('day-'+S.date,dayDef(S.date));const p=b.dataset.set;let v=b.dataset.v;
@@ -1574,7 +1594,7 @@ main.addEventListener('change',e=>{if(e.target.dataset.brsd!=null){const B=bible
 main.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('awrap')){e.preventDefault();e.target.blur();return}if(e.key==='Enter'&&e.target.id==='spadd'){e.preventDefault();main.querySelector('[data-act=spadd]').click()}if(e.key==='Enter'&&e.target.id==='tknew'){e.preventDefault();main.querySelector('[data-act=tkadd]').click()}if(e.key==='Enter'&&e.target.id==='tknew2'){e.preventDefault();main.querySelector('[data-act=tkadd2]').click()}if(e.target.id==='qnew'&&e.key==='Enter'){e.preventDefault();addQ()}if(e.target.id==='sesskey'&&e.key==='Enter'){e.preventDefault();main.querySelector('[data-act=sesskey]').click()}});
 function asz(t){t.style.height='auto';t.style.height=t.scrollHeight+(t.offsetHeight-t.clientHeight)+'px'}
 function grow(t){t.style.height='auto';if(t.classList.contains('wsm')){t.style.height=Math.max(t.scrollHeight,parseFloat(getComputedStyle(t).lineHeight)*2+8)+'px';return}t.style.height=Math.max(t.scrollHeight,innerHeight*(t.dataset.je?0.3:(t.dataset.jd&&main.querySelector('.jent')?0.35:0.52)))+'px'}
-function addQ(){const i=$('#qnew');const t=i.value.trim();if(!t){i.focus();return}const q=get('sessq',{items:[]});(q.items=q.items||[]).push({t,done:false});save('sessq');render();$('#qnew').focus()}
+function addQ(){const i=$('#qnew');const t=i.value.trim();if(!t){i.focus();return}const q=get('sessq',{items:[]});(q.items=q.items||[]).push({id:uid(),t,done:false});save('sessq');render();$('#qnew').focus()}
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab;if(S.tab==='home')S.date=today();render();scrollTo(0,0)}));
 function shift(n){if(S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')==='day')){S.date=addDays(S.date,n);S.nform=null}else if(S.seg==='month'){const d=parse(S.month+'-01');d.setMonth(d.getMonth()+n);S.month=ymd(d).slice(0,7);S.mday=''}else if(S.view==='cycle'&&schedule().mode==='cycle'&&schedule().s1)S.cyc=addDays(S.cyc,15*n);else S.week=addDays(S.week,7*n);render()}
 $('#prev').addEventListener('click',()=>shift(-1));
