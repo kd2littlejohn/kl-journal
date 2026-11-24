@@ -31,11 +31,11 @@ h1{font-family:Cinzel,Lora,serif;font-weight:600;letter-spacing:.06em;font-size:
 header{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:env(safe-area-inset-top);border-bottom:0}
 body.has-hero header{background:transparent}body.has-hero header.solid{background:var(--bg)}
 body.has-hero header .ib{background:rgba(13,12,11,.42);border-color:rgba(212,175,97,.22);color:#f5ecd8}
-body.has-hero header .bar small{color:#cfc4ae}body.has-hero header:not(.solid) .status:not(.warn){opacity:.42}
+body.has-hero header .bar small{color:#cfc4ae}
 .mono{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--acc);display:grid;place-items:center;font-family:Cinzel,serif;font-weight:600;font-size:16px;color:var(--acc2);flex:none}
 .bar{display:flex;align-items:center;gap:8px;padding:10px 0}.wrap.bar{padding:10px 16px}
 .bar .t{flex:1}.bar small{display:block;color:var(--mute);font-size:13px}
-.status{font-size:11px;line-height:1;color:var(--mute);opacity:.6;text-align:right;white-space:nowrap}.status.warn{opacity:1}
+.status{font-size:11px;line-height:1.4;color:var(--mute);opacity:.55;text-align:center;white-space:nowrap;padding:18px 0 4px}.status.warn{opacity:1;color:#e0574b}
 .status.warn{color:var(--acc)}
 button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -326,9 +326,10 @@ details.more>summary small{color:var(--mute);font-weight:400}
   <button class="ib" id="prev" aria-label="Previous">‹</button>
   <div class="mono" aria-hidden="true">KL</div><div class="t"><h1 id="title">Today</h1><small id="sub"></small></div>
   <button class="ib" id="next" aria-label="Next">›</button>
-</div><div class="wrap"><div class="status" id="status" style="padding-bottom:5px">Loading…</div></div></header>
+</div></header>
 <div id="herozone"></div>
 <main class="wrap" id="main"></main>
+<div class="wrap"><div class="status" id="status">Loading…</div></div>
 <nav class="tabs" aria-label="Sections"><div class="wrap">
   <button data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="3.5" width="7" height="9" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="5" rx="1.5"/><rect x="13.5" y="11.5" width="7" height="9" rx="1.5"/><rect x="3.5" y="15.5" width="7" height="5" rx="1.5"/></svg>Home</button>
   <button data-tab="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M4 10h16"/></svg>Today</button>
