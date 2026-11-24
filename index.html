@@ -31,7 +31,7 @@ h1{font-family:Cinzel,Lora,serif;font-weight:600;letter-spacing:.06em;font-size:
 header{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:env(safe-area-inset-top);border-bottom:0}
 body.has-hero header{background:transparent}body.has-hero header.solid{background:var(--bg)}
 body.has-hero header .ib{background:rgba(13,12,11,.42);border-color:rgba(212,175,97,.22);color:#f5ecd8}
-body.has-hero header .bar small{color:#cfc4ae}
+body.has-hero header .bar small{color:#cfc4ae}body.has-hero header:not(.solid) .mono,body.has-hero header:not(.solid) .t{visibility:hidden}
 .mono{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--acc);display:grid;place-items:center;font-family:Cinzel,serif;font-weight:600;font-size:16px;color:var(--acc2);flex:none}
 .bar{display:flex;align-items:center;gap:8px;padding:10px 0}.wrap.bar{padding:10px 16px}
 .bar .t{flex:1}.bar small{display:block;color:var(--mute);font-size:13px}
@@ -418,13 +418,13 @@ function heroBox(m,k,t,sub,pct){return `<section class="hero hero-${HIMG[m]||'ho
 function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},tyName=x=>esc((TYPES.find(y=>y[0]===dayType(x))||['',''])[1]);
   const wd=x=>esc(fmtDate(x,{weekday:'long'}));
   if(tab==='home'){const h=new Date().getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';const dd=cache['day-'+td]||{};
-    return heroBox(h>=18||h<5?'moon':'sun',`${wd(td)} · ${tyName(td)} day${dd.flex?' · flex':''}`,`${g}, Kevin`,esc(REM[parse(td).getDate()%REM.length]))}
+    return heroBox(h>=18||h<5?'moon':'sun',`${esc(fmtDate(td,{weekday:'short',month:'short',day:'numeric'}))} · ${tyName(td)} day${dd.flex?' · flex':''}`,`${g}, Kevin`,esc(REM[parse(td).getDate()%REM.length]))}
   if(tab==='today'){const seg=S.seg||'day';
     if(seg==='tasks'){const o=tasks().filter(t=>!t.done),ov=o.filter(t=>t.due&&t.due<td).length,du=o.filter(t=>t.due===td).length;return heroBox('cal','Tasks',o.length?`${o.length} open task${o.length>1?'s':''}`:'All clear',o.length?`${ov?ov+' overdue · ':''}${du} due today · most pressing first`:'Nothing waiting. Enjoy it.')}
     if(seg==='week'){return heroBox('cal','This week','Week of '+esc(fmtDate(S.week,{month:'long',day:'numeric'})),'Your days, routines and calendar side by side.')}
     if(seg==='month'){return heroBox('cal','Month view',esc(parse(S.month+'-01').toLocaleDateString(undefined,{month:'long',year:'numeric'})),'Tap a day to see what’s on it.')}
     const c=MCP?CAL[dt]:null,evs=c&&c.state==='ok'?c.events:[];const {total,n}=dayRows(dt,evs);const p=d.plan||{},top=(p.top||[]).filter(x=>x.tid?findTask(x.tid):(x.t||'').trim()),tdn=top.filter(x=>x.tid?findTask(x.tid).done:x.done).length;
-    return heroBox('cal',`${dt===td?'Today':wd(dt)} · ${tyName(dt)} day${d.flex?' · flex':''}`,total?(n>=total?'All done. Well done.':`${n} of ${total} done`):'A fresh page',`Top 3: ${tdn} of ${top.length||0}${d.flex?' · skipped items don’t count against you':''}`,total?Math.round(n/total*100):null)}
+    return heroBox('cal',`${dt===td?'Today':esc(fmtDate(dt,{weekday:'short',month:'short',day:'numeric'}))} · ${tyName(dt)} day${d.flex?' · flex':''}`,total?(n>=total?'All done. Well done.':`${n} of ${total} done`):'A fresh page',`Top 3: ${tdn} of ${top.length||0}${d.flex?' · skipped items don’t count against you':''}`,total?Math.round(n/total*100):null)}
   if(tab==='journal'){const es=(d.entries||[]);return heroBox('pen',dt===td?'Journal · today':'Journal · '+esc(fmtDate(dt,{month:'short',day:'numeric'})),es.length?`${es.length} entr${es.length>1?'ies':'y'} ${dt===td?'today':'this day'}`:'Write anything',es.length?'Tap one to read or add to it.':'One line is a full entry.')}
   if(tab==='spiritual'){const B=bible(),T=track(),read=B.log[dt]!=null;return heroBox('book',`${T===TRACKS.all?'Bible reading':(B.track==='history'?'◆ ':'● ')+esc(T.name)} · ${dt===td?'today':esc(fmtDate(dt,{month:'short',day:'numeric'}))}`,(read?'✓ ':'')+esc(portion(dt)||secLabel(nextIdx())),`${readPct(T)}% of the ${T===TRACKS.all?'Bible':'track'} read · take time to meditate`,readPct(T))}
   if(tab==='sessions'){const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;const na=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=td).sort((a,b)=>a.s<b.s?-1:1)[0]:null;
