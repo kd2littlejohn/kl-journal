@@ -264,14 +264,20 @@ details.more>summary small{color:var(--mute);font-weight:400}
 .jopen{border-top:1px solid var(--line);padding:10px 0 6px}.jopen:first-child{border-top:0}
 .jtitle{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;font:600 18px Lora,Georgia,serif;color:var(--ink);padding:8px 0;margin-bottom:6px}
 .jtitle:focus-visible{outline:none;border-bottom-color:var(--acc)}
-.hero{position:relative;overflow:hidden;margin:14px 0 4px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(214,171,79,.35);
- background:radial-gradient(120% 140% at 100% 0%,rgba(214,171,79,.20),rgba(214,171,79,.04) 45%,transparent 70%),linear-gradient(160deg,#1c1813,#110f0c)}
-.hero::after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,236,190,.08);pointer-events:none}
-.hero .hm{position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:132px;height:132px;color:#d6ab4f;opacity:.42;pointer-events:none}
-.hero .hk{font:600 12px Inter,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);position:relative;max-width:72%}
-.hero .ht{font:600 27px/1.15 Lora,Georgia,serif;margin:6px 0 6px;color:#f3e7cc;position:relative;max-width:74%}
-.hero .hs{margin:0;color:#bfb4a0;font-size:15px;position:relative;max-width:74%}
-.hero .hbar{position:relative;height:6px;border-radius:3px;background:rgba(214,171,79,.15);margin-top:12px;max-width:74%;overflow:hidden}.hero .hbar i{display:block;height:100%;background:linear-gradient(90deg,#b8862f,#e6c370);border-radius:3px}
+.hero{position:relative;overflow:hidden;margin:14px 0 4px;padding:18px 18px 16px;min-height:180px;display:flex;flex-direction:column;justify-content:center;border-radius:18px;border:1px solid rgba(212,175,97,.32);background-color:#100f0d;background-repeat:no-repeat;background-size:var(--hs,cover);background-position:var(--hp,right center)}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,15,13,.94) 0%,rgba(16,15,13,.82) 38%,rgba(16,15,13,.35) 68%,rgba(16,15,13,.05) 100%);pointer-events:none}
+.hero>*{position:relative}
+.hero .hk{font:600 12px Inter,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#d4af61;max-width:64%}
+.hero .ht{font:600 27px/1.15 Lora,Georgia,serif;margin:6px 0 6px;color:#f5ecd8;max-width:64%;text-shadow:0 1px 2px rgba(0,0,0,.45)}
+.hero .hs{margin:0;color:#b4aa98;font-size:15px;max-width:62%}
+.hero .hbar{height:5px;border-radius:3px;background:rgba(212,175,97,.18);margin-top:12px;max-width:58%;overflow:hidden}.hero .hbar i{display:block;height:100%;background:#d4af61;border-radius:3px}
+.hero-home{background-image:url('assets/hero-home.webp');--hs:auto 152%;--hp:0% 42%}.hero-home .ht,.hero-home .hk{max-width:60%}
+.hero-today{background-image:url('assets/hero-today.webp');--hp:85% center}
+.hero-journal{background-image:url('assets/hero-journal.webp');--hp:80% center}
+.hero-spiritual{background-image:url('assets/hero-spiritual.webp');--hp:70% center}.hero-spiritual::before{background:linear-gradient(90deg,rgba(16,15,13,.95) 0%,rgba(16,15,13,.88) 45%,rgba(16,15,13,.45) 72%,rgba(16,15,13,.1) 100%)}
+.hero-sessions{background-image:url('assets/hero-sessions.webp');--hp:65% center}
+.hero-more{background-image:url('assets/hero-more.webp');--hp:100% center}
+@media (min-width:600px){.hero{min-height:200px;padding:22px 26px}.hero .hk,.hero .ht{max-width:54%}.hero .hs{max-width:50%}.hero .hbar{max-width:46%}.hero .ht{font-size:30px}.hero-home{background-image:linear-gradient(90deg,#100f0d 0,#100f0d 46%,rgba(16,15,13,0) 60%),url('assets/hero-home.webp');background-size:100% 100%,auto 100%;background-position:0 0,right center}.hero-home .ht,.hero-home .hk{max-width:46%}}
 .hgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.hgrid .card{margin:0}
 .hcard{display:block;width:100%;text-align:left;color:var(--ink);font:inherit;cursor:pointer}.hcard .lbl{margin-bottom:4px}
 .hbig{font:700 26px/1.1 Lora,Georgia,serif;color:var(--ink)}.hbig small{font:500 14px Inter,sans-serif;color:var(--mute)}
@@ -394,15 +400,8 @@ const lvl=(d,a)=>d?.anchors?.[a]?.l||0;
 function chips(path,opts,val,cls=''){return `<div class="chips">${opts.map(([v,l])=>`<button class="chip ${cls}" data-set="${path}" data-v="${esc(v)}" aria-pressed="${String(val)===String(v)}" ${l&&l!==v?`title="${esc(l)}"`:''}>${esc(v)}</button>`).join('')}</div>`}
 
 function ring(n,t){const r=26,c=2*Math.PI*r,p=t?n/t:0;return `<svg viewBox="0 0 64 64" class="ring" role="img" aria-label="${n} of ${t}"><circle cx="32" cy="32" r="${r}" fill="none" stroke="rgba(214,171,79,.15)" stroke-width="7"/>${p>0?`<circle cx="32" cy="32" r="${r}" fill="none" stroke="#d6ab4f" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 32 32)"/>`:''}<text x="32" y="37" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="15" font-weight="700" fill="currentColor">${t?Math.round(p*100)+'%':'–'}</text></svg>`}
-const HM={
- sun:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 84h92M26 96h68M40 108h40"/><path d="M34 84a26 26 0 0 1 52 0"/><path d="M60 40v-14M33 51l-9-9M87 51l9-9M22 70H10M110 70H98"/></svg>',
- moon:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M74 24a38 38 0 1 0 26 58A32 32 0 0 1 74 24z"/><path d="M30 30v8M26 34h8M96 20v6M93 23h6M88 52v6M85 55h6"/></svg>',
- cal:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="26" width="80" height="76" rx="10"/><path d="M20 46h80M40 16v18M80 16v18"/><path d="M44 74l11 11 22-22"/></svg>',
- pen:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M94 18c-30 6-52 30-60 62l-6 22 22-6c32-8 56-30 62-60z"/><path d="M28 102l30-30M62 44l14 14"/><path d="M14 108h40" opacity=".6"/></svg>',
- book:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 52c-12-8-28-10-44-8v52c16-2 32 0 44 8 12-8 28-10 44-8V44c-16-2-32 0-44 8z"/><path d="M60 52v52"/><path d="M60 38V22M42 40l-8-12M78 40l8-12M28 48l-12-6M92 48l12-6" opacity=".8"/></svg>',
- talk:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 30h56a8 8 0 0 1 8 8v26a8 8 0 0 1-8 8H38l-14 12V72h-8a8 8 0 0 1-8-8V38a8 8 0 0 1 8-8z"/><path d="M80 48h22a8 8 0 0 1 8 8v24a8 8 0 0 1-8 8h-6v12L84 88H62a8 8 0 0 1-8-8v-8"/><path d="M26 46h36M26 56h24"/></svg>',
- gear:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="60" r="16"/><path d="M60 18v14M60 88v14M18 60h14M88 60h14M30 30l10 10M80 80l10 10M30 90l10-10M80 40l10-10"/><circle cx="60" cy="60" r="34" opacity=".5"/></svg>'};
-function heroBox(m,k,t,sub,pct){return `<section class="hero">${HM[m]||''}<div class="hk">${k}</div><h2 class="ht">${t}</h2>${sub?`<p class="hs">${sub}</p>`:''}${pct!=null?`<div class="hbar"><i style="width:${Math.max(0,Math.min(100,pct))}%"></i></div>`:''}</section>`}
+const HIMG={sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
+function heroBox(m,k,t,sub,pct){return `<section class="hero hero-${HIMG[m]||'home'}"><div class="hk">${k}</div><h2 class="ht">${t}</h2>${sub?`<p class="hs">${sub}</p>`:''}${pct!=null?`<div class="hbar"><i style="width:${Math.max(0,Math.min(100,pct))}%"></i></div>`:''}</section>`}
 function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},tyName=x=>esc((TYPES.find(y=>y[0]===dayType(x))||['',''])[1]);
   const wd=x=>esc(fmtDate(x,{weekday:'long'}));
   if(tab==='home'){const h=new Date().getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';const dd=cache['day-'+td]||{};
