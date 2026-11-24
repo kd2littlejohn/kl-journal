@@ -802,7 +802,25 @@ const CALADD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const CYC=['S1','B1','S2','B2','S3','B3','S4','B4','S5','Off1','Off2','Off3','Off4','Off5','Off6'];
 function schedule(){const st=get('settings',setDef);return st.sched||{mode:'light',s1:''}}
 function cycIdx(date){const sc=schedule();if(sc.mode!=='cycle'||!sc.s1)return -1;const n=Math.round((parse(date)-parse(sc.s1))/864e5);return ((n%15)+15)%15}
-function autoType(date){const i=cycIdx(date);if(i>=0)return i<9?(i%2===0?'S':'B'):(i===9?'B':'O');const w=parse(date).getDay();return (w===0||w===6)?'W':'L'}
+// ---- Shift days from your calendar (schedule mode "cal")
+const SHKEY='kl-shiftdays';let SHIFTS=null;try{SHIFTS=JSON.parse(localStorage.getItem(SHKEY)||'null')}catch(e){}
+const shiftWord=()=>((schedule().word||'A shift').trim()||'A shift');
+function shiftRe(){const w=shiftWord().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'[\\s-]*');return new RegExp('^\\s*'+w+'\\b','i')}
+const isShiftDay=d=>!!(SHIFTS&&SHIFTS.days&&SHIFTS.days.includes(d));
+let SHLOAD=null;
+async function loadShifts(force){const sc=schedule();if(sc.mode!=='cal'||!MCP)return;const sig=(sc.cal||'*')+'|'+shiftWord();
+  if(!force&&SHIFTS&&SHIFTS.sig===sig&&Date.now()-SHIFTS.at<1800000)return;if(SHLOAD)return SHLOAD;
+  SHLOAD=(async()=>{try{await getCals(force);const cals=(CALS||[]).filter(c=>sc.cal?c.id===sc.cal:!isHol(c.id));const re=shiftRe(),start=addDays(today(),-45),end=addDays(today(),200);
+    const res=await Promise.allSettled(cals.map(c=>MCP.callTool(GC,'list_events',{calendarId:c.id,startTime:start+'T00:00:00',endTime:end+'T00:00:00',orderBy:'startTime',pageSize:250,fullText:shiftWord()},{cache:{staleTime:600000,gcTime:86400000,refresh:!!force}}).then(r=>normEvents(c,r.payload))));
+    const ok=res.filter(r=>r.status==='fulfilled');if(!ok.length&&res.length)throw res[0].reason;
+    const days=new Set();ok.forEach(r=>r.value.forEach(e=>{if(re.test(e.t||''))days.add(e.all?e.s:ymd(new Date(e.s)))}));
+    const prev=JSON.stringify((SHIFTS&&SHIFTS.days)||[]);SHIFTS={at:Date.now(),sig,days:[...days].sort()};try{localStorage.setItem(SHKEY,JSON.stringify(SHIFTS))}catch(e){}
+    if(prev!==JSON.stringify(SHIFTS.days)||S.tab==='setup'){const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}}
+  catch(e){SHIFTS=Object.assign({},SHIFTS||{days:[]},{err:true,at:Date.now(),sig});if(S.tab==='setup'){const y=scrollY;render();scrollTo(0,y)}}
+  finally{SHLOAD=null}})();return SHLOAD}
+function autoType(date){
+  if(schedule().mode==='cal'&&SHIFTS&&SHIFTS.days){if(isShiftDay(date))return 'S';if(isShiftDay(addDays(date,-1))&&isShiftDay(addDays(date,1)))return 'B';return 'O'}
+  const i=cycIdx(date);if(i>=0)return i<9?(i%2===0?'S':'B'):(i===9?'B':'O');const w=parse(date).getDay();return (w===0||w===6)?'W':'L'}
 const cycleLabel=date=>{const i=cycIdx(date);return i<0?'':CYC[i]};
 const cycStart=date=>{const i=cycIdx(date);return i<0?date:addDays(date,-i)};
 function dayType(date){const d=cache['day-'+date];return (d&&d.type)||autoType(date)}
@@ -948,7 +966,7 @@ async function loadRange(start,end,force){
 }
 // Hide your "A shift" calendar event on any day that isn't set as a Shift day
 const SHIFTEV=/^\s*a[\s-]*shift\b/i;
-const visEv=(list,d)=>dayType(d)==='S'?(list||[]):(list||[]).filter(e=>!SHIFTEV.test(e.t||''));
+const visEv=(list,d)=>{if(dayType(d)==='S')return list||[];const re=schedule().mode==='cal'?shiftRe():SHIFTEV;return (list||[]).filter(e=>!re.test(e.t||''))};
 const rangeEvents=(start,end,d)=>{const r=RANGE[start+'|'+end];return visEv(r&&r.state==='ok'?(r.by[d]||[]):[],d)};
 function rangeNote(start,end){if(!MCP)return '';const r=RANGE[start+'|'+end];if(!r||r.state==='loading')return '<p class="calnote">Loading calendar…</p>';if(r.state==='err'){const [t,act]=calErrText(r.err);return `<p class="calnote">${esc(t)}${act==='allow'?' <button class="btn sm" data-act="rangeallow">Allow calendar</button>':act?' <button class="btn sm" data-act="rangeretry">Try again</button>':''}</p>`}return ''}
 function vPlan(){
@@ -1129,7 +1147,7 @@ async function bridgeConnect(){const url=($('#b-url').value||'').trim(),key=($('
   catch(e){m.textContent=e.code==='bridge_key'?'The key doesn’t match the one in your script.':e.code==='bridge_offline'?'Couldn’t reach that URL. Check it, and that the deployment’s access is set to “Anyone.”':'The bridge answered with an error. Run “setup” once in Apps Script, then try again.'}}
 
 let CALSAT=0,MCP=null,CALS=null,CALSERR=null,CAL={},SESSEV=null;
-async function mcpInit(){if(!window.claude){if(bridgeOn()){MCP=bridgeMCP();const y=scrollY;render();scrollTo(0,y)}return}try{MCP=await claude.use('mcp')}catch(e){MCP=null}if(MCP){const y=scrollY;render();scrollTo(0,y)}}
+async function mcpInit(){if(!window.claude){if(bridgeOn()){MCP=bridgeMCP();const y=scrollY;render();scrollTo(0,y);loadShifts()}return}try{MCP=await claude.use('mcp')}catch(e){MCP=null}if(MCP){const y=scrollY;render();scrollTo(0,y);loadShifts()}}
 function calErrText(e){const c=e&&e.code;
   if(c==='bridge_key')return['Your Google bridge key doesn’t match. Check More → Google connection.',false];
   if(c==='bridge_offline')return['Couldn’t reach your Google bridge. Check your connection.',true];
@@ -1366,7 +1384,12 @@ function vSetup(){
   <div class="card">
     <h2>Schedule</h2>
     <p class="muted" style="margin-top:0">Sets each day's type, and which routine "Fill from routine" uses.</p>
-    <div class="chips"><button class="chip" data-sched="light" aria-pressed="${schedule().mode!=='cycle'}">Light duty · Mon–Fri</button><button class="chip" data-sched="cycle" aria-pressed="${schedule().mode==='cycle'}">15-day shift cycle</button></div>
+    <div class="chips"><button class="chip" data-sched="light" aria-pressed="${schedule().mode==='light'||!schedule().mode}">Light duty · Mon–Fri</button><button class="chip" data-sched="cycle" aria-pressed="${schedule().mode==='cycle'}">15-day shift cycle</button><button class="chip" data-sched="cal" aria-pressed="${schedule().mode==='cal'}">From my shift calendar</button></div>
+    ${schedule().mode==='cal'?(MCP?`<label style="display:block;margin-top:12px"><span class="lbl">Shift calendar</span><select id="shcal"><option value="">Look in all my calendars</option>${(CALS||[]).filter(c=>!isHol(c.id)).map(c=>`<option value="${esc(c.id)}" ${c.id===(schedule().cal||'')?'selected':''}>${esc(calName(c))}</option>`).join('')}</select></label>
+      <label style="display:block;margin-top:10px"><span class="lbl">Shift event is called</span><input id="shword" value="${esc(shiftWord())}" placeholder="A shift" autocomplete="off"></label>
+      <p class="calnote" style="margin-top:8px">${!SHIFTS||SHIFTS.sig!==((schedule().cal||'*')+'|'+shiftWord())?'Looking for your shifts…':SHIFTS.err?'Couldn’t read your calendar just now.':(()=>{const up=SHIFTS.days.filter(d=>d>=today());return up.length?`Found ${up.length} upcoming shift${up.length>1?'s':''} · next ${esc(fmtDate(up[0],{weekday:'short',month:'short',day:'numeric'}))}. ${isShiftDay(today())?'Today is a shift day.':''}`:'No upcoming shifts found. Check the calendar and event name.'})()} <button class="btn sm" data-act="shrefresh" style="min-height:34px;margin-left:4px">↻</button></p>
+      <p class="calnote">Days with your shift event become <b>S</b>. A single day between two shifts is <b>B</b>; every other day is <b>O</b>. Tapping a day type on the Plan card still overrides it for that day.</p>`
+      :'<p class="calnote" style="margin-top:10px">Connect Google Calendar first (More → Google connection) so the journal can read your shift calendar.</p>'):''}
     ${schedule().mode==='cycle'?`<label style="display:block;margin-top:12px"><span class="lbl">Date of any S1 (first shift of a cycle)</span><input type="date" id="s1" value="${esc(schedule().s1||'')}"></label>${schedule().s1?`<p class="calnote" style="margin-top:6px">Today is ${esc(cycleLabel(today()))}.</p>`:''}`:''}
     <p class="calnote" style="margin-top:14px">Bible reading plan, tracks and place are on the <b>Spiritual</b> tab.</p>
     <span class="lbl" style="margin-top:14px">Routine times</span><div class="chips"><button class="chip" data-exact="0" aria-pressed="${!st.exactTimes}">Flexible · no set times</button><button class="chip" data-exact="1" aria-pressed="${!!st.exactTimes}">Exact times</button></div><p class="calnote" style="margin-top:6px">Flexible keeps your routine in order (morning, afternoon, evening) without clock times, so nothing feels missed.</p>
@@ -1516,7 +1539,8 @@ main.addEventListener('click',e=>{
   if(b.dataset.btrack){bible().track=b.dataset.btrack;save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='bset'){bible().pos=Number($('#bsec').value)||0;save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.exact!=null){const st=get('settings',setDef);st.exactTimes=b.dataset.exact==='1';save('settings');const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.sched){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),{mode:b.dataset.sched});save('settings');RANGE={};const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.act==='shrefresh'){SHIFTS=null;loadShifts(true);const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.sched){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),{mode:b.dataset.sched});save('settings');RANGE={};if(b.dataset.sched==='cal'){if(!CALS&&MCP)getCals().then(()=>{if(S.tab==='setup'){const y=scrollY;render();scrollTo(0,y)}}).catch(()=>{});loadShifts(true)}const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='calretry'){CALSAT=0;loadDay(S.date,true);return}
   if(b.dataset.act==='calallow'){CAL[S.date]={state:'loading'};paintCal();MCP.callTool(GC,'list_calendars',{pageSize:100}).then(r=>{CALS=((r.payload&&r.payload.calendars)||[]).filter(c=>c&&c.id);loadDay(S.date,true)},e=>{CAL[S.date]={state:'err',err:e};paintCal()});return}
   if(b.dataset.act==='calmore'){S.calAll=true;paintCal();return}
@@ -1590,7 +1614,7 @@ main.addEventListener('input',e=>{
   else if(t.dataset.gc){const st=get('settings',setDef);setP(st,t.dataset.gc,t.checked);save('settings')}
   else if(t.id==='filter'){S.filter=t.value;const pos=t.selectionStart;render();const f=$('#filter');f.focus();f.setSelectionRange(pos,pos)}
 });
-main.addEventListener('change',e=>{if(e.target.dataset.brsd!=null){const B=bible(),i=Number(e.target.dataset.brsd);if(e.target.value){const old=B.read[i];B.read[i]=e.target.value;if(old&&B.log[old]===i&&old!==e.target.value&&B.log[e.target.value]==null){delete B.log[old];B.log[e.target.value]=i}save('settings')}return}if(e.target.id==='tkfile'&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>{let items=[];try{items=parseTakeout(JSON.parse(fr.result))}catch(err){}S.impOpen=true;if(!items.length){render();$('#tkmsg').textContent='That file doesn’t look like a Google Tasks export (Tasks.json).';return}const open=items.filter(x=>!x.done),r=importList(open);render();$('#tkmsg').textContent=`Imported ${r.n} open task${r.n===1?'':'s'}${r.skip?` · skipped ${r.skip} already in your list`:''}${items.length>open.length?` · left out ${items.length-open.length} completed`:''}.`};fr.readAsText(e.target.files[0]);return}if(e.target.dataset.tkd){const x=findTask(e.target.dataset.tkd);if(x){x.due=e.target.value;save('tasks');const y=scrollY;render();scrollTo(0,y)}return}if(e.target.id==='s1'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),{s1:e.target.value});save('settings');S.cyc=cycStart(today());const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='addcal'){const st=get('settings',setDef);st.addCal=e.target.value;save('settings')}if(e.target.dataset.bf==='tm'||e.target.dataset.bf==='win'){const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='kwsetup'){setKeys(e.target.value.split(','))}if(e.target.id==='imp')readImport(e.target.files[0]);if(e.target.id==='s-date'&&e.target.value){S.sess=e.target.value;render()}if(e.target.id==='recfile'&&e.target.files[0]){const fl=e.target.files[0];storeClip(fl,fl.name)}});
+main.addEventListener('change',e=>{if(e.target.id==='shcal'||e.target.id==='shword'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),e.target.id==='shcal'?{cal:e.target.value}:{word:e.target.value.trim()});save('settings');SHIFTS=null;RANGE={};CAL={};loadShifts(true);const y=scrollY;render();scrollTo(0,y);return}if(e.target.dataset.brsd!=null){const B=bible(),i=Number(e.target.dataset.brsd);if(e.target.value){const old=B.read[i];B.read[i]=e.target.value;if(old&&B.log[old]===i&&old!==e.target.value&&B.log[e.target.value]==null){delete B.log[old];B.log[e.target.value]=i}save('settings')}return}if(e.target.id==='tkfile'&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>{let items=[];try{items=parseTakeout(JSON.parse(fr.result))}catch(err){}S.impOpen=true;if(!items.length){render();$('#tkmsg').textContent='That file doesn’t look like a Google Tasks export (Tasks.json).';return}const open=items.filter(x=>!x.done),r=importList(open);render();$('#tkmsg').textContent=`Imported ${r.n} open task${r.n===1?'':'s'}${r.skip?` · skipped ${r.skip} already in your list`:''}${items.length>open.length?` · left out ${items.length-open.length} completed`:''}.`};fr.readAsText(e.target.files[0]);return}if(e.target.dataset.tkd){const x=findTask(e.target.dataset.tkd);if(x){x.due=e.target.value;save('tasks');const y=scrollY;render();scrollTo(0,y)}return}if(e.target.id==='s1'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),{s1:e.target.value});save('settings');S.cyc=cycStart(today());const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='addcal'){const st=get('settings',setDef);st.addCal=e.target.value;save('settings')}if(e.target.dataset.bf==='tm'||e.target.dataset.bf==='win'){const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='kwsetup'){setKeys(e.target.value.split(','))}if(e.target.id==='imp')readImport(e.target.files[0]);if(e.target.id==='s-date'&&e.target.value){S.sess=e.target.value;render()}if(e.target.id==='recfile'&&e.target.files[0]){const fl=e.target.files[0];storeClip(fl,fl.name)}});
 main.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('awrap')){e.preventDefault();e.target.blur();return}if(e.key==='Enter'&&e.target.id==='spadd'){e.preventDefault();main.querySelector('[data-act=spadd]').click()}if(e.key==='Enter'&&e.target.id==='tknew'){e.preventDefault();main.querySelector('[data-act=tkadd]').click()}if(e.key==='Enter'&&e.target.id==='tknew2'){e.preventDefault();main.querySelector('[data-act=tkadd2]').click()}if(e.target.id==='qnew'&&e.key==='Enter'){e.preventDefault();addQ()}if(e.target.id==='sesskey'&&e.key==='Enter'){e.preventDefault();main.querySelector('[data-act=sesskey]').click()}});
 function asz(t){t.style.height='auto';t.style.height=t.scrollHeight+(t.offsetHeight-t.clientHeight)+'px'}
 function grow(t){t.style.height='auto';if(t.classList.contains('wsm')){t.style.height=Math.max(t.scrollHeight,parseFloat(getComputedStyle(t).lineHeight)*2+8)+'px';return}t.style.height=Math.max(t.scrollHeight,innerHeight*(t.dataset.je?0.3:(t.dataset.jd&&main.querySelector('.jent')?0.35:0.52)))+'px'}
@@ -1649,7 +1673,7 @@ start();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 mcpInit();
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&DQ.size)drivePush();if(document.visibilityState==='visible'&&driveOn())drivePull();if(document.visibilityState==='visible'&&MCP){if(S.tab==='today')loadDay(S.date);if(S.tab==='sessions')loadSessEv()}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&DQ.size)drivePush();if(document.visibilityState==='visible'&&driveOn())drivePull();if(document.visibilityState==='visible'&&MCP){loadShifts();if(S.tab==='today')loadDay(S.date);if(S.tab==='sessions')loadSessEv()}});
 }
 </script>
 </body>
