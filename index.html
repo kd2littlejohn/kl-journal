@@ -418,7 +418,7 @@ function heroBox(m,k,t,sub,pct){return `<section class="hero hero-${HIMG[m]||'ho
 function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},tyName=x=>esc((TYPES.find(y=>y[0]===dayType(x))||['',''])[1]);
   const wd=x=>esc(fmtDate(x,{weekday:'long'}));
   if(tab==='home'){const h=new Date().getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';const dd=cache['day-'+td]||{};
-    return heroBox(h>=18||h<5?'moon':'sun',`${esc(fmtDate(td,{weekday:'short',month:'short',day:'numeric'}))} · ${tyName(td)} day${dd.flex?' · flex':''}`,`${g}, Kevin`,esc(REM[parse(td).getDate()%REM.length]))}
+    return heroBox(h>=18||h<5?'moon':'sun',`${esc(fmtDate(td,{weekday:'short',month:'short',day:'numeric'}))} · ${tyName(td)}${dd.flex?' · flex':''}`,`${g}, Kevin`,esc(REM[parse(td).getDate()%REM.length]))}
   if(tab==='today'){const seg=S.seg||'day';
     if(seg==='tasks'){const o=tasks().filter(t=>!t.done),ov=o.filter(t=>t.due&&t.due<td).length,du=o.filter(t=>t.due===td).length;return heroBox('cal','Tasks',o.length?`${o.length} open task${o.length>1?'s':''}`:'All clear',o.length?`${ov?ov+' overdue · ':''}${du} due today · most pressing first`:'Nothing waiting. Enjoy it.')}
     if(seg==='week'){return heroBox('cal','This week','Week of '+esc(fmtDate(S.week,{month:'long',day:'numeric'})),'Your days, routines and calendar side by side.')}
