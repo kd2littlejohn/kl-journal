@@ -450,7 +450,7 @@ function vHome(){
   const grid=ANCH.map(([k,nm])=>{let cnt=0;const dots=wk.map(dt=>{const x=cache['day-'+dt];const on=lvl(x,k)>0;if(on)cnt++;return `<span class="dot ${on?'on':''} ${dt>td?'fut':''}" title="${esc(nm+' · '+fmtDate(dt,{weekday:'short'}))}"></span>`}).join('');return `<span>${nm}</span>${dots}<span class="n">${cnt}</span>`}).join('');
   let mi=0,wo=0;wk.forEach(dt=>{const x=cache['day-'+dt];if(!x)return;const m=parseFloat(x.run?.mi);if(m>0)mi+=m;if((x.ex||[]).some(e=>e.n)||m>0)wo++});
   // calendar: what's left today
-  const now=Date.now(),upc=evs.filter(e=>!e.all&&new Date(e.en||e.s).getTime()>now&&!isHol(e.calId)).slice(0,3);
+  const now=Date.now(),upc=visEv(evs,td).filter(e=>!e.all&&new Date(e.en||e.s).getTime()>now&&!isHol(e.calId)).slice(0,3);
   const nextBlk=rows.filter(r=>r.b&&!r.b.done&&!d.flex).slice(0,3);
   // sessions
   const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;
@@ -851,7 +851,7 @@ const hhmm=s=>{const d=new Date(s);return pad(d.getHours())+':'+pad(d.getMinutes
 const flexTimes=()=>!get('settings',setDef).exactTimes;
 function dayRows(date,evList){
   const d=cache['day-'+date]||{},p=d.plan||{},done=d.evDone||{};
-  const evs=(evList||[]).filter(e=>!isHol(e.calId));
+  const evs=visEv(evList,date).filter(e=>!isHol(e.calId));
   const nm=x=>(x||'').toLowerCase().replace(/[^a-z0-9]/g,'');
   const blocks=(p.blocks||[]).map((b,i)=>({b,i,win:b.win||winOfTm(b.tm)}));
   const byName=new Map(blocks.map(x=>[nm(x.b.t),x]));
@@ -946,7 +946,10 @@ async function loadRange(start,end,force){
   catch(e){RANGE[k]={state:'err',err:e}}
   if(S.tab==='today'&&(S.seg||'day')!=='tasks'&&(S.seg||'day')!=='day'){const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}
 }
-const rangeEvents=(start,end,d)=>{const r=RANGE[start+'|'+end];return r&&r.state==='ok'?(r.by[d]||[]):[]};
+// Hide your "A shift" calendar event on any day that isn't set as a Shift day
+const SHIFTEV=/^\s*a[\s-]*shift\b/i;
+const visEv=(list,d)=>dayType(d)==='S'?(list||[]):(list||[]).filter(e=>!SHIFTEV.test(e.t||''));
+const rangeEvents=(start,end,d)=>{const r=RANGE[start+'|'+end];return visEv(r&&r.state==='ok'?(r.by[d]||[]):[],d)};
 function rangeNote(start,end){if(!MCP)return '';const r=RANGE[start+'|'+end];if(!r||r.state==='loading')return '<p class="calnote">Loading calendar…</p>';if(r.state==='err'){const [t,act]=calErrText(r.err);return `<p class="calnote">${esc(t)}${act==='allow'?' <button class="btn sm" data-act="rangeallow">Allow calendar</button>':act?' <button class="btn sm" data-act="rangeretry">Try again</button>':''}</p>`}return ''}
 function vPlan(){
   const seg=S.seg||'tasks';
@@ -1148,10 +1151,10 @@ function calHTML(){
   const c=CAL[S.date];
   if(!c||c.state==='loading')return '<p class="calnote">Loading your calendar…</p>';
   if(c.state==='err'){const [t,act]=calErrText(c.err);return `<p class="calnote">${esc(t)}${act==='allow'?'<br><button class="btn sm" data-act="calallow">Allow calendar</button>':act?'<br><button class="btn sm" data-act="calretry">Try again</button>':''}</p>`}
-  if(!c.events.length)return '<p class="calnote">Nothing on the calendar.</p>';
-  const show=S.calAll?c.events:c.events.slice(0,6);
+  const cev=visEv(c.events,S.date);if(!cev.length)return '<p class="calnote">Nothing on the calendar.</p>';
+  const show=S.calAll?cev:cev.slice(0,6);
   return show.map(e=>`<div class="ev"><div class="tm">${e.all?'All day':esc(fmtTime(e.s))}</div><div class="nm">${esc(e.t)}<span class="cn">${esc(e.cal)}${e.loc?' · '+esc(e.loc):''}</span></div></div>`).join('')+
-   (c.events.length>6&&!S.calAll?`<button class="btn sm" style="margin-top:6px" data-act="calmore">Show ${c.events.length-6} more</button>`:'')+
+   (cev.length>6&&!S.calAll?`<button class="btn sm" style="margin-top:6px" data-act="calmore">Show ${cev.length-6} more</button>`:'')+
    (c.partial?'<p class="calnote" style="margin-top:6px">Some calendars couldn’t be loaded.</p>':'')}
 function paintCal(){const b=$('#sched');if(b)b.innerHTML=schedHTML();calStamp();const h=$('#herozone').querySelector('.hero');if(h&&S.tab==='today'){const t=document.createElement('div');t.innerHTML=heroFor();if(t.firstElementChild)h.replaceWith(t.firstElementChild)}}
 function calCard(){return MCP?`<div class="card cal"><h3>On the calendar <small></small></h3><div id="calbody">${calHTML()}</div></div>`:''}
