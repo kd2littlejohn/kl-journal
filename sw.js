@@ -1,5 +1,5 @@
 // KL Journal service worker: makes the app open offline.
-const CACHE = 'kl-journal-v27';
+const CACHE = 'kl-journal-v28';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/favicon.png'];
 

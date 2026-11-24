@@ -264,6 +264,14 @@ details.more>summary small{color:var(--mute);font-weight:400}
 .jopen{border-top:1px solid var(--line);padding:10px 0 6px}.jopen:first-child{border-top:0}
 .jtitle{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;font:600 18px Lora,Georgia,serif;color:var(--ink);padding:8px 0;margin-bottom:6px}
 .jtitle:focus-visible{outline:none;border-bottom-color:var(--acc)}
+.hero{position:relative;overflow:hidden;margin:14px 0 4px;padding:18px 18px 16px;border-radius:18px;border:1px solid rgba(214,171,79,.35);
+ background:radial-gradient(120% 140% at 100% 0%,rgba(214,171,79,.20),rgba(214,171,79,.04) 45%,transparent 70%),linear-gradient(160deg,#1c1813,#110f0c)}
+.hero::after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,236,190,.08);pointer-events:none}
+.hero .hm{position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:132px;height:132px;color:#d6ab4f;opacity:.42;pointer-events:none}
+.hero .hk{font:600 12px Inter,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);position:relative;max-width:72%}
+.hero .ht{font:600 27px/1.15 Lora,Georgia,serif;margin:6px 0 6px;color:#f3e7cc;position:relative;max-width:74%}
+.hero .hs{margin:0;color:#bfb4a0;font-size:15px;position:relative;max-width:74%}
+.hero .hbar{position:relative;height:6px;border-radius:3px;background:rgba(214,171,79,.15);margin-top:12px;max-width:74%;overflow:hidden}.hero .hbar i{display:block;height:100%;background:linear-gradient(90deg,#b8862f,#e6c370);border-radius:3px}
 .hgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.hgrid .card{margin:0}
 .hcard{display:block;width:100%;text-align:left;color:var(--ink);font:inherit;cursor:pointer}.hcard .lbl{margin-bottom:4px}
 .hbig{font:700 26px/1.1 Lora,Georgia,serif;color:var(--ink)}.hbig small{font:500 14px Inter,sans-serif;color:var(--mute)}
@@ -386,6 +394,31 @@ const lvl=(d,a)=>d?.anchors?.[a]?.l||0;
 function chips(path,opts,val,cls=''){return `<div class="chips">${opts.map(([v,l])=>`<button class="chip ${cls}" data-set="${path}" data-v="${esc(v)}" aria-pressed="${String(val)===String(v)}" ${l&&l!==v?`title="${esc(l)}"`:''}>${esc(v)}</button>`).join('')}</div>`}
 
 function ring(n,t){const r=26,c=2*Math.PI*r,p=t?n/t:0;return `<svg viewBox="0 0 64 64" class="ring" role="img" aria-label="${n} of ${t}"><circle cx="32" cy="32" r="${r}" fill="none" stroke="rgba(214,171,79,.15)" stroke-width="7"/>${p>0?`<circle cx="32" cy="32" r="${r}" fill="none" stroke="#d6ab4f" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 32 32)"/>`:''}<text x="32" y="37" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="15" font-weight="700" fill="currentColor">${t?Math.round(p*100)+'%':'–'}</text></svg>`}
+const HM={
+ sun:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 84h92M26 96h68M40 108h40"/><path d="M34 84a26 26 0 0 1 52 0"/><path d="M60 40v-14M33 51l-9-9M87 51l9-9M22 70H10M110 70H98"/></svg>',
+ moon:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M74 24a38 38 0 1 0 26 58A32 32 0 0 1 74 24z"/><path d="M30 30v8M26 34h8M96 20v6M93 23h6M88 52v6M85 55h6"/></svg>',
+ cal:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="26" width="80" height="76" rx="10"/><path d="M20 46h80M40 16v18M80 16v18"/><path d="M44 74l11 11 22-22"/></svg>',
+ pen:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M94 18c-30 6-52 30-60 62l-6 22 22-6c32-8 56-30 62-60z"/><path d="M28 102l30-30M62 44l14 14"/><path d="M14 108h40" opacity=".6"/></svg>',
+ book:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 52c-12-8-28-10-44-8v52c16-2 32 0 44 8 12-8 28-10 44-8V44c-16-2-32 0-44 8z"/><path d="M60 52v52"/><path d="M60 38V22M42 40l-8-12M78 40l8-12M28 48l-12-6M92 48l12-6" opacity=".8"/></svg>',
+ talk:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 30h56a8 8 0 0 1 8 8v26a8 8 0 0 1-8 8H38l-14 12V72h-8a8 8 0 0 1-8-8V38a8 8 0 0 1 8-8z"/><path d="M80 48h22a8 8 0 0 1 8 8v24a8 8 0 0 1-8 8h-6v12L84 88H62a8 8 0 0 1-8-8v-8"/><path d="M26 46h36M26 56h24"/></svg>',
+ gear:'<svg class="hm" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="60" r="16"/><path d="M60 18v14M60 88v14M18 60h14M88 60h14M30 30l10 10M80 80l10 10M30 90l10-10M80 40l10-10"/><circle cx="60" cy="60" r="34" opacity=".5"/></svg>'};
+function heroBox(m,k,t,sub,pct){return `<section class="hero">${HM[m]||''}<div class="hk">${k}</div><h2 class="ht">${t}</h2>${sub?`<p class="hs">${sub}</p>`:''}${pct!=null?`<div class="hbar"><i style="width:${Math.max(0,Math.min(100,pct))}%"></i></div>`:''}</section>`}
+function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},tyName=x=>esc((TYPES.find(y=>y[0]===dayType(x))||['',''])[1]);
+  const wd=x=>esc(fmtDate(x,{weekday:'long'}));
+  if(tab==='home'){const h=new Date().getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';const dd=cache['day-'+td]||{};
+    return heroBox(h>=18||h<5?'moon':'sun',`${wd(td)} · ${tyName(td)} day${dd.flex?' · flex':''}`,`${g}, Kevin`,esc(REM[parse(td).getDate()%REM.length]))}
+  if(tab==='today'){const seg=S.seg||'day';
+    if(seg==='tasks'){const o=tasks().filter(t=>!t.done),ov=o.filter(t=>t.due&&t.due<td).length,du=o.filter(t=>t.due===td).length;return heroBox('cal','Tasks',o.length?`${o.length} open task${o.length>1?'s':''}`:'All clear',o.length?`${ov?ov+' overdue · ':''}${du} due today · most pressing first`:'Nothing waiting. Enjoy it.')}
+    if(seg==='week'){return heroBox('cal','This week','Week of '+esc(fmtDate(S.week,{month:'long',day:'numeric'})),'Your days, routines and calendar side by side.')}
+    if(seg==='month'){return heroBox('cal','Month view',esc(parse(S.month+'-01').toLocaleDateString(undefined,{month:'long',year:'numeric'})),'Tap a day to see what’s on it.')}
+    const c=MCP?CAL[dt]:null,evs=c&&c.state==='ok'?c.events:[];const {total,n}=dayRows(dt,evs);const p=d.plan||{},top=(p.top||[]).filter(x=>x.tid?findTask(x.tid):(x.t||'').trim()),tdn=top.filter(x=>x.tid?findTask(x.tid).done:x.done).length;
+    return heroBox('cal',`${dt===td?'Today':wd(dt)} · ${tyName(dt)} day${d.flex?' · flex':''}`,total?(n>=total?'All done. Well done.':`${n} of ${total} done`):'A fresh page',`Top 3: ${tdn} of ${top.length||0}${d.flex?' · skipped items don’t count against you':''}`,total?Math.round(n/total*100):null)}
+  if(tab==='journal'){const es=(d.entries||[]);return heroBox('pen',dt===td?'Journal · today':'Journal · '+esc(fmtDate(dt,{month:'short',day:'numeric'})),es.length?`${es.length} entr${es.length>1?'ies':'y'} ${dt===td?'today':'this day'}`:'Write anything',es.length?'Tap one to read or add to it.':'One line is a full entry.')}
+  if(tab==='spiritual'){const B=bible(),T=track(),read=B.log[dt]!=null;return heroBox('book',`${T===TRACKS.all?'Bible reading':(B.track==='history'?'◆ ':'● ')+esc(T.name)} · ${dt===td?'today':esc(fmtDate(dt,{month:'short',day:'numeric'}))}`,(read?'✓ ':'')+esc(portion(dt)||secLabel(nextIdx())),`${readPct(T)}% of the ${T===TRACKS.all?'Bible':'track'} read · take time to meditate`,readPct(T))}
+  if(tab==='sessions'){const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;const na=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=td).sort((a,b)=>a.s<b.s?-1:1)[0]:null;
+    return heroBox('talk','Private · only you','Sessions',`${q?q+' question'+(q>1?'s':'')+' ready for next time':'Jot questions as they come up'}${na?' · next '+esc(fmtDate(na.date,{weekday:'short',month:'short',day:'numeric'})):''}`)}
+  if(tab==='setup'){return heroBox('gear','More','Make it yours',bridgeOn()?'Connected to Google'+(BRIDGE.email?' · '+esc(BRIDGE.email):''):window.claude?'Saved to your Claude account':'Schedule, backups and settings')}
+  return ''}
 function vHome(){
   const td=today(),d=get('day-'+td,dayDef(td)),p=planOf(d);
   if(READY&&!p.blocks.length&&!p.cleared){fillRoutine(d,td);save('day-'+td)}autoTop(d,td);
@@ -408,9 +441,7 @@ function vHome(){
   const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;
   const nextAppt=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=td).sort((a,b)=>a.s<b.s?-1:1)[0]:null;
   const go=(tab,extra='')=>`data-go="${tab}" ${extra}`;
-  return `<div class="hgreet">${greet}, Kevin</div>
-  <p class="muted" style="margin:0 0 4px">${esc((TYPES.find(x=>x[0]===ty)||['',''])[1])} day${cl?' · '+cl:''}${d.flex?' · flex day':''}</p>
-  ${inboxCard()}${startCard(d)}
+  return `${inboxCard()}${startCard(d)}
   <div class="hgrid">
     <button class="card hcard" ${go('today')}><span class="lbl">Today</span><div class="hrow">${ring(n,total)}<div><div class="hbig">${n}<small> of ${total}</small></div><div class="hsub">routine &amp; events</div></div></div><div class="hsub" style="margin-top:8px">Top 3: <b>${topD} of ${topN.length}</b></div></button>
     <button class="card hcard" ${go('tasks')}><span class="lbl">Tasks</span><div class="hbig">${open.length}<small> open</small></div><div class="hsub">${over?`<b style="color:#e0574b">${over} overdue</b> · `:''}${dueT} due today</div><div class="hsub">${ib?`<b>${ib}</b> in inbox`:'Inbox clear'}</div></button>
@@ -1107,7 +1138,7 @@ function calHTML(){
   return show.map(e=>`<div class="ev"><div class="tm">${e.all?'All day':esc(fmtTime(e.s))}</div><div class="nm">${esc(e.t)}<span class="cn">${esc(e.cal)}${e.loc?' · '+esc(e.loc):''}</span></div></div>`).join('')+
    (c.events.length>6&&!S.calAll?`<button class="btn sm" style="margin-top:6px" data-act="calmore">Show ${c.events.length-6} more</button>`:'')+
    (c.partial?'<p class="calnote" style="margin-top:6px">Some calendars couldn’t be loaded.</p>':'')}
-function paintCal(){const b=$('#sched');if(b)b.innerHTML=schedHTML();calStamp()}
+function paintCal(){const b=$('#sched');if(b)b.innerHTML=schedHTML();calStamp();const h=main.querySelector('.hero');if(h&&S.tab==='today'){const t=document.createElement('div');t.innerHTML=heroFor();if(t.firstElementChild)h.replaceWith(t.firstElementChild)}}
 function calCard(){return MCP?`<div class="card cal"><h3>On the calendar <small></small></h3><div id="calbody">${calHTML()}</div></div>`:''}
 // therapy sessions found on the calendar (matches any of your keywords)
 function sessKeys(){const st=get('settings',setDef);if(!st.sessKeys&&st.sessKey){st.sessKeys=String(st.sessKey).split(',').map(x=>x.trim()).filter(Boolean)}return (st.sessKeys||[]).filter(Boolean)}
@@ -1360,7 +1391,8 @@ function render(){
   else{$('#title').textContent={home:'KL Journal',brs:'Reading schedule',logs:'Logs',entries:'Journal entries',setup:'More',sessions:'Sessions',help:'How to use'}[S.tab];$('#sub').textContent={home:fmtDate(today(),{weekday:'long',month:'long',day:'numeric',year:'numeric'}),brs:'Bible Reading Schedule',entries:'Tap any entry to open it',logs:'Optional · only if tracking helps',setup:'',sessions:'Private · only you can see these',help:'Tap a topic to open it'}[S.tab]}
   const wasOpen=[...document.querySelectorAll('details.more')].map(x=>x.open);
   if(S.tab!=='journal'){S.jopen=null;S.jnew=null}
-  $('#main').innerHTML=({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
+  const HERO=heroFor();
+  $('#main').innerHTML=HERO+({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
   document.querySelectorAll('details.more').forEach((x,i)=>{if(wasOpen[i]&&S._lastTab===S.tab+S.date)x.open=true});S._lastTab=S.tab+S.date;
   main.querySelectorAll('textarea.write').forEach(grow);hydrateAudio();
   if(MCP&&S.tab==='home'){const td=today();const st=$('#hcalst');if(st&&CAL[td]&&CAL[td].at)st.textContent='updated '+new Date(CAL[td].at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const need=!CAL[td]||CAL[td].state!=='ok'||Date.now()-CAL[td].at>120000;if(need)loadDay(td).then(()=>{if(S.tab==='home'&&!(document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName))){const y=scrollY;render();scrollTo(0,y)}});const ss=SESSEV;loadSessEv().then(()=>{if(S.tab==='home'&&SESSEV!==ss&&SESSEV&&SESSEV.state==='ok'){const y=scrollY;render();scrollTo(0,y)}})}
