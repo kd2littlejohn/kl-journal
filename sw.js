@@ -1,5 +1,6 @@
 // KL Journal service worker: makes the app open offline.
-const CACHE = 'kl-journal-v44';
+const CACHE = 'kl-journal-v45';
+const OCR = 'kl-ocr-v1';   // text reader files (~7 MB): kept across app updates
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/favicon.png',
   './assets/hero-home.webp', './assets/hero-today.webp', './assets/hero-journal.webp',
@@ -9,7 +10,7 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== OCR).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', e => {
@@ -20,6 +21,11 @@ self.addEventListener('fetch', e => {
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); return r; })
       .catch(() => caches.match('./index.html')));
+    return;
+  }
+  // Text reader: cache first in its own long-lived cache, so it works offline after the first use.
+  if (url.origin === location.origin && /\/ocr\//.test(url.pathname)) {
+    e.respondWith(caches.open(OCR).then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }))));
     return;
   }
   // Fonts and app files: cache first.

@@ -106,6 +106,22 @@ details.rgrp .rt{flex:1;font-size:16px;font-weight:600;color:var(--cream)}
 .mvgoals{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.mvof{font-size:13px;color:var(--mute);font-weight:400}
 .mvkinds .chip small{opacity:.7;font-weight:400}.mvback{display:inline-block;margin:0 0 8px}
 @media(max-width:420px){.mvent{grid-template-columns:minmax(0,1fr) auto auto;row-gap:2px}.mvent .mvt{grid-column:1/-1;grid-row:1}.mvent .mvd{grid-row:2}.mvent .btn{grid-row:2;padding:0 10px}}
+.vcbar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}.vcb{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border:1px solid var(--gline);border-radius:12px;background:rgba(212,175,97,.06);color:var(--gold);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.vcb svg{width:19px;height:19px}.vcb[aria-pressed=true]{background:rgba(212,175,97,.2)}.vcb span{color:var(--cream)}
+.vqrow{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}.vq{position:relative}.vq img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--gline);display:block}
+.vq button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:1px solid var(--gline2);background:#141210;color:var(--cream);font-size:14px;line-height:1}
+.vstrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.vstrip img,.vtb img{width:56px;height:56px;object-fit:cover;border-radius:9px;border:1px solid var(--gline);display:block;background:#1a1714}
+.vtb{padding:0;border:0;background:transparent;cursor:zoom-in}.vtb.big img{width:84px;height:84px}img.vmini{width:16px;height:16px;object-fit:cover;border-radius:4px;vertical-align:-3px;display:inline-block;border:0}
+img.vmissing{opacity:.35}
+.vimgs{display:grid;gap:10px;margin:0 0 10px}.vimg{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--gline);border-radius:12px;background:rgba(0,0,0,.18)}
+.vimeta{flex:1;min-width:0;display:grid;gap:3px}.vimeta b{color:var(--gold);font-size:15px}.vimeta small{color:var(--mute);font-size:12px}.vwarn{color:#e3b26a!important}.vcloud{color:var(--gold)}
+.vtext summary{cursor:pointer;color:var(--mute);font-size:13px;margin-top:4px}.vtext textarea{width:100%;margin:6px 0;font-size:13px}.vtext pre{white-space:pre-wrap;font:inherit;font-size:13px;color:var(--mute);max-height:220px;overflow:auto}
+.vcai{justify-self:start;margin-top:4px}.vkeep{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--mute);cursor:pointer}.vkeep input{width:20px!important;height:20px;min-height:0;flex:none;margin:0;padding:0;accent-color:#d4af61}
+.vtb.big img{object-fit:contain;background:#0d0c0b}
+.vprog{padding:6px 0 4px}.vprog .hbar{height:6px;border-radius:4px;background:rgba(212,175,97,.15);overflow:hidden}.vprog .hbar i{display:block;height:100%;background:var(--gold);transition:width .3s}
+#vcview{z-index:80}.vcard{max-width:720px;margin:0 auto;max-height:92vh;overflow:auto}.vfull{display:block;max-width:100%;max-height:62vh;margin:8px auto;border-radius:12px;border:1px solid var(--gline)}
+.vrecs{margin:0;padding-left:18px;font-size:14px}.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}.vgrid img{width:100%;height:auto;aspect-ratio:1}.vh3{font-size:16px;margin:16px 0 4px}.vh3 small{color:var(--mute);font-weight:400;font-size:13px}
+body.vdrag::after{content:'Drop a photo to capture it';position:fixed;inset:12px;border:2px dashed var(--gold);border-radius:18px;background:rgba(13,12,11,.82);color:var(--gold);display:grid;place-items:center;font:600 20px Lora,Georgia,serif;z-index:99;pointer-events:none}
 .anch .tick .bx{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(245,236,216,.6);display:grid;place-items:center;font-size:12px;color:#1a1408;margin-top:auto}
 .anch .tick[aria-pressed=true]{border-color:var(--gline2);background:rgba(212,175,97,.08)}.anch .tick[aria-pressed=true] .bx{background:var(--gold);border-color:var(--gold)}
 .chd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}.chd small{color:var(--mute);font-size:13px;text-align:right;max-width:58%}
@@ -581,9 +597,10 @@ function perspCard(){const i=qIndex(today()),[c,t]=PQ[i],sv=isSavedQ(i);
   return `<section class="card persp"><div class="pk">Daily Perspective<span> · ${esc(c)}</span></div>
     <blockquote class="pq"><span class="pm" aria-hidden="true">“</span>${esc(t)}</blockquote>
     <div class="pa"><button class="pab" data-qsave="${i}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this quote'}">${sv?'★ Saved':'☆ Save'}</button><button class="pab" data-qshare="${i}">Share</button><button class="pab gold" data-qreflect="${i}">Reflect on this</button></div></section>`}
-function savedQList(){const it=savedQ().slice().sort((a,b)=>(b.at||0)-(a.at||0));return it.length?it.map(x=>{const q=PQ.find(y=>y[1]===x.t)||[x.c,x.t];return `<div class="qrow2"><blockquote class="pq sm"><span class="pm" aria-hidden="true">\u201C</span>${esc(q[1])}</blockquote><div class="calnote">${esc(q[0])}${x.at?' \u00b7 saved '+esc(fmtDate(ymd(new Date(x.at)),{month:'short',day:'numeric'})):''}</div><div class="pa"><button class="pab" data-qshare="${PQ.indexOf(PQ.find(y=>y[1]===x.t))}">Share</button><button class="pab" data-qreflect="${PQ.indexOf(PQ.find(y=>y[1]===x.t))}">Reflect on this</button><button class="pab" data-qsave="${PQ.indexOf(PQ.find(y=>y[1]===x.t))}">Remove</button></div></div>`}).join(''):'<p class="empty">Quotes you save on Home will collect here.</p>'}
+function vqCustom(x){return `<div class="qrow2"><blockquote class="pq sm"><span class="pm" aria-hidden="true">\u201C</span>${esc(x.t)}</blockquote><div class="calnote">${esc(x.c||'Saved')}${x.at?' \u00b7 saved '+esc(fmtDate(ymd(new Date(x.at)),{month:'short',day:'numeric'})):''} ${x.src?capSrcLink(x.src):''}</div><div class="pa"><button class="pab" data-qcrm="${esc(x.id)}">Remove</button></div></div>`}
+function savedQList(){const it=savedQ().slice().sort((a,b)=>(b.at||0)-(a.at||0));return it.length?it.map(x=>{if(x.custom)return vqCustom(x);const q=PQ.find(y=>y[1]===x.t)||[x.c,x.t];return `<div class="qrow2"><blockquote class="pq sm"><span class="pm" aria-hidden="true">\u201C</span>${esc(q[1])}</blockquote><div class="calnote">${esc(q[0])}${x.at?' \u00b7 saved '+esc(fmtDate(ymd(new Date(x.at)),{month:'short',day:'numeric'})):''}</div><div class="pa"><button class="pab" data-qshare="${PQ.indexOf(PQ.find(y=>y[1]===x.t))}">Share</button><button class="pab" data-qreflect="${PQ.indexOf(PQ.find(y=>y[1]===x.t))}">Reflect on this</button><button class="pab" data-qsave="${PQ.indexOf(PQ.find(y=>y[1]===x.t))}">Remove</button></div></div>`}).join(''):'<p class="empty">Quotes you save on Home will collect here.</p>'}
 function savedQCard(){const it=savedQ().slice().sort((a,b)=>(b.at||0)-(a.at||0));
-  return `<details class="more" ${S.qOpen?'open':''} id="qsaved"><summary>Saved perspectives <small>· ${it.length?it.length+' saved':'tap ☆ Save on Home to keep one'}</small></summary><div class="card">${it.length?it.map(x=>{const q=PQ[x.i]||[x.c,x.t];return `<div class="qrow2"><blockquote class="pq sm"><span class="pm" aria-hidden="true">“</span>${esc(q[1])}</blockquote><div class="calnote">${esc(q[0])}${x.at?' · saved '+esc(fmtDate(ymd(new Date(x.at)),{month:'short',day:'numeric'})):''}</div><div class="pa"><button class="pab" data-qshare="${x.i}">Share</button><button class="pab" data-qreflect="${x.i}">Reflect on this</button><button class="pab" data-qsave="${x.i}">Remove</button></div></div>`}).join(''):'<p class="empty">Quotes you save will collect here.</p>'}</div></details>`}
+  return `<details class="more" ${S.qOpen?'open':''} id="qsaved"><summary>Saved perspectives <small>· ${it.length?it.length+' saved':'tap ☆ Save on Home to keep one'}</small></summary><div class="card">${it.length?it.map(x=>{if(x.custom)return vqCustom(x);const q=PQ[x.i]||[x.c,x.t];return `<div class="qrow2"><blockquote class="pq sm"><span class="pm" aria-hidden="true">“</span>${esc(q[1])}</blockquote><div class="calnote">${esc(q[0])}${x.at?' · saved '+esc(fmtDate(ymd(new Date(x.at)),{month:'short',day:'numeric'})):''}</div><div class="pa"><button class="pab" data-qshare="${x.i}">Share</button><button class="pab" data-qreflect="${x.i}">Reflect on this</button><button class="pab" data-qsave="${x.i}">Remove</button></div></div>`}).join(''):'<p class="empty">Quotes you save will collect here.</p>'}</div></details>`}
 async function qShare(i,btn){const [c,t]=PQ[i];const text=`“${t}”`;
   try{if(navigator.share){await navigator.share({text});return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(text);btn.textContent='Copied'}catch(e){btn.textContent='Copy blocked'}setTimeout(()=>{if(btn.isConnected)btn.textContent='Share'},1800)}
@@ -614,7 +631,8 @@ const MVCAT=[
   {id:'run',name:'Running',type:'dist',icon:'run'},
   {id:'walk',name:'Walking',type:'dist',icon:'walk'},
   {id:'cycle',name:'Cycling',type:'dist',icon:'bike'},
-  {id:'strength',name:'Strength Training',type:'strength',icon:'strength'}];
+  {id:'strength',name:'Strength Training',type:'strength',icon:'strength'},
+  {id:'workout',name:'Workouts',type:'time',quick:[900,1800,2700,3600],icon:'time'}];
 const MVTYPE={reps:'Repetitions',time:'Duration',dist:'Distance · Time · Pace',strength:'Sets · Reps · Weight'};
 const MVKIND=[['S','On shift'],['O','Off shift'],['L','Light duty'],['R','Recovery'],['X','Rest day']];
 const mvKName=k=>(MVKIND.find(x=>x[0]===k)||['',''])[1];
@@ -642,7 +660,9 @@ function mvMMSS(s){s=Math.round(+s||0);const h=Math.floor(s/3600),m=Math.floor(s
 function mvFmt(a,v,short){v=+v||0;return a.type==='reps'?String(Math.round(v)):a.type==='time'?mvMMSS(v):a.type==='dist'?mvR(v)+(short?'':' mi'):Math.round(v)+(short?'':' set'+(Math.round(v)===1?'':'s'))}
 const mvUnitW=a=>a.type==='reps'?(a.unit||'reps'):a.type==='time'?'held':a.type==='dist'?'miles':'sets';
 const mvPace=x=>x.mi>0&&x.dur>0?mvMMSS(x.dur/x.mi)+' /mi':'';
-function mvDesc(a,x){if(a.type==='reps')return x.n+' '+(a.unit||'reps');if(a.type==='time')return mvMMSS(x.sec);
+const mvExtra=x=>[x.label?cap1(String(x.label).toLowerCase()):'',x.kcal?x.kcal+' kcal':'',x.hr?'avg '+x.hr+' bpm':''].filter(Boolean);
+function mvDesc(a,x){const ex=mvExtra(x),tail=ex.length?' · '+ex.join(' · '):'';return mvDesc0(a,x)+tail}
+function mvDesc0(a,x){if(a.type==='reps')return x.n+' '+(a.unit||'reps');if(a.type==='time')return mvMMSS(x.sec);
   if(a.type==='dist')return [x.mi?mvR(x.mi)+' mi':'',x.dur?mvMMSS(x.dur):'',mvPace(x)].filter(Boolean).join(' · ');
   return [x.name||'Lift',(x.sets||1)+'×'+(x.reps||0),x.w?'@ '+x.w+' lb':''].filter(Boolean).join(' ')}
 // day type for goals: manual override → rest days → work schedule
@@ -673,7 +693,8 @@ function mvLog(id,date,vals,tm){const a=mvAct(id),r=mvAdd(id,date,vals,tm);if(!r
   mvToast(`Logged <b>${esc(mvLbl(a,r.x))}</b>${date===today()?'':' · '+esc(fmtDate(date,{month:'short',day:'numeric'}))}${r.ticked?' · Movement done':''}`,()=>{mvRemove([r.x.id]);if(r.ticked)mvUntick(date)});return true}
 // Smart Capture → hub
 function mvFromCap(it,src){const r=it.rec||{},a=mvAct(r.a||'pushups');if(!a)return [];const date=it.date&&it.date<=today()?it.date:today(),W={early:'06:00',morning:'09:00',afternoon:'14:00',evening:'19:00',night:'21:00'};
-  const tm=it.time||W[it.win]||(date===today()?'':'12:00'),ids=[],add=(v,i)=>{const x=mvAdd(a.id,date,v,tm,{src,cap:it.h,ci:i});if(x)ids.push(x.x.id)};
+  const tm=it.time||W[it.win]||(date===today()?'':'12:00'),ids=[],xt={},add=(v,i)=>{const x=mvAdd(a.id,date,v,tm,Object.assign({src,cap:it.h,ci:i},i===0?xt:{}));if(x)ids.push(x.x.id)};
+  ['kcal','hr','label'].forEach(k=>{if(r[k]!=null&&r[k]!=='')xt[k]=r[k]});
   if(a.type==='reps'){let sets=(it.title.match(/\(([^)]*)\)/)||[])[1];sets=sets?sets.split('+').map(x=>parseInt(x,10)).filter(n=>n>0):[];const lead=parseInt(it.title,10)||0;
     if(!sets.length||(lead&&sets.reduce((p,q)=>p+q,0)!==lead))sets=lead?[lead]:(r.sets||[]);sets.forEach((n,i)=>add({n},i))}
   else if(a.type==='time')(r.secs||[]).forEach((sec,i)=>add({sec},i));
@@ -847,10 +868,314 @@ function mvChange(el){const f=el.dataset.mvf;
 const puHM=at=>{const d=new Date(at);return pad(d.getHours())+':'+pad(d.getMinutes())};
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target||!e.target.dataset||!e.target.dataset.mf)return;const box=e.target.closest('.mvform');if(!box)return;e.preventDefault();const b=box.querySelector('[data-mv=log]')||box.parentElement.querySelector('[data-mv=esave]');if(b)mvClick(b)});
 // ================= /Movement Hub =================
+// ================= Visual Capture =================
+// Capture anything. Give everything a place.
+// Photos are kept on this device (IndexedDB), read on this device (Tesseract OCR), then sorted by Smart Capture.
+// Nothing is sent anywhere unless you turn on cloud reading and tap "Read with AI" for a specific photo.
+const IMGDB={db:null,open(){return this.db||(this.db=new Promise((ok,no)=>{try{const r=indexedDB.open('kl-journal-images',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('full'))d.createObjectStore('full');if(!d.objectStoreNames.contains('thumb'))d.createObjectStore('thumb')};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}}))},
+  async op(st,mode,fn){const d=await this.open();return new Promise((ok,no)=>{const t=d.transaction(st,mode);const q=fn(t.objectStore(st));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error);t.onabort=()=>no(t.error||new Error('aborted'))})},
+  put(st,id,b){return this.op(st,'readwrite',s=>s.put(b,id))},get(st,id){return this.op(st,'readonly',s=>s.get(id))},del(st,id){return this.op(st,'readwrite',s=>s.delete(id))}};
+function imgDoc(){const d=get('images',{items:[]});d.items=d.items||[];return d}
+const imgMeta=id=>imgDoc().items.find(x=>x.id===id);
+const VCURL={};   // id -> object URL for thumbnails (memory only)
+async function vcThumbURL(id){if(VCURL[id])return VCURL[id];try{const b=await IMGDB.get('thumb',id);if(b){VCURL[id]=URL.createObjectURL(b);return VCURL[id]}}catch(e){}return ''}
+function vcHydrate(root){(root||document).querySelectorAll('img[data-vimg]:not([src])').forEach(async el=>{const u=await vcThumbURL(el.dataset.vimg);if(u)el.src=u;else{el.classList.add('vmissing');el.alt='Photo not on this device'}})}
+const vcThumb=(id,cls)=>`<img data-vimg="${esc(id)}" class="vthumb ${cls||''}" alt="Photo" loading="lazy">`;
+const vcStrip=ids=>(ids&&ids.length)?`<span class="vstrip">${ids.map(i=>`<button class="vtb" data-vview="${esc(i)}" aria-label="View photo">${vcThumb(i)}</button>`).join('')}</span>`:'';
+function vcLoadImg(file){return new Promise((ok,no)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{ok({im,u})};im.onerror=()=>{URL.revokeObjectURL(u);no(new Error('not_image'))};im.src=u})}
+function vcCanvas(im,max,mime,q){const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.max(1,Math.round(im.naturalWidth*s)),h=Math.max(1,Math.round(im.naturalHeight*s));
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  return new Promise(ok=>c.toBlob(b=>ok({b,w,h,c}),mime||'image/jpeg',q||.86))}
+// 64-bit difference hash, so the same picture is recognized even after re-saving or resizing
+function vcDHash(im){const c=document.createElement('canvas');c.width=9;c.height=8;const x=c.getContext('2d');x.drawImage(im,0,0,9,8);const d=x.getImageData(0,0,9,8).data;let h='';
+  for(let y=0;y<8;y++){let byte=0;for(let i=0;i<8;i++){const p=(y*9+i)*4,q=p+4,a=d[p]*.3+d[p+1]*.59+d[p+2]*.11,b=d[q]*.3+d[q+1]*.59+d[q+2]*.11;byte=(byte<<1)|(a>b?1:0)}h+=byte.toString(16).padStart(2,'0')}return h}
+function vcHam(a,b){if(!a||!b||a.length!==b.length)return 64;let n=0;for(let i=0;i<a.length;i+=2){let x=parseInt(a.substr(i,2),16)^parseInt(b.substr(i,2),16);while(x){n+=x&1;x>>=1}}return n}
+function vcFindDup(h,exceptId){return imgDoc().items.find(x=>x.id!==exceptId&&x.ph&&vcHam(x.ph,h)<=3&&x.proc)}
+async function vcStorage(){try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();return e}}catch(e){}return null}
+// Store a photo: re-encoded (drops location and camera metadata), max 2400px for readable text, plus a small thumbnail
+async function vcIngest(file,how){if(!file||!/^image\//.test(file.type||'image/'))throw new Error('not_image');
+  const {im,u}=await vcLoadImg(file);try{
+    const full=await vcCanvas(im,2400,'image/jpeg',.86),th=await vcCanvas(im,360,'image/jpeg',.72),ph=vcDHash(im),id='i'+uid();
+    try{await IMGDB.put('full',id,full.b);await IMGDB.put('thumb',id,th.b)}catch(e){try{await IMGDB.del('full',id)}catch(_){}throw new Error(e&&e.name==='QuotaExceededError'?'quota':'store')}
+    const m={id,ph,w:full.w,h:full.h,bytes:full.b.size,tb:th.b.size,at:Date.now(),date:today(),how:how||'',name:String(file.name||'').slice(0,80)};imgDoc().items.push(m);save('images');
+    try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+    VCURL[id]=URL.createObjectURL(th.b);return m}finally{URL.revokeObjectURL(u)}}
+async function vcDelete(id){try{await IMGDB.del('full',id);await IMGDB.del('thumb',id)}catch(e){}if(VCURL[id]){URL.revokeObjectURL(VCURL[id]);delete VCURL[id]}const d=imgDoc(),i=d.items.findIndex(x=>x.id===id);if(i>=0){tomb(d,id);d.items.splice(i,1);save('images')}}
+const vcBlobToData=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsDataURL(b)});
+const vcDataToBlob=s=>fetch(s).then(r=>r.blob());
+// ---------- on-device OCR (Tesseract, bundled; works offline once loaded) ----------
+let VCOCR=null;
+function vcScript(src){return new Promise((ok,no)=>{if(document.querySelector(`script[data-src="${src}"]`))return ok();const s=document.createElement('script');s.src=src;s.dataset.src=src;s.onload=()=>ok();s.onerror=()=>no(new Error('ocr_load'));document.head.appendChild(s)})}
+function vcOcrBase(){try{return new URL('ocr/',location.href).href}catch(e){return './ocr/'}}
+async function vcOcrWorker(onp){if(VCOCR)return VCOCR;const base=vcOcrBase();await vcScript(base+'tesseract.min.js');if(!window.Tesseract)throw new Error('ocr_load');
+  VCOCR=Tesseract.createWorker('eng',1,{workerPath:base+'worker.min.js',corePath:base,langPath:base,gzip:true,logger:m=>{if(onp&&m&&m.progress!=null)onp(m)}}).catch(e=>{VCOCR=null;throw e});return VCOCR}
+// prepare a copy for reading: upscale small screenshots, invert dark mode, grayscale
+async function vcOcrInput(blob){const {im,u}=await vcLoadImg(blob);try{const W=im.naturalWidth,H=im.naturalHeight,s=Math.max(1,Math.min(2.5,1400/Math.max(W,H)));const c=document.createElement('canvas');c.width=Math.round(W*s);c.height=Math.round(H*s);
+  const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(im,0,0,c.width,c.height);const d=x.getImageData(0,0,c.width,c.height),p=d.data;let sum=0;for(let i=0;i<p.length;i+=4*7)sum+=p[i]*.3+p[i+1]*.59+p[i+2]*.11;const dark=sum/(p.length/(4*7))<110;
+  for(let i=0;i<p.length;i+=4){let g=p[i]*.3+p[i+1]*.59+p[i+2]*.11;if(dark)g=255-g;p[i]=p[i+1]=p[i+2]=g}x.putImageData(d,0,0);return await new Promise(ok=>c.toBlob(ok,'image/png'))}finally{URL.revokeObjectURL(u)}}
+async function vcOcr(id,onp){const blob=await IMGDB.get('full',id);if(!blob)throw new Error('missing');const w=await vcOcrWorker(onp);const inp=await vcOcrInput(blob);const {data}=await w.recognize(inp);
+  const lines=(data.lines||[]).map(l=>({t:(l.text||'').replace(/\s+/g,' ').trim(),c:Math.round(l.confidence||0)})).filter(l=>l.t);
+  return {text:(data.text||'').trim(),conf:Math.round(data.confidence||0),lines}}
+// ---------- understanding ----------
+const VC_TYPES={checklist:'Checklist',cleaning:'Household checklist',list:'List of to-dos',appt:'Appointment',workout:'Workout summary',body:'Body composition report',bible:'Bible study note',sms:'Text message',book:'Book recommendation',quote:'Quote',receipt:'Receipt',bill:'Payment reminder',brainstorm:'Brainstorm / notes',photo:'Photo',note:'Note',unclear:'Hard to read'};
+const VC_BOOKS='genesis|exodus|leviticus|numbers|deuteronomy|joshua|judges|ruth|samuel|kings|chronicles|ezra|nehemiah|esther|job|psalms?|proverbs|ecclesiastes|song of solomon|isaiah|jeremiah|lamentations|ezekiel|daniel|hosea|joel|amos|obadiah|jonah|micah|nahum|habakkuk|zephaniah|haggai|zechariah|malachi|matthew|mark|luke|john|acts|romans|corinthians|galatians|ephesians|philippians|colossians|thessalonians|timothy|titus|philemon|hebrews|james|peter|jude|revelation|gen|ex|lev|deut|josh|judg|sam|chron|neh|esth|ps|prov|eccl|isa|jer|ezek|dan|hos|mic|zech|mal|matt|mt|mk|lk|jn|rom|cor|gal|eph|phil|col|thess|tim|heb|jas|pet|rev';
+const VC_REF=new RegExp('\\b((?:[123]\\s?)?(?:'+VC_BOOKS+'))\\.?\\s+(\\d{1,3})(?::(\\d{1,3})(?:\\s?[-–]\\s?(\\d{1,3}))?)?\\b','i');
+const VC_CHK=/^\s*(?:\[\s?[x✓✔]?\s?\]|\(\s?\)|[☐□▢☑☒✓✔○◯●•▪◦\-–*>]|[oO0D]\s(?=[A-Z]))\s*/;
+function vcRedact(t){return String(t||'').replace(/\b(?:\d[ -]?){9,}\d\b/g,m=>'•••• '+m.replace(/\D/g,'').slice(-4))}
+function vcClean(o){const lines=(o.lines&&o.lines.length?o.lines:String(o.text||'').split('\n').map(t=>({t,c:o.conf||80}))).map(l=>({t:vcRedact(l.t.replace(/[|_~^`]{2,}/g,' ').replace(/\s+/g,' ').trim()),c:l.c}))
+    .filter(l=>l.t&&vcReal(l.t)>0&&!(l.c<40&&vcReal(l.t)<2));
+  return lines}
+const vcCount=(re,t)=>(t.match(re)||[]).length;
+const vcReal=t=>(String(t).match(/[A-Za-z]{2,}/g)||[]).filter(w=>w.length>=3&&/[aeiouy]/i.test(w)||/^(to|do|my|at|on|in|by|of|is|it|go|be|we|me|up|am|pm|dr|mi|lb)$/i.test(w)).length+(String(t).match(/\d/)?.5:0);
+function vcType(lines,conf,note){const t=lines.map(l=>l.t).join('\n'),low=t.toLowerCase(),n=lines.length,words=t.split(/\s+/).filter(Boolean).length;
+  const real=lines.reduce((s,l)=>s+vcReal(l.t),0);if(words<3||real<3)return 'photo';
+  const lowConf=lines.filter(l=>l.c<70).length;if(conf<55||(n&&lowConf/n>.5))return 'unclear';
+  const sc={};
+  sc.workout=vcCount(/\b(active (kilo)?calories|total (kilo)?calories|kcal|cal\b|avg\.? heart rate|heart rate|bpm|workout time|elapsed time|avg\.? pace|pace|outdoor (run|walk|cycle)|indoor (run|walk|cycle)|traditional strength|functional strength|strength training|hiit|elevation|cadence|avg\.? power|splits|workout)\b/gi,t)+(/\b\d+(\.\d+)?\s?(mi|km)\b/i.test(t)?1:0);
+  sc.body=vcCount(/\b(body fat|bmi|muscle mass|skeletal muscle|visceral fat|body water|bone mass|bmr|metabolic age|protein|subcutaneous|fat-?free|lean (body )?mass|body type|renpho)\b/gi,t);
+  const dt=capDate(t.replace(/\n/g,' '),today());sc.appt=vcCount(/\b(appointment|appt|confirmed|confirmation|scheduled|reschedul\w*|check-?in|arrive|please arrive|visit|reminder|clinic|dr\.|doctor|dentist|office|location)\b/gi,t)+((dt.date||dt.time)?1:0);
+  sc.sms=vcCount(/\b(imessage|text message|delivered|read \d|today \d{1,2}:\d{2}|yesterday \d|sms)\b/gi,t)+vcCount(/^(can you|could you|i'?ll|i will|ok|okay|sure|thanks|thank you|lol|sounds good|yes|no|on my way|omw|love you|k)\b/gim,t);
+  sc.bible=(VC_REF.test(t)?2:0)+vcCount(/\b(bible|scripture|verse|jehovah|watchtower|meeting|ministry|study|kingdom hall|congregation|prayer|apply|application|key thought)\b/gi,t);
+  sc.book=vcCount(/\b(book|novel|author|isbn|must read|you should read|recommend\w*|reading list|chapters?)\b/gi,t)+(/\bby\s+[A-Z][a-z]+(\s+[A-Z]\.?)?\s+[A-Z][a-z]+/.test(t)?1:0);
+  sc.receipt=vcCount(/\b(total|subtotal|tax|change due|receipt|order #|visa|mastercard|amex|debit|credit|thank you for shopping|qty|item)\b/gi,t);
+  sc.bill=vcCount(/\b(amount due|payment due|due date|due by|minimum payment|statement balance|autopay|past due|pay by|invoice|bill)\b/gi,t);
+  const chk=lines.filter(l=>VC_CHK.test(l.t)).length,shortL=lines.filter(l=>l.t.split(' ').length<=8).length,verbL=lines.filter(l=>startsWithVerb(l.t.replace(VC_CHK,''))).length;
+  const house=vcCount(/\b(vacuum|dishes|laundry|mop|trash|garbage|bathroom|bathrooms|kitchen|dust|sweep|wipe|clean|bedroom|sheets|toilet|counters?|floors?)\b/gi,t);
+  const quoted=/[“"]([^”"]{12,220})[”"]/.test(t)||/^\s*[-—–]\s*[A-Z][\w.]+(\s[A-Z][\w.]+)*\s*$/m.test(t);
+  if(sc.body>=2)return 'body';
+  if(sc.workout>=3)return 'workout';
+  if(sc.bill>=2&&/\$\s?\d/.test(t))return 'bill';
+  if(sc.receipt>=3)return 'receipt';
+  if(sc.appt>=3)return 'appt';
+  if(sc.sms>=2&&sc.appt<3)return 'sms';
+  if(sc.bible>=3)return 'bible';
+  if(sc.book>=2)return 'book';
+  if(quoted&&words<=60&&verbL<2)return 'quote';
+  if((chk>=2||(shortL>=3&&shortL/Math.max(1,n)>.7))&&house>=2)return 'cleaning';
+  if(chk>=2)return 'checklist';
+  if(n>=3&&shortL/Math.max(1,n)>.7&&verbL>=2)return 'list';
+  if(n>=4&&shortL/Math.max(1,n)>.75&&verbL<2)return 'brainstorm';
+  if(sc.appt>=2&&(dt.date||dt.time))return 'appt';
+  return 'note'}
+const vcNum=(re,t)=>{const m=t.match(re);return m?parseFloat(String(m[1]).replace(/,/g,'')):null};
+function vcWorkout(t){const low=t.toLowerCase(),r={};
+  r.label=(t.match(/\b(outdoor|indoor)\s+(run|walk|cycle|cycling)\b|\b(traditional|functional) strength training\b|\bhiit\b|\bhiking\b|\byoga\b|\bcore training\b|\belliptical\b|\browing\b|\bstair stepper\b|\bswim(ming)?\b/i)||[''])[0];
+  r.a=/run/i.test(r.label)||/\brun(ning)?\b/.test(low)?'run':/walk|hik/i.test(r.label+low)?'walk':/cycl|bike/i.test(r.label+low)?'cycle':'workout';
+  let m;if((m=t.match(/(\d+(?:\.\d+)?)\s?(mi|miles)\b/i)))r.mi=+m[1];else if((m=t.match(/(\d+(?:\.\d+)?)\s?km\b/i)))r.mi=Math.round(+m[1]*62.1371)/100;
+  const dm=t.match(/(?:workout time|elapsed time|total time|duration|time)\D{0,12}(\d{1,2}:\d{2}(?::\d{2})?)/i)||t.match(/\b(\d{1,2}:\d{2}:\d{2})\b/);if(dm)r.dur=toSec(dm[1]);
+  else if((m=t.match(/(\d+)\s?(?:hr|h)\s?(\d+)\s?min/i)))r.dur=(+m[1])*3600+(+m[2])*60;else if((m=t.match(/(\d+)\s?min(?:utes)?\b/i)))r.dur=+m[1]*60;
+  const kc=t.match(/active (?:kilo)?calories\D{0,6}([\d,]+)/i)||t.match(/([\d,]+)\s?(?:active\s)?(?:cal|kcal)\b/i)||t.match(/total (?:kilo)?calories\D{0,6}([\d,]+)/i);if(kc)r.kcal=parseInt(kc[1].replace(/,/g,''),10);
+  const hr=t.match(/(?:avg\.?|average) heart rate\D{0,6}(\d{2,3})/i)||t.match(/(\d{2,3})\s?bpm/i);if(hr)r.hr=+hr[1];
+  const pc=t.match(/(\d{1,2})['’:](\d{2})["”]?\s?\/\s?mi/i);if(pc)r.pace=(+pc[1])*60+(+pc[2]);
+  if(!r.dur&&r.pace&&r.mi)r.dur=Math.round(r.pace*r.mi);
+  if(r.a==='workout'){r.secs=r.dur?[r.dur]:[]}
+  return r}
+function vcBody(t){t=t.replace(/(\d)\s?(?:ib|ibs|1b|\|b)\b/gi,'$1 lb');const g=(re)=>vcNum(re,t),c={};let w=g(/weight\D{0,8}([\d.,]+)\s?(?:lb|lbs|ib|ibs|1b|\|b)/i)??g(/([\d.]+)\s?(?:lb|lbs|ib|ibs|1b|\|b)\b/i),kg=null;if(w==null){kg=g(/weight\D{0,8}([\d.,]+)\s?kg/i);if(kg!=null)w=Math.round(kg*2.20462*10)/10}
+  const pct=(name)=>g(new RegExp(name+'\\D{0,10}([\\d.]+)\\s?%','i'));
+  c.bodyFat=pct('body fat');c.bmi=g(/\bbmi\D{0,8}([\d.]+)/i);c.muscle=g(/muscle mass\D{0,10}([\d.]+)\s?(?:lb|lbs|ib|ibs|1b|\|b)/i);c.skeletal=pct('skeletal muscle');c.water=pct('body water');c.visceral=g(/visceral fat\D{0,8}([\d.]+)/i);
+  c.bone=g(/bone mass\D{0,10}([\d.]+)\s?(?:lb|lbs|ib|ibs|1b|\|b)/i);c.bmr=g(/\bbmr\D{0,8}([\d,]+)/i);c.metAge=g(/metabolic age\D{0,8}(\d{2})/i);c.protein=pct('protein');c.subq=pct('subcutaneous fat');
+  Object.keys(c).forEach(k=>{if(c[k]==null||isNaN(c[k]))delete c[k]});return {weight:w,comp:c}}
+const VC_COMP={bodyFat:['Body fat','%'],bmi:['BMI',''],muscle:['Muscle mass',' lb'],skeletal:['Skeletal muscle','%'],water:['Body water','%'],visceral:['Visceral fat',''],bone:['Bone mass',' lb'],bmr:['BMR',' kcal'],metAge:['Metabolic age',''],protein:['Protein','%'],subq:['Subcutaneous fat','%']};
+const vcCompStr=c=>Object.entries(c||{}).map(([k,v])=>VC_COMP[k]?VC_COMP[k][0]+' '+v+VC_COMP[k][1]:'').filter(Boolean).join(' · ');
+function vcDateIn(t,base){const m=t.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:,?\s+(\d{4}))?/i);if(m){const mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(m[1].slice(0,3).toLowerCase());let y=m[3]?+m[3]:+base.slice(0,4);let d=ymd(new Date(y,mo,+m[2]));if(!m[3]&&d>addDays(base,7))d=ymd(new Date(y-1,mo,+m[2]));return d}
+  const n=t.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/);if(n){const y=+n[3]<100?2000+(+n[3]):+n[3];return ymd(new Date(y,+n[1]-1,+n[2]))}if(/\byesterday\b/i.test(t))return addDays(base,-1);if(/\btoday\b/i.test(t))return base;return ''}
+// make a list line read like a to-do
+function vcLineTask(s){let t=s.replace(VC_CHK,'').replace(/^(please|pls)\s+/i,'').replace(/[.;]+$/,'').trim();return cap1(t)}
+// Build Smart Capture items for one photo. Returns {type,label,items,uncertain,lines}
+function vcUnderstand(ocr,ctx,note){const base=ctx.date||today(),lines=vcClean(ocr),text=lines.map(l=>l.t).join('\n'),type=vcType(lines,ocr.conf||0,note),out=[],unc=[];
+  lines.filter(l=>l.c<70).forEach(l=>unc.push(l.t));
+  const C=Object.assign({},ctx,{kind:'image'});
+  const mkI=(o)=>Object.assign({id:uid(),src:o.src||text.slice(0,160),kind:'task',dest:'task',cat:'other',group:'General',date:'',time:'',win:'',imp:false,conf:'high',notes:[],sel:true},o);
+  const fromText=(t,promote,grp,force)=>{const r=capAnalyze(t,C);r.items.forEach(it=>{if(promote&&(it.kind==='uncertain'||it.kind==='reflection')){it.kind='task';it.dest='task';it.sel=true;it.conf='medium';it.notes=it.notes.filter(n=>!/not sure|check it/i.test(n));it.notes.push('From a list in the photo');if(it.dest==='journal')it.dest='task'}if(grp&&(force||it.group==='General'||!it.group))it.group=grp;out.push(it)});
+    if(promote)r.kept.forEach(k=>{if(k.why==='reflection'&&k.s.split(' ').length<=10){out.push(mkI({src:k.s,title:vcLineTask(k.s),group:grp||capGroup(k.s,'task'),conf:'medium',notes:['From a list in the photo']}))}});return r};
+  if(type==='photo'){out.push(mkI({kind:'photo',dest:'journal',cat:'journal',group:'Journal',title:note&&note.trim()?note.trim().slice(0,200):'Photo',notes:['No text found. Saves the photo to your journal'],src:'(photo)'}))}
+  else if(type==='unclear'){fromText(text,false);out.forEach(it=>{it.sel=false;it.conf='low';it.notes.unshift('Hard to read — check before adding')});if(!out.length)out.push(mkI({kind:'photo',dest:'journal',cat:'journal',group:'Journal',title:note&&note.trim()?note.trim():'Photo',sel:false,conf:'low',notes:['The text was too blurry to read. Retake it, edit the text below, or keep it as a photo']}))}
+  else if(type==='workout'){const r=vcWorkout(text),dt=vcDateIn(text,base)||base,a=mvAct(r.a)||mvAct('workout');
+    if(r.mi||r.dur){const rec=r.a==='workout'?{a:'workout',secs:r.secs,kcal:r.kcal,hr:r.hr,label:r.label}:{a:r.a,mi:r.mi||0,dur:r.dur||0,kcal:r.kcal,hr:r.hr,label:r.label};
+      const bits=[r.mi?r.mi+' mi':'',r.dur?mvMMSS(r.dur):'',r.kcal?r.kcal+' kcal':'',r.hr?'avg '+r.hr+' bpm':''].filter(Boolean);
+      out.push(mkI({kind:'move',dest:'move',cat:'movement',group:'Fitness',title:(r.label?cap1(r.label.toLowerCase()):a.name)+' · '+bits.join(' · '),date:dt,rec,notes:['Completed workout',a.name+(mvOn(a.id)?'':' will be added to My Activities')].concat(dt===base&&!vcDateIn(text,base)?['Date not shown — assumed today']:[])}))}
+    else unc.push('Couldn’t find a distance or duration in this workout');}
+  else if(type==='body'){const r=vcBody(text),dt=vcDateIn(text,base)||base;if(r.weight!=null||Object.keys(r.comp).length){const ex=cache['progress-'+dt];
+      out.push(mkI({kind:'body',dest:'body',cat:'movement',group:'Fitness',title:'Body check-in'+(r.weight!=null?' · '+r.weight+' lb':'')+(r.comp.bodyFat!=null?' · '+r.comp.bodyFat+'% body fat':''),date:dt,rec:r,conf:'medium',notes:[vcCompStr(r.comp)||'Weight only','Health info — saved only on your devices'].concat(ex?['Updates your existing check-in for this day']:[]).concat(dt===base&&!vcDateIn(text,base)?['Date not shown — assumed today']:[])}))}}
+  else if(type==='bible'){const m=text.match(VC_REF),ref=m?m[0].replace(/\s+/g,' '):'',st=/watchtower|meeting|midweek|cbs|talk|assignment/i.test(text)?'Meeting prep':/research/i.test(text)?'Research':ref?'Bible reading':'Personal study';
+    out.push(mkI({kind:'snote',dest:'snote',cat:'spiritual',group:'Spiritual',title:(ref?ref+' — ':'')+(lines.find(l=>!VC_REF.test(l.t)&&l.t.split(' ').length>2)||{t:'Study note'}).t.slice(0,80),date:base,rec:{type:st,ref,text},notes:['Study note · '+st]}));
+    const acts=lines.filter(l=>startsWithVerb(l.t.replace(/^(apply|application|to do|action)\s*[:\-–]\s*/i,''))||/^(apply|action|to do)\s*[:\-–]/i.test(l.t)).map(l=>l.t.replace(/^(apply|application|to do|action)\s*[:\-–]\s*/i,''));
+    if(acts.length){const n0=out.length;fromText(acts.join('\n'),true,'Spiritual',true);out.slice(n0).forEach(it=>{it.notes=it.notes.filter(x=>x!=='From a list in the photo');it.notes.push('From your study note')})}}
+  else if(type==='sms'){const msgs=lines.map(l=>l.t).filter(s=>!/^(imessage|text message|delivered|read\b|today\b|yesterday\b|\d{1,2}:\d{2}\s?(am|pm)?$|messages?$|<)/i.test(s)&&s.split(' ').length>=2)
+      .map(s=>s.replace(/^(can you|could you|can u|would you|will you)\s+(please\s+)?/i,'').replace(/^(don'?t forget to|remember to|reminder:?)\s+/i,'').replace(/^(i'?ll|i will|i can|i'?m going to)\s+/i,'').replace(/\?+$/,'').trim()).filter(Boolean);
+    const sub=msgs.filter(s=>startsWithVerb(s)||ACT_RE.test(s)||capDate(s,base).date||capDate(s,base).time);
+    if(sub.length){fromText(sub.join('\n'),false);out.forEach(it=>{it.notes.push('From a text message — check who it’s for');if(it.conf==='high')it.conf='medium'})}}
+  else if(type==='book'){let title='',author='',m;if((m=text.match(/[“"]([^”"]{2,80})[”"](?:[ \t]*(?:by)[ \t]+([A-Z][\w.'-]+(?:[ \t]+[A-Z][\w.'-]+){0,3}))?/)))[title,author]=[m[1].trim(),(m[2]||'').trim()];
+    else if((m=text.match(/^(.{2,80}?)\s+by[ \t]+([A-Z][\w.'-]+(?:[ \t]+[A-Z][\w.'-]+){0,3})[ \t]*$/m)))[title,author]=[m[1].replace(/^(you should read|read|book:?|must read:?|recommended:?)\s*/i,'').trim(),m[2]];
+    if(title)out.push(mkI({title:'Read “'+title+'”'+(author?' by '+author:''),group:'Personal Development',notes:['Book recommendation','Added to Tasks (no reading list yet)']}));else unc.push('Couldn’t tell which book this is')}
+  else if(type==='quote'){let m=text.replace(/\n/g,' ').match(/[“"]([^”"]{8,240})[”"]\s*[-—–]?\s*([A-Z][\w.'-]+(?:\s+[A-Z][\w.'-]+){0,3})?/),q='',by='';
+    if(m){q=m[1].trim();by=(m[2]||'').trim()}else{const ls=lines.map(l=>l.t);const last=ls[ls.length-1]||'';if(/^[-—–]/.test(last)){by=last.replace(/^[-—–]\s*/,'');q=ls.slice(0,-1).join(' ')}else q=ls.join(' ')}
+    out.push(mkI({kind:'quote',dest:'quote',cat:'journal',group:'Daily Perspective',title:q,rec:{q,by},notes:['Saves to your saved perspectives'+(by?' · '+by:'')]}))}
+  else if(type==='bill'){const amt=(text.match(/(?:amount due|payment due|minimum payment|statement balance|total due|balance)\D{0,12}\$\s?([\d,]+\.\d{2})/i)||text.match(/\$\s?([\d,]+\.\d{2})/)||[])[1],due=(text.match(/(?:due date|due by|pay by|payment due)\D{0,6}([A-Za-z]{3,9}\.?\s+\d{1,2}(?:,?\s+\d{4})?|\d{1,2}\/\d{1,2}\/\d{2,4})/i)||[])[1];
+    const payee=(lines.find(l=>/^[A-Z][A-Za-z&'. ]{2,30}$/.test(l.t)&&!/amount|due|payment|balance|statement|account|total/i.test(l.t))||{t:''}).t;const dd=due?vcDateIn(due,base):'';
+    out.push(mkI({title:'Pay '+(payee||'bill')+(amt?' $'+amt:''),date:dd,group:'Family & Household',conf:'medium',notes:[dd?'Due '+fmtDate(dd,{month:'short',day:'numeric'}):'Due date not found — add one if you know it','Account numbers are never saved']}))}
+  else if(type==='receipt'){const tot=(text.match(/\btotal\D{0,10}\$?\s?([\d,]+\.\d{2})/i)||[])[1];out.push(mkI({kind:'reflection',dest:'journal',cat:'journal',group:'Journal',title:'Receipt'+(tot?' · total $'+tot:''),sel:false,conf:'low',notes:['A receipt usually needs nothing done. Check to note it in your journal']}))}
+  else if(type==='cleaning'||type==='checklist'||type==='list'){let ls=lines.map(l=>l.t);const h0=ls[0]||'',hdt=capDate(h0,base);
+    const hd=ls.length>2&&!VC_CHK.test(h0)&&h0.split(' ').length<=4&&!startsWithVerb(h0)&&(/:\s*$/.test(h0)||/\b(to ?do|todo|list|chores|tasks|errands|groceries|shopping|reminders|notes|weekend|this week|today|tomorrow)\b/i.test(h0)||!!hdt.date)?h0:'';if(hd)ls=ls.slice(1);
+    const grp=type==='cleaning'||/chore|clean|house/i.test(hd)?'Family & Household':/grocer|shopping/i.test(hd)?'Family & Household':null;const n0=out.length;fromText(ls.map(l=>l.replace(VC_CHK,'')).join('\n'),true,grp);
+    out.slice(n0).forEach(it=>{if(hd){it.notes.push('From “'+hd.replace(/[:.]$/,'')+'”');if(hdt.date&&!it.date){it.date=hdt.date;it.notes.push(fmtDate(hdt.date,{weekday:'long'})+', from the list title')}}})}
+  else if(type==='brainstorm'){fromText(lines.map(l=>l.t).join('\n'),false);out.push(mkI({kind:'reflection',dest:'journal',cat:'journal',group:'Journal',title:'Brainstorm: '+lines.map(l=>l.t).join(' · ').slice(0,300),conf:'medium',notes:['Keeps the whole page in your journal with the photo. Local reading can’t follow arrows or layout']}))}
+  else if(type==='appt'){const one=lines.map(l=>l.t).join(' · '),dt=capDate(one.replace(/·/g,' '),base),who=(text.match(/\b(dr\.?\s+[A-Z][a-z]+|dentist|doctor|primary care|optometrist|dermatolog\w+|physical therapy|vet\w*|clinic|haircut|barber|oil change)\b/i)||[])[0],title=(who?'Appointment: '+cap1(who):(lines.find(l=>/appointment|visit|appt/i.test(l.t))||lines[0]).t).slice(0,80);
+    const exp=vcDateIn(text,base),wd=(text.match(/\b(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i)||[])[1];
+    const it=mkI({kind:'appt',title,date:exp||dt.date,time:dt.time||'',win:dt.win||'',cat:'other',group:capGroup(text,'appt'),notes:[]});if(!it.date){it.notes.push('Date not found — add it before saving');it.sel=false;it.conf='low'}else if(exp&&wd&&fmtDate(exp,{weekday:'long'}).toLowerCase()!==wd.toLowerCase()){it.conf='medium';it.notes.push('The photo says '+cap1(wd.toLowerCase())+', but '+fmtDate(exp,{month:'short',day:'numeric'})+' is a '+fmtDate(exp,{weekday:'long'})+' — check the date')}if(!it.time)it.notes.push('Time not found');
+    it.dest=MCP&&it.time?'cal':'plan';out.push(it)}
+  else{fromText(text,false)}
+  if(note&&note.trim()&&type!=='photo'){out.forEach(it=>{if(!it.notes.includes('Your note: '+note.trim().slice(0,60)))void 0})}
+  const lowL=lines.filter(l=>l.c<70).map(l=>l.t.toLowerCase());
+  out.forEach(it=>{it.img=ctx.img;it.src=it.src||text.slice(0,160);
+    if(type!=='photo'&&lowL.some(l=>l&&(String(it.src).toLowerCase().includes(l)||String(it.title).toLowerCase().includes(l.slice(0,12))))){it.sel=false;it.conf='low';it.notes.unshift('Hard to read — check the wording')}
+    else if(type!=='photo'&&type!=='unclear'&&(ocr.conf||100)<80&&!it.notes.some(n=>/blurry|hard to read/i.test(n)))it.notes.push('The photo is a bit blurry — check the wording');
+    if(it.time&&+it.time.slice(0,2)<7&&!/\b\d{1,2}(:\d\d)?\s?(a\.?m|p\.?m)\b/i.test(type==='appt'?text:String(it.src))){it.notes.push('Time '+(+it.time.slice(0,2))+':'+it.time.slice(3)+' — am or pm? Set it before saving');it.time='';if(it.conf==='high')it.conf='medium'}});
+  return {type,label:VC_TYPES[type]||'Note',items:out,uncertain:type==='photo'?[]:unc,lines,text:type==='photo'?'':text}}
+// ---------- capture flow ----------
+let VCQ=[];               // photos attached in the capture sheet, not yet added
+const VCIC={cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8h3l1.5-2.5h8L17.5 8h3v11h-17z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M20.5 16l-5-5-8.5 8.5"/></svg>',
+  paste:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="4.5" width="13" height="16" rx="2"/><path d="M9 4.5h6v2.5H9z"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>'};
+const vcSR=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
+function vcBar(target){const canPaste=!!(navigator.clipboard&&navigator.clipboard.read);return `<div class="vcbar" data-vtarget="${target}">
+  <label class="vcb"><input type="file" accept="image/*" capture="environment" data-vfile="camera" hidden>${VCIC.cam}<span>Camera</span></label>
+  <label class="vcb"><input type="file" accept="image/*" multiple data-vfile="library" hidden>${VCIC.lib}<span>Photos</span></label>
+  ${canPaste?`<button class="vcb" data-vc="paste">${VCIC.paste}<span>Paste</span></button>`:''}
+  ${vcSR()?`<button class="vcb" data-vc="dictate" aria-pressed="false">${VCIC.mic}<span>Dictate</span></button>`:''}</div>`}
+function vcMsg(t){const m=$('#cap-m')||$('#vc-jmsg');if(m)m.textContent=t}
+async function vcAddFiles(files,how,target){files=[...(files||[])].filter(f=>/^image\//.test(f.type||''));if(!files.length){vcMsg('That isn’t a photo or screenshot.');return}
+  vcMsg('Saving '+files.length+' photo'+(files.length>1?'s':'')+'…');let ok=0;
+  for(const f of files){try{const m=await vcIngest(f,how);ok++;if(target==='journal'){const d=get('day-'+S.date,dayDef(S.date));d.dimg=(d.dimg||[]).concat(m.id);save('day-'+S.date)}else VCQ.push(m.id)}
+    catch(e){vcMsg(e.message==='quota'?'This device is out of storage for photos. Delete some photos in More › Photos, or download a backup.':'Couldn’t open that image.');return}}
+  vcMsg(ok?`${ok} photo${ok>1?'s':''} attached. Tap ✦ Organize to read ${ok>1?'them':'it'}, or Add to keep ${ok>1?'them':'it'} as is.`:'');
+  if(target==='journal'){const y=scrollY;render();scrollTo(0,y)}else vcPaintQ()}
+function vcPaintQ(){const el=$('#cap-imgs');if(!el)return;el.innerHTML=VCQ.map(id=>`<span class="vq">${vcThumb(id)}<button data-vc="qrm" data-id="${esc(id)}" aria-label="Remove photo">×</button></span>`).join('');vcHydrate(el)}
+async function vcPaste(target){try{const its=await navigator.clipboard.read(),files=[];for(const it of its){const t=it.types.find(x=>/^image\//.test(x));if(t){const b=await it.getType(t);files.push(new File([b],'pasted.'+(t.split('/')[1]||'png'),{type:t}))}}
+  if(files.length)vcAddFiles(files,'paste',target);else vcMsg('No image on the clipboard. Copy a photo or screenshot first.')}catch(e){vcMsg('Paste was blocked. Press and hold in the box and choose Paste, or use Photos.')}}
+let VCREC=null;
+function vcDictate(btn){const SR=vcSR();if(!SR)return;if(VCREC){VCREC.stop();return}const t=$('#cap-t')||main.querySelector('[data-jd=draft]');if(!t)return;
+  const r=new SR();r.lang=navigator.language||'en-US';r.interimResults=false;r.continuous=true;VCREC=r;btn.setAttribute('aria-pressed','true');vcMsg('Listening… tap Dictate again to stop.');
+  r.onresult=e=>{let s='';for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)s+=e.results[i][0].transcript;if(s){t.value=(t.value?t.value.replace(/\s*$/,' '):'')+s.trim();t.dispatchEvent(new Event('input',{bubbles:true}))}};
+  r.onend=()=>{VCREC=null;btn.setAttribute('aria-pressed','false');vcMsg('')};r.onerror=()=>{vcMsg('Dictation isn’t available right now. Your keyboard’s microphone works too.')};try{r.start()}catch(e){VCREC=null}}
+function vcProgress(html){const sh=$('#capsheet');sh.innerHTML=`<div class="card capcard" role="dialog" aria-modal="true" aria-label="Reading photos"><div class="caphd"><span class="spk">${SPARK}</span><div><h2>Smart Capture</h2><small>Capture anything. Give everything a place.</small></div></div><div class="vprog">${html}</div></div>`;sh.classList.remove('hide')}
+// Read photos (+ optional note) and open the review sheet
+async function vcOrganize(note,ids,ctx){ids=(ids||[]).filter(Boolean);let items=[],kept=[];const imgs=[];
+  if(note&&note.trim()){const r=capAnalyze(note,ctx);items=items.concat(r.items);kept=kept.concat(r.kept)}
+  for(let i=0;i<ids.length;i++){const id=ids[i],m=imgMeta(id);if(!m)continue;const lab=`Reading photo ${i+1} of ${ids.length} on this device…`;vcProgress(`<p>${lab}</p><div class="hbar"><i id="vcpb" style="width:3%"></i></div><p class="calnote" id="vcpn">The first time, this downloads the text reader (about 7 MB). After that it works offline.</p>`);
+    let ocr=m.ocr;
+    if(!ocr||ocr.err){try{ocr=await vcOcr(id,p=>{const bar=$('#vcpb');if(bar&&p.status==='recognizing text')bar.style.width=Math.round(10+p.progress*90)+'%';else if(bar&&/load/.test(p.status||''))bar.style.width=Math.round(3+p.progress*7)+'%'});ocr.text=vcRedact(ocr.text).slice(0,12000);ocr.lines=ocr.lines.slice(0,400).map(l=>({t:vcRedact(l.t),c:l.c}));m.ocr={text:ocr.text,conf:ocr.conf,lines:ocr.lines,at:Date.now(),by:'device'};save('images')}
+      catch(e){ocr={text:'',conf:0,lines:[],err:e&&e.message||'ocr'}}}
+    const dup=vcFindDup(m.ph,id),ictx={kind:'image',key:'img',id:m.ph,img:id,date:ctx.date||today()};
+    const u=ocr.err?{type:'photo',label:'Photo',items:[],uncertain:[],text:''}:vcUnderstand(ocr,ictx,note);
+    if(ocr.err)u.items.push({id:uid(),src:'(photo)',kind:'photo',dest:'journal',cat:'journal',group:'Journal',title:(note||'').trim()||'Photo',date:'',time:'',win:'',imp:false,conf:'low',notes:['Couldn’t read text '+(navigator.onLine?'here':'offline yet — the text reader downloads once when you’re online')+'. You can keep it as a photo'],sel:false,img:id});
+    m.type=u.type;save('images');
+    if(dup){u.items.forEach(it=>{it.prev=true;it.sel=false;it.notes.unshift('Already processed from this photo on '+fmtDate(ymd(new Date(dup.proc.at)),{month:'short',day:'numeric'}))})}
+    imgs.push({id,type:u.type,label:u.label,conf:ocr.conf||0,text:u.text,unc:u.uncertain,dup:dup?dup.id:'',err:ocr.err||'',by:'device'});items=items.concat(u.items)}
+  // keep the reviewed items ordered: note first, then each photo
+  CAPS={items,kept,ctx,imgs,note:note||'',keep:true};capSheet()}
+function vcSheetImgs(C){return `<div class="vimgs">${C.imgs.map((im,k)=>`<div class="vimg"><button class="vtb big" data-vview="${esc(im.id)}" aria-label="View photo">${vcThumb(im.id)}</button><div class="vimeta">
+  <b>${esc(im.label)}</b><small>${im.by==='ai'?'<span class="vcloud">☁ Read by AI (cloud)</span>':im.err?'Not read':'Read on this device'+(im.conf?' · '+im.conf+'% sure':'')}</small>
+  ${im.dup?'<small class="vwarn">You’ve organized this photo before. Repeats are unchecked.</small>':''}
+  ${im.unc&&im.unc.length?`<small class="vwarn">${im.unc.length} line${im.unc.length>1?'s were':' was'} hard to read</small>`:''}
+  ${im.text?`<details class="vtext"><summary>Text read from this photo</summary><textarea class="awrap" data-vcs-text="${k}" rows="3">${esc(im.text)}</textarea><button class="btn sm" data-vcs="reread" data-k="${k}">Re-sort with my edits</button></details>`:''}
+  ${vcAIOn()?`<button class="btn sm vcai" data-vcs="ai" data-k="${k}">☁ Read with AI</button>`:''}</div></div>`).join('')}
+  <label class="vkeep"><input type="checkbox" data-vcs-keep ${C.keep?'checked':''}> Keep the photo${C.imgs.length>1?'s':''} (linked from what’s added)</label></div>`}
+function vcAfterAdd(C,created){(C.imgs||[]).forEach(im=>{const m=imgMeta(im.id);if(!m)return;const mine=(created||[]).filter(c=>c.type==='reg').length;m.proc={at:Date.now(),n:mine};save('images');if(!C.keep)vcDelete(im.id)})}
+function vcReread(k,text){const C=CAPS;if(!C||!C.imgs[k])return;const im=C.imgs[k],m=imgMeta(im.id)||{};const ictx={kind:'image',key:'img',id:m.ph||im.id,img:im.id,date:C.ctx.date||today()};
+  const u=vcUnderstand({text,conf:Math.max(70,im.conf||0),lines:text.split('\n').map(t=>({t,c:90}))},ictx,C.note);C.items=C.items.filter(it=>it.img!==im.id).concat(u.items);Object.assign(im,{type:u.type,label:u.label,text,unc:[]});if(m.ocr){m.ocr.text=text;m.ocr.lines=u.lines;m.ocr.edited=Date.now();save('images')}capSheet()}
+// ---------- viewer ----------
+async function vcView(id){let sh=$('#vcview');if(!sh){sh=document.createElement('div');sh.id='vcview';sh.className='sheet hide';document.body.appendChild(sh);sh.addEventListener('click',vcViewClick)}
+  const m=imgMeta(id);let url='';try{const b=await IMGDB.get('full',id);if(b)url=URL.createObjectURL(b)}catch(e){}
+  const recs=capReg().filter(r=>r.src&&r.src.kind==='image'&&r.src.id===id);
+  sh.innerHTML=`<div class="card vcard" role="dialog" aria-modal="true" aria-label="Photo"><div class="caphd"><span class="spk">${VCIC.lib}</span><div><h2>Photo</h2><small>${m?esc(fmtDate(m.date||today(),{weekday:'short',month:'short',day:'numeric',year:'numeric'}))+(m.type?' · '+esc(VC_TYPES[m.type]||''):''):''}</small></div><button class="x" data-vv="close" aria-label="Close">×</button></div>
+    ${url?`<img class="vfull" src="${url}" alt="Photo">`:`<p class="calnote">${m?'This photo isn’t stored on this device. It may be on your other device.':'This photo was deleted. What was made from it is still here.'}</p>`}
+    ${m&&m.ocr&&m.ocr.text?`<details class="vtext"><summary>Text read from this photo ${m.ocr.by==='ai'?'· ☁ AI':'· on this device'}</summary><pre>${esc(m.ocr.text)}</pre></details>`:''}
+    ${recs.length?`<p class="lbl" style="margin:10px 0 4px">Made from this photo</p><ul class="vrecs">${recs.map(r=>`<li>${esc(r.title)} <small class="muted">· ${esc(CAPDEST[r.dest]||r.dest)}</small></li>`).join('')}</ul>`:''}
+    <div class="chips" style="margin-top:12px">${m&&url?`<button class="btn pri" data-vv="org" data-id="${esc(id)}"><span class="orgbtn">${SPARK}Organize${m.proc?' again':''}</span></button>`:''}${m?`<button class="btn" data-vv="del" data-id="${esc(id)}">Delete photo</button>`:''}<button class="btn" data-vv="close">Close</button></div>
+    ${m?'<p class="calnote">Deleting the photo keeps everything that was made from it.</p>':''}</div>`;sh.classList.remove('hide');sh._url=url}
+function vcViewClose(){const sh=$('#vcview');if(!sh)return;sh.classList.add('hide');if(sh._url){URL.revokeObjectURL(sh._url);sh._url=''}}
+function vcViewClick(e){if(e.target.id==='vcview'){vcViewClose();return}const b=e.target.closest('[data-vv]');if(!b)return;const a=b.dataset.vv;
+  if(a==='close'){vcViewClose();return}
+  if(a==='org'){vcViewClose();vcOrganize('',[b.dataset.id],{kind:'inbox',key:'img',id:b.dataset.id,date:today()});return}
+  if(a==='del'){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete photo'}},3000);return}
+    vcDelete(b.dataset.id).then(()=>{vcViewClose();const y=scrollY;render();scrollTo(0,y);capToast('Photo deleted. Everything made from it is still here.',null)})}}
+// ---------- applying photo-specific items ----------
+function vcApplyBody(it,src,created){const r=it.rec||{},dd=it.date||today(),k='progress-'+dd,prev=cache[k]?JSON.parse(JSON.stringify(cache[k])):null;const p=cache[k]||(cache[k]={date:dd});
+  if(r.weight!=null)p.weight=String(r.weight);p.comp=Object.assign({},p.comp||{},r.comp||{});p.src=src;save(k);created.push({type:'body',key:k,prev})}
+// ---------- optional cloud reading (off by default) ----------
+const vcAIOn=()=>{try{return !!(get('settings',setDef).ai||{}).vision&&bridgeOn()}catch(e){return false}};
+const VC_KINDS=['task','appt','move','body','snote','quote','question','journal','idea'];
+function vcAIValidate(r){if(!r||typeof r!=='object')throw new Error('bad_ai');const S1=(v,n)=>typeof v==='string'?v.replace(/[\u0000-\u001f]/g,' ').trim().slice(0,n):'';const N=(v,lo,hi)=>{const x=Number(v);return isFinite(x)&&x>=lo&&x<=hi?Math.round(x*100)/100:undefined};
+  const D=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(parse(v))&&ymd(parse(v))===v?v:'',T=v=>typeof v==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(v)?v:'';
+  const out={type:VC_TYPES[r.type]?r.type:'note',summary:S1(r.summary,300),text:vcRedact(S1(r.text,12000)),unreadable:Array.isArray(r.unreadable)?r.unreadable.slice(0,20).map(x=>S1(x,200)).filter(Boolean):[],items:[]};
+  (Array.isArray(r.items)?r.items:[]).slice(0,40).forEach(x=>{if(!x||!VC_KINDS.includes(x.kind))return;const it={kind:x.kind,title:vcRedact(S1(x.title,200)),date:D(x.date),time:T(x.time),group:S1(x.group,40),notes:(Array.isArray(x.notes)?x.notes:[]).slice(0,4).map(n=>S1(n,120)).filter(Boolean),conf:['high','medium','low'].includes(x.confidence)?x.confidence:'medium'};
+    if(!it.title)return;
+    if(x.kind==='move'&&x.move){const m=x.move,a=['run','walk','cycle','workout','pushups','pullups','squats','plank','strength'].includes(m.activity)?m.activity:null;if(!a)return;
+      it.move={a,mi:N(m.distance_mi,0,300),dur:N(m.duration_sec,1,86400),sets:Array.isArray(m.sets)?m.sets.map(s=>N(s,1,2000)).filter(Boolean).slice(0,30):undefined,reps:N(m.reps,1,500),w:N(m.weight_lb,0,2000),name:S1(m.exercise,60),kcal:N(m.kcal,1,10000),hr:N(m.avg_hr,30,240)}}
+    if(x.kind==='body'&&x.body){const b=x.body;it.body={weight:N(b.weight_lb,40,800),comp:{bodyFat:N(b.body_fat_pct,1,80),bmi:N(b.bmi,8,80),muscle:N(b.muscle_lb,10,400),skeletal:N(b.skeletal_pct,5,80),water:N(b.water_pct,10,90),visceral:N(b.visceral,1,60),bone:N(b.bone_lb,1,40),bmr:N(b.bmr,500,5000),metAge:N(b.metabolic_age,10,110),protein:N(b.protein_pct,1,60)}};Object.keys(it.body.comp).forEach(k=>{if(it.body.comp[k]==null)delete it.body.comp[k]})}
+    if(x.kind==='snote')it.study={ref:S1(x.study&&x.study.ref,40),type:NTYPES.includes(x.study&&x.study.type)?x.study.type:'Personal study'};
+    if(x.kind==='quote')it.quote={q:S1(x.quote&&x.quote.text||x.title,300),by:S1(x.quote&&x.quote.by,60)};
+    out.items.push(it)});return out}
+function vcAIItems(v,img,base){const out=[];v.items.forEach(x=>{const it={id:uid(),src:'(read by AI)',kind:x.kind,title:x.title,date:x.date,time:x.time,win:'',dest:'task',cat:'other',group:x.group||'General',imp:false,conf:x.conf,notes:x.notes.concat(['Read by AI']),sel:x.conf!=='low',img};
+    if(x.kind==='appt'){it.dest=MCP&&it.time?'cal':'plan';if(!it.date){it.sel=false;it.notes.push('Date not found')}}
+    else if(x.kind==='question')it.dest='question';
+    else if(x.kind==='journal'){it.dest='journal';it.kind='photo'}
+    else if(x.kind==='idea'){it.dest='idea';it.sel=false}
+    else if(x.kind==='snote'){it.dest='snote';it.cat='spiritual';it.rec={type:x.study.type,ref:x.study.ref,text:v.text}}
+    else if(x.kind==='quote'){it.dest='quote';it.rec=x.quote}
+    else if(x.kind==='body'){if(!x.body)return;it.dest='body';it.cat='movement';it.rec=x.body;it.date=it.date||base;it.notes.push('Health info — saved only on your devices')}
+    else if(x.kind==='move'){const m=x.move;if(!m)return;let rec={a:m.a,kcal:m.kcal,hr:m.hr};if(['pushups','pullups','squats'].includes(m.a)){if(!m.sets||!m.sets.length)return;rec.sets=m.sets}else if(m.a==='plank'||m.a==='workout'){if(!m.dur)return;rec.secs=[m.dur]}else if(m.a==='strength'){if(!m.reps)return;Object.assign(rec,{name:m.name||'Lift',sets:m.sets&&m.sets.length?m.sets.length:1,reps:m.reps,w:m.w||0})}else{if(!m.mi&&!m.dur)return;rec.mi=m.mi||0;rec.dur=m.dur||0}
+      it.dest='move';it.cat='movement';it.group='Fitness';it.rec=rec;it.sets=rec.sets;it.date=it.date||base;it.title=mvCapTitle(rec)+(m.kcal?' · '+m.kcal+' kcal':'')}
+    else{it.cat=capCat(it.title);if(!x.group)it.group=capGroup(it.title,'task')}
+    out.push(it)});return out}
+async function vcAI(k,btn){const C=CAPS;if(!C||!C.imgs[k])return;if(!btn.dataset.armed){btn.dataset.armed=1;btn.textContent='Tap again to send this photo'+(C.note?' and your note':'')+' to Anthropic';setTimeout(()=>{if(btn.isConnected){delete btn.dataset.armed;btn.textContent='☁ Read with AI'}},5000);return}
+  const im=C.imgs[k];btn.disabled=true;btn.textContent='☁ Reading in the cloud…';
+  try{const full=await IMGDB.get('full',im.id);const {im:el,u}=await vcLoadImg(full);let data;try{const c=await vcCanvas(el,1568,'image/jpeg',.82);data=(await vcBlobToData(c.b)).split(',')[1]}finally{URL.revokeObjectURL(u)}
+    const res=await bcall('vision',{images:[{mime:'image/jpeg',data}],note:C.note||'',today:today(),tz:Intl.DateTimeFormat().resolvedOptions().timeZone||''});
+    if(res&&res.error)throw new Error(res.error);const v=vcAIValidate(res.result);const items=vcAIItems(v,im.id,C.ctx.date||today());
+    const m=imgMeta(im.id),reg=capReg();items.forEach(it=>{it.h=capHash('img|'+((m&&m.ph)||im.id)+'|'+capNorm(it.title));if(reg.some(r=>r.h===it.h)){it.prev=true;it.sel=false;it.notes.unshift('Already organized from this photo')}});
+    C.items=C.items.filter(it=>it.img!==im.id).concat(items);Object.assign(im,{type:v.type,label:VC_TYPES[v.type]||'Note',text:v.text,unc:v.unreadable,by:'ai',conf:0});if(m){m.ocr={text:v.text,conf:0,lines:v.text.split('\n').map(t=>({t,c:90})),at:Date.now(),by:'ai'};m.type=v.type;save('images')}capSheet()}
+  catch(e){btn.disabled=false;delete btn.dataset.armed;const c=e&&(e.message||e.code);btn.textContent=c==='no_ai_key'?'Add your AI key to the Apps Script first':c==='unknown_op'?'Update your Apps Script first (see More)':'Couldn’t reach AI — try again';}}
+// ---------- photos in More ----------
+function vcPhotosCard(){const it=imgDoc().items.slice().sort((a,b)=>(b.at||0)-(a.at||0)),bytes=it.reduce((s,x)=>s+(x.bytes||0)+(x.tb||0),0),ai=(get('settings',setDef).ai||{}).vision;
+  const body=`<p class="calnote" style="margin-top:0">Photos and screenshots you capture are kept on this device and in your downloaded backups. They aren’t copied to Google Drive.</p>
+    <p class="calnote" id="vcstore">${it.length} photo${it.length===1?'':'s'} · about ${(bytes/1048576).toFixed(1)} MB</p>
+    ${it.length?`<div class="vgrid">${it.slice(0,24).map(x=>`<button class="vtb" data-vview="${esc(x.id)}" aria-label="View photo">${vcThumb(x.id)}</button>`).join('')}</div>${it.length>24?`<p class="calnote">Showing the newest 24.</p>`:''}`:'<p class="empty">No photos yet. Tap + and choose Camera or Photos.</p>'}
+    <div class="chips" style="margin-top:10px"><button class="btn sm" data-vc="ocrprep">Get text reading ready for offline</button></div><p class="calnote" id="vcprep"></p>
+    <h3 class="vh3">Cloud reading <small>· optional, off</small></h3>
+    <p class="calnote">Reading on this device handles printed text and clear screenshots. Handwriting, tables, diagrams and busy screenshots are better read by an AI model. If you turn this on, a <b>☁ Read with AI</b> button appears on each photo in Smart Capture. Nothing is sent until you tap it twice for that photo.</p>
+    <div class="chips"><button class="chip" data-vc="aitog" aria-pressed="${!!ai}">${ai?'✓ ':''}Allow cloud reading when I ask</button></div>
+    <p class="calnote">${!bridgeOn()?'Needs your Google connection (More › Google connection).':ai?'Photos you choose go through your own Google Apps Script to Anthropic. Your API key stays in the script’s settings, never in this app. Update the script and add the key first (instructions in the script).':'Off. Everything stays on this device.'}</p>`;
+  return rc('mo-photos',VCIC.lib,'Photos & Visual Capture',`${it.length} photo${it.length===1?'':'s'}${ai?' · cloud reading allowed':' · read on this device'}`,body,false)}
+async function vcStoreLine(){const el=$('#vcstore'),e=await vcStorage();if(el&&e&&e.quota){el.textContent+=` · this app is using ${(e.usage/1048576).toFixed(0)} MB of ${(e.quota/1048576/1024).toFixed(1)} GB available`}}
+async function vcOcrPrep(){const el=$('#vcprep');if(el)el.textContent='Downloading the text reader…';try{await vcOcrWorker(m=>{if(el&&m.progress!=null&&/load/.test(m.status||''))el.textContent='Downloading the text reader… '+Math.round(m.progress*100)+'%'});if(el)el.textContent='Ready. Photos can be read without internet now.'}catch(e){if(el)el.textContent='Couldn’t download it right now. Try again when you’re online.'}}
+// ---------- backup ----------
+async function vcBackupImages(){const out={};for(const m of imgDoc().items){try{const b=await IMGDB.get('full',m.id);if(b)out[m.id]=await vcBlobToData(b)}catch(e){}}return out}
+async function vcRestoreImages(map){let n=0;for(const [id,data] of Object.entries(map||{})){try{if(!/^data:image\//.test(data))continue;const b=await vcDataToBlob(data);await IMGDB.put('full',id,b);const {im,u}=await vcLoadImg(b);try{const th=await vcCanvas(im,360,'image/jpeg',.72);await IMGDB.put('thumb',id,th.b)}finally{URL.revokeObjectURL(u)}n++}catch(e){}}return n}
+// ---------- events ----------
+document.addEventListener('change',e=>{const f=e.target.closest&&e.target.closest('[data-vfile]');if(!f)return;const bar=f.closest('.vcbar');vcAddFiles(f.files,f.dataset.vfile,bar&&bar.dataset.vtarget);f.value=''});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-vc],[data-vview]');if(!b)return;
+  if(b.dataset.vview){e.preventDefault();e.stopPropagation();vcView(b.dataset.vview);return}
+  const a=b.dataset.vc,bar=b.closest('.vcbar'),tg=bar&&bar.dataset.vtarget;
+  if(a==='paste'){vcPaste(tg);return}
+  if(a==='dictate'){vcDictate(b);return}
+  if(a==='qrm'){const id=b.dataset.id;VCQ=VCQ.filter(x=>x!==id);vcDelete(id);vcPaintQ();return}
+  if(a==='jrm'){const d=get('day-'+S.date,dayDef(S.date));d.dimg=(d.dimg||[]).filter(x=>x!==b.dataset.id);save('day-'+S.date);vcDelete(b.dataset.id);const y=scrollY;render();scrollTo(0,y);return}
+  if(a==='ocrprep'){vcOcrPrep();return}
+  if(a==='aitog'){const st=get('settings',setDef);st.ai=st.ai||{};st.ai.vision=!st.ai.vision;save('settings');const y=scrollY;render();scrollTo(0,y);return}},true);
+function vcIncoming(files,how){const cap=$('#cap');const jd=main.querySelector('[data-jd=draft]');if(cap&&!cap.classList.contains('hide')){vcAddFiles(files,how,'cap');return}
+  if(S.tab==='journal'&&jd){vcAddFiles(files,how,'journal');return}openCap();setTimeout(()=>vcAddFiles(files,how,'cap'),0)}
+document.addEventListener('paste',e=>{const fs=[...(e.clipboardData&&e.clipboardData.files||[])].filter(f=>/^image\//.test(f.type));if(!fs.length)return;e.preventDefault();vcIncoming(fs,'paste')});
+document.addEventListener('dragover',e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes('Files')){e.preventDefault();document.body.classList.add('vdrag')}});
+document.addEventListener('dragleave',e=>{if(e.target===document.documentElement||!e.relatedTarget)document.body.classList.remove('vdrag')});
+document.addEventListener('drop',e=>{document.body.classList.remove('vdrag');const fs=[...(e.dataTransfer&&e.dataTransfer.files||[])].filter(f=>/^image\//.test(f.type));if(!fs.length)return;e.preventDefault();vcIncoming(fs,'drop')});
+// ================= /Visual Capture =================
 // ================= Smart Capture: From Thought to Action =================
 // Everything here runs on this device. Notes are never sent anywhere.
 const SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>';
-const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',move:'Movement hub',skip:'Don’t add'};
+const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',move:'Movement hub',body:'Body check-in (Logs)',snote:'Study note',quote:'Saved perspectives',skip:'Don’t add'};
 const CAPCAT={general:'General',spiritual:'Spiritual',movement:'Movement',journal:'Journal',reset:'Reset'};
 function capMode(){return get('settings',setDef).capMode||'review'}
 function capReg(){const r=get('capture',{items:[]});r.items=r.items||[];return r.items}
@@ -1095,7 +1420,8 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
   return {items:out,kept}}
 
 // ---------- applying ----------
-function capApply(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,key:ctx.key||'',id:ctx.id||'',date:ctx.date||td,text:ctx.kind==='inbox'?(ctx.text||'').slice(0,400):''};
+function capApply(items,ctx){const by=new Map();items.forEach(it=>{const k=it.img||'';if(!by.has(k))by.set(k,[]);by.get(k).push(it)});let out=[];by.forEach((list,k)=>{out=out.concat(capApply1(list,k?Object.assign({},ctx,{kind:'image',key:'',id:k,img:k}):ctx))});return out}
+function capApply1(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,key:ctx.key||'',id:ctx.id||'',date:ctx.date||td,text:ctx.kind==='inbox'?(ctx.text||'').slice(0,400):''};
   const addTask=(it,due)=>{const t={id:uid(),t:it.title,due:due||'',done:false,created:Date.now(),imp:!!it.imp,cat:it.cat,src:srcRef};if(it.group&&it.group!=='General')t.group=it.group;if(it.kind==='proposed')t.proposed=true;tasks().push(t);save('tasks');created.push({type:'task',id:t.id});return t};
   items.filter(x=>x.sel&&x.dest!=='skip'&&x.title.trim()).forEach(it=>{
     if(it.dest==='task')addTask(it,it.date);
@@ -1105,8 +1431,11 @@ function capApply(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,k
     else if(it.dest==='cal'){const dd=it.date||td,inp=it.time?{summary:it.title,startTime:dd+'T'+it.time+':00',endTime:(addMin(it.time,60)<it.time?addDays(dd,1):dd)+'T'+addMin(it.time,60)+':00',description:'Added by KL Journal Smart Capture'}:{summary:it.title,allDay:true,startTime:dd+'T00:00:00',endTime:addDays(dd,1)+'T00:00:00',description:'Added by KL Journal Smart Capture'};
       const rec={type:'cal',title:it.title,date:dd};created.push(rec);MCP.callTool(GC,'create_event',inp,{cache:false}).then(r=>{rec.gid=(r&&r.payload&&r.payload.id)||'';try{MCP.invalidate(GC,'list_events')}catch(e){}CAL={};RANGE={}}).catch(()=>{rec.failed=true;capToast('Couldn’t add “'+it.title+'” to Google Calendar. It wasn’t saved there.',null)})}
     else if(it.dest==='question'){const q=get('sessq',{items:[]});q.items=q.items||[];const x={id:uid(),t:it.title,done:false,src:srcRef};q.items.push(x);save('sessq');created.push({type:'q',id:x.id})}
-    else if(it.dest==='journal'){const dd=ctx.date||td,day=get('day-'+dd,dayDef(dd));ents(day).push({id:uid(),title:'',text:it.title,cat:'',at:Date.now(),src:srcRef});syncText(day);save('day-'+dd);created.push({type:'entry',key:'day-'+dd,id:ents(day)[ents(day).length-1].id})}
+    else if(it.dest==='journal'){const dd=ctx.date||td,day=get('day-'+dd,dayDef(dd));ents(day).push(Object.assign({id:uid(),title:'',text:it.title,cat:'',at:Date.now(),src:srcRef},it.img&&['photo','reflection'].includes(it.kind)?{img:[it.img]}:{}));syncText(day);save('day-'+dd);created.push({type:'entry',key:'day-'+dd,id:ents(day)[ents(day).length-1].id})}
     else if(it.dest==='move'){const aid=(it.rec&&it.rec.a)||'pushups',wasOn=mvOn(aid);const ids=mvFromCap(it,srcRef);if(ids.length)created.push({type:'mv',ids,date:it.date,aid,wasOn})}
+    else if(it.dest==='body')vcApplyBody(it,srcRef,created);
+    else if(it.dest==='snote'){const r=it.rec||{},nid=uid();cache['note-'+nid]=Object.assign({id:nid,date:it.date||td,type:r.type||'Personal study',ref:r.ref||'',text:r.text||it.title,created:Date.now(),src:srcRef},it.img?{img:[it.img]}:{});save('note-'+nid);created.push({type:'snote',key:'note-'+nid})}
+    else if(it.dest==='quote'){const b=get('quotes',{items:[]});b.items=b.items||[];const x={id:'qc'+uid(),custom:true,t:(it.rec&&it.rec.q)||it.title,c:(it.rec&&it.rec.by)||'From a photo',at:Date.now(),src:srcRef};b.items.push(x);save('quotes');created.push({type:'quote',id:x.id})}
     else if(it.dest==='idea'){const st=get('settings',setDef);const line='• '+it.title;st.notes=(st.notes?st.notes.replace(/\s*$/,'')+'\n':'')+line;save('settings');created.push({type:'idea',line})}
     const r={id:uid(),h:it.h,at:Date.now(),dest:it.dest,title:it.title,src:srcRef};capReg().push(r);created.push({type:'reg',id:r.id})});
   save('capture');return created}
@@ -1118,12 +1447,15 @@ function capUndo(created){(created||[]).forEach(c=>{
   else if(c.type==='entry'){const d=cache[c.key];if(d){const es=ents(d),i=es.findIndex(e=>e.id===c.id);if(i>=0){tomb(d,c.id);es.splice(i,1);syncText(d);save(c.key)}}}
   else if(c.type==='idea'){const st=get('settings',setDef);st.notes=(st.notes||'').split('\n').filter((l,i,a)=>!(l===c.line&&a.lastIndexOf(c.line)===i)).join('\n');save('settings')}
   else if(c.type==='mv'||c.type==='pu'){mvRemove(c.ids);if(c.aid&&c.wasOn===false&&!mvItems(c.aid).length){mvCfg(c.aid).on=false;save('settings')}}
+  else if(c.type==='snote'){del(c.key)}
+  else if(c.type==='quote'){const b=get('quotes',{items:[]}),i=(b.items||[]).findIndex(x=>x.id===c.id);if(i>=0){tomb(b,c.id);b.items.splice(i,1);save('quotes')}}
+  else if(c.type==='body'){if(c.prev){cache[c.key]=c.prev;save(c.key)}else del(c.key)}
   else if(c.type==='cal'){capToast('“'+c.title+'” was added to Google Calendar. Remove it there if you don’t want it.',null)}
   else if(c.type==='reg'){const r=get('capture',{items:[]}),i=r.items.findIndex(x=>x.id===c.id);if(i>=0){tomb(r,c.id);r.items.splice(i,1);save('capture')}}})}
 
 // ---------- entry points ----------
 let CAPS=null;
-const CAPKIND={move:'Completed exercise',list:'List',project:'Project',task:'Task',subtask:'Subtask',routine:'Routine',research:'Research',objective:'Objective',proposed:'Proposed',question:'Session question',goal:'Personal goal',idea:'Idea',uncertain:'Uncertain',appt:'Appointment',reflection:'Reflection'};
+const CAPKIND={move:'Completed exercise',body:'Body metrics',snote:'Study note',quote:'Quote',photo:'Photo',list:'List',project:'Project',task:'Task',subtask:'Subtask',routine:'Routine',research:'Research',objective:'Objective',proposed:'Proposed',question:'Session question',goal:'Personal goal',idea:'Idea',uncertain:'Uncertain',appt:'Appointment',reflection:'Reflection'};
 function capOrder(items){const order=[],seen=new Map();items.forEach((it,i)=>{const g=it.group||'General';if(!seen.has(g)){seen.set(g,[]);order.push(g)}seen.get(g).push({it,i})});const out=[];order.forEach(g=>seen.get(g).forEach((x,k)=>out.push(Object.assign({head:k===0?g:''},x))));return out}
 function capRun(text,ctx,trigger){if(!(text||'').trim())return;const res=capAnalyze(text,ctx);const mode=capMode();
   const useful=res.items.filter(x=>!x.prev&&x.dest!=='skip');
@@ -1142,16 +1474,17 @@ function capSheet(){const sh=$('#capsheet');if(!CAPS){sh.classList.add('hide');r
   const destOpts=it=>Object.entries(CAPDEST).filter(([k])=>(k!=='update'||it.dup)&&(k!=='cal'||MCP)).map(([k,l])=>`<option value="${k}" ${it.dest===k?'selected':''}>${l}</option>`).join('');
   const needsDate=d=>['task','top3','plan','spir','cal','update','move'].includes(d);
   sh.innerHTML=`<div class="card capcard" role="dialog" aria-modal="true" aria-labelledby="caph2"><div class="caphd"><span class="spk">${SPARK}</span><div><h2 id="caph2">Smart Capture</h2><small>From Thought to Action</small></div><button class="x" data-cs="close" aria-label="Close">×</button></div>
-    ${items.length?`<p class="calnote" style="margin:0 0 6px">Check what to add. Tap any part to change it. Your note stays exactly as you wrote it.</p>`:'<p class="calnote">Nothing to organize here. It reads as a reflection, so it stays in your note as written.</p>'}
+    ${CAPS.imgs&&CAPS.imgs.length?vcSheetImgs(CAPS):''}
+    ${items.length?`<p class="calnote" style="margin:0 0 6px">Check what to add. Tap any part to change it. ${CAPS.imgs&&CAPS.imgs.length?'Your photo is kept as it is':'Your note stays exactly as you wrote it'}.</p>`:CAPS.imgs&&CAPS.imgs.length?'<p class="calnote">Nothing to add from this. The photo stays in your library; edit the text above and tap Re-sort if something was misread.</p>':'<p class="calnote">Nothing to organize here. It reads as a reflection, so it stays in your note as written.</p>'}
     <div class="capitems">${capOrder(items).map(({it,i,head})=>`${head?`<div class="capgrp">${esc(head)}</div>`:''}<div class="capit ${it.sel?'':'off'}"><div class="cr1"><button class="cb" data-cs="sel" data-i="${i}" aria-label="${it.sel?'Don’t add':'Add'}"><span>${it.sel?'✓':''}</span></button><textarea rows="1" class="awrap capt" data-ci="${i}" data-cf="title" aria-label="Title">${esc(it.title)}</textarea><button class="capstar ${it.imp?'on':''}" data-cs="imp" data-i="${i}" aria-label="Priority">★</button></div>
       <div class="cr2"><label><span>To</span><select data-ci="${i}" data-cf="dest">${destOpts(it)}</select></label>${it.dest==='question'||it.dest==='journal'||it.dest==='idea'||it.dest==='skip'?'':`<label><span>Type</span><select data-ci="${i}" data-cf="cat">${Object.entries(CAPCAT).map(([k,l])=>`<option value="${k}" ${it.cat===k?'selected':''}>${l}</option>`).join('')}</select></label>`}${needsDate(it.dest)?`<label><span>Date</span><input type="date" data-ci="${i}" data-cf="date" value="${esc(it.date||'')}"></label>`:''}${it.dest==='cal'||it.dest==='plan'?`<label><span>Time</span><input type="time" data-ci="${i}" data-cf="time" value="${esc(it.time||'')}"></label>`:''}</div>
       <div class="capnote"><span class="capkind">${esc(CAPKIND[it.kind]||'Task')}</span>${it.notes.length?' '+it.notes.map(esc).join(' · '):''}</div><div class="capsrc">“${esc(it.src.length>140?it.src.slice(0,137)+'…':it.src)}”</div></div>`).join('')}</div>
     ${kept.length?`<details class="capkept"><summary>${kept.length} sentence${kept.length>1?'s':''} left in your note</summary>${kept.map(k=>`<p>“${esc(k.s)}” <small>· ${esc(k.why)}</small></p>`).join('')}</details>`:''}
     <div class="chips" style="margin-top:12px"><button class="btn pri" data-cs="add" ${n?'':'disabled'}>${n?`Add ${n} item${n>1?'s':''}`:'Nothing selected'}</button><button class="btn" data-cs="close">${items.length?'Cancel':'Close'}</button></div></div>`;
-  sh.classList.remove('hide');sh.querySelectorAll('textarea.awrap').forEach(asz)}
-function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump'}[src.kind]||'Note';
-  return `<button class="lnkg" data-gosrc="${esc(JSON.stringify(src))}" style="font-size:13px">${SPARK.replace('<svg','<svg style="width:13px;height:13px;vertical-align:-2px"')} From ${lbl} · ${esc(fmtDate(src.date||today(),{month:'short',day:'numeric'}))}</button>`}
-function capGoSrc(src){if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
+  sh.classList.remove('hide');sh.querySelectorAll('textarea.awrap').forEach(asz);vcHydrate(sh)}
+function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump',image:'Photo'}[src.kind]||'Note';
+  return `<button class="lnkg" data-gosrc="${esc(JSON.stringify(src))}" style="font-size:13px">${src.kind==='image'?vcThumb(src.id,'vmini'):SPARK.replace('<svg','<svg style="width:13px;height:13px;vertical-align:-2px"')} From ${lbl} · ${esc(fmtDate(src.date||today(),{month:'short',day:'numeric'}))}</button>`}
+function capGoSrc(src){if(src.kind==='image'){vcView(src.id);return}if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
   else if(src.kind==='session'){S.tab='sessions';S.sess=src.date;S.rc=S.rc||{};S.rc['se-new']=true}
   else if(src.kind==='note'){S.tab='spiritual';S.date=src.date;const x=cache[src.key];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};S.rc=S.rc||{};S.rc['sp-notes']=true}}
   else{if(inbox().some(x=>x.id===src.id)){S.tab='home'}else{capToast('Original note: “'+esc(src.text||'')+'”',null);return}}
@@ -1222,11 +1555,12 @@ function entTime(e){return e.at?new Date(e.at).toLocaleTimeString([],{hour:'nume
 function tickOn(d,k){d.anchors=d.anchors||{};const a=d.anchors[k]=d.anchors[k]||{l:0};if(!(a.l>0))a.l=1}
 function journalCard(d){
   const es=ents(d),showNew=S.jnew===S.date||(d.draft||'').trim()||(d.dtitle||'').trim();
-  const list=es.map(e=>S.jopen===e.id?`<div class="jopen"><textarea rows="1" class="awrap jtitle" data-je="${esc(e.id)}" data-k="title" placeholder="Title (optional)" aria-label="Entry title">${esc(e.title||'')}</textarea>${catChips(e.cat||'',e.id)}<textarea class="write" data-je="${esc(e.id)}" data-k="text" aria-label="Journal entry">${esc(e.text||'')}</textarea><div class="quick"><button class="btn sm pri" data-act="jdone">Done</button><button class="btn sm" data-jorg="${esc(e.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn sm" data-jdel="${esc(e.id)}">Delete</button>${entTime(e)?`<span class="muted">Written ${esc(entTime(e))}</span>`:''}</div></div>`
-    :`<button class="entry jent" data-jopen="${esc(e.id)}"><b>${esc(entName(e))}</b>${e.cat?`<span class="jcat">${esc(catName(e.cat))}</span>`:''}${entTime(e)?`<span class="tk" style="color:var(--mute)">${esc(entTime(e))}</span>`:''}${entRest(e)?`<p>${esc(entRest(e))}</p>`:''}</button>`).join('');
+  const list=es.map(e=>S.jopen===e.id?`<div class="jopen"><textarea rows="1" class="awrap jtitle" data-je="${esc(e.id)}" data-k="title" placeholder="Title (optional)" aria-label="Entry title">${esc(e.title||'')}</textarea>${catChips(e.cat||'',e.id)}<textarea class="write" data-je="${esc(e.id)}" data-k="text" aria-label="Journal entry">${esc(e.text||'')}</textarea>${vcStrip(e.img)}<div class="quick"><button class="btn sm pri" data-act="jdone">Done</button><button class="btn sm" data-jorg="${esc(e.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn sm" data-jdel="${esc(e.id)}">Delete</button>${entTime(e)?`<span class="muted">Written ${esc(entTime(e))}</span>`:''}</div></div>`
+    :`<button class="entry jent" data-jopen="${esc(e.id)}"><b>${esc(entName(e))}</b>${e.cat?`<span class="jcat">${esc(catName(e.cat))}</span>`:''}${entTime(e)?`<span class="tk" style="color:var(--mute)">${esc(entTime(e))}</span>`:''}${entRest(e)?`<p>${esc(entRest(e))}</p>`:''}${e.img&&e.img.length?`<span class="vstrip">${e.img.map(i=>vcThumb(i)).join('')}</span>`:''}</button>`).join('');
   const comp=showNew?`<div class="${es.length?'jopen':''}"><div class="prompt">${S.pi>=0?`<i>${esc(PROMPTS[S.pi])}</i><button class="btn sm" data-act="prompt">Another</button><button class="btn sm" data-act="noprompt">Hide</button>`:`<button class="btn sm" data-act="prompt">Need a prompt?</button>`}</div>
     <textarea rows="1" class="awrap jtitle" data-jd="dtitle" placeholder="What's this one about? (optional)" aria-label="New entry title">${esc(d.dtitle||'')}</textarea>${catChips(d.dcat||'','new')}
     <textarea class="write" data-jd="draft" placeholder="Write anything. One line is a full entry." aria-label="New journal entry">${esc(d.draft||'')}</textarea>
+    ${vcBar('journal')}${(d.dimg||[]).length?`<div class="vqrow">${d.dimg.map(id=>`<span class="vq">${vcThumb(id)}<button data-vc="jrm" data-id="${esc(id)}" aria-label="Remove photo">×</button></span>`).join('')}</div>`:''}<p class="calnote" id="vc-jmsg"></p>
     <div class="quick"><button class="btn sm pri" data-act="jsave">Save entry</button><button class="btn sm" data-act="jsaveorg"><span class="orgbtn">${SPARK}Save &amp; Organize</span></button><button class="btn sm" data-act="jcancel">${(d.draft||'').trim()?'Keep as draft':'Cancel'}</button><span class="muted">Saving folds it up. Tap it anytime to read or edit.</span></div></div>`
     :'';
   if(!es.length&&!showNew)return '';
@@ -1432,7 +1766,7 @@ function vProgress(){
     <label style="display:block;margin-top:10px"><span class="lbl">Note / win</span><input id="p-note"></label>
     <button class="btn pri" style="margin-top:12px" data-act="addp">Save check-in</button>
     <div class="scroll" style="margin-top:14px">${ps.length?`<table><thead><tr><th>Date</th><th class="n">Weight</th><th class="n">Waist</th><th class="n">Chest</th><th class="n">Arm</th><th>Note</th><th></th></tr></thead><tbody>
-      ${ps.map(p=>`<tr><td style="white-space:nowrap">${fmtDate(p.date,{month:'short',day:'numeric',year:'numeric'})}</td><td class="n">${esc(p.weight)}</td><td class="n">${esc(p.waist)}</td><td class="n">${esc(p.chest)}</td><td class="n">${esc(p.arm)}</td><td>${esc(p.note)}</td><td><button class="btn sm" data-delp="${esc(p.date)}">Delete</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">No check-ins yet.</p>'}</div>
+      ${ps.map(p=>`<tr><td style="white-space:nowrap">${fmtDate(p.date,{month:'short',day:'numeric',year:'numeric'})}</td><td class="n">${esc(p.weight)}</td><td class="n">${esc(p.waist)}</td><td class="n">${esc(p.chest)}</td><td class="n">${esc(p.arm)}</td><td>${esc(p.note)}${p.comp&&Object.keys(p.comp).length?`<br><small class="muted">${esc(vcCompStr(p.comp))}</small>`:''}${p.src?`<br>${capSrcLink(p.src)}`:''}</td><td><button class="btn sm" data-delp="${esc(p.date)}">Delete</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">No check-ins yet.</p>'}</div>
   </div>`;
 }
 function drawWeight(){
@@ -1602,9 +1936,9 @@ function startCard(d){if(S.date!==today())return '';const h=startHere(d);if(!h)r
 // ----- inbox: quick capture from anywhere, sort later
 function inbox(){const b=get('inbox',{items:[]});b.items=b.items||[];return b.items}
 function inboxCard(){const it=inbox();if(!it.length)return '';
-  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
-function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Jot it down</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind. Sort it later." aria-label="Inbox item"></textarea><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="org"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');const t=$('#cap-t');grow(t);t.focus()}
-function closeCap(){$('#cap').classList.add('hide');if(S.tab==='home'||(S.tab==='today'&&(S.seg||'day')==='day')){const y=scrollY;render();scrollTo(0,y)}}
+  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}${vcStrip(x.img)}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
+function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Jot it down</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind, or add a photo or screenshot." aria-label="Inbox item"></textarea>${vcBar('cap')}<div id="cap-imgs" class="vqrow"></div><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="org"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');vcPaintQ();const t=$('#cap-t');grow(t);t.focus()}
+function closeCap(){if(VCQ.length){VCQ.forEach(id=>vcDelete(id));VCQ=[]}$('#cap').classList.add('hide');if(S.tab==='home'||(S.tab==='today'&&(S.seg||'day')==='day')){const y=scrollY;render();scrollTo(0,y)}}
 
 function addTask(text,due){text=(text||'').trim();if(!text)return false;tasks().push({id:uid(),t:text,due:due||'',done:false,created:Date.now()});save('tasks');return true}
 function setTaskDone(t,on){t.done=on;t.doneOn=on?today():'';t.doneAt=on?Date.now():0;save('tasks')}
@@ -1853,7 +2187,7 @@ function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTime
 // Item-level merge so the same page edited on two devices keeps both sets of changes.
 const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
 const ikey=x=>x&&(x.id||('t:'+(x.t||'')));
-function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];return[]}
+function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];return[]}
 function mergeDoc(key,a,b){if(!a||a._del===true)return b;if(!b||b._del===true)return a;
   const lists=mergeLists(key);if(!lists.length)return (Number(a._u)||0)>=(Number(b._u)||0)?a:b;
   const [nw,ol]=(Number(a._u)||0)>=(Number(b._u)||0)?[a,b]:[b,a];
@@ -2184,7 +2518,8 @@ function vSetup(){
   </div>`,false)}
   ${rc('mo-capture',SPARK,'Smart Capture','From Thought to Action · '+({review:'Review first',auto:'Smart Auto',manual:'Manual'}[capMode()]),`<div class="chips" role="group" aria-label="Smart Capture mode">${[['review','Review first'],['auto','Smart Auto'],['manual','Manual']].map(([k,l])=>`<button class="chip" data-capmode="${k}" aria-pressed="${capMode()===k}">${l}</button>`).join('')}</div>
     <p class="calnote" style="margin-top:8px">${{review:'After you save a journal entry, study note or Inbox note, Smart Capture shows what it found (tasks, dates, session questions) and adds only what you check.',auto:'Clear, low-risk items (plain tasks and session questions) are added right away, with Undo. Anything with an unclear date, a calendar event or a “maybe” waits for your review.',manual:'Nothing happens on its own. Tap ✦ Organize on a note when you want it sorted.'}[capMode()]}</p>
-    <p class="calnote">Your notes are read on this device only. Nothing is sent to any outside service. Your original note is never changed; anything Smart Capture adds links back to it.</p>`,false)}
+    <p class="calnote">Your notes and photos are read on this device. Nothing is sent to any outside service unless you allow cloud reading below and ask for it on a specific photo. Your original note is never changed; anything Smart Capture adds links back to it.</p>`,false)}
+  ${vcPhotosCard()}
   ${rc('mo-quotes',IC.bookmark,'Saved Perspectives',savedQ().length?`${savedQ().length} saved`:'Quotes you save on Home',savedQList(),false)}
   ${rc('mo-data',IC.cloud,'Data &amp; Sync',bridgeOn()?'Google connected · backup and restore':'Backup, restore, and device storage',`${bridgeCard()}
   <div class="card">
@@ -2218,7 +2553,7 @@ function render(){
   document.body.classList.toggle('has-hero',!!HERO);$('#herozone').innerHTML=HERO;heroHdr();
   $('#main').innerHTML=({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,move:vMove,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
   document.querySelectorAll('details.more').forEach((x,i)=>{if(wasOpen[i]&&S._lastTab===S.tab+S.date)x.open=true});S._lastTab=S.tab+S.date;
-  main.querySelectorAll('textarea.write').forEach(grow);main.querySelectorAll('textarea.awrap').forEach(asz);hydrateAudio();
+  main.querySelectorAll('textarea.write').forEach(grow);main.querySelectorAll('textarea.awrap').forEach(asz);hydrateAudio();vcHydrate(main);if(S.tab==='setup')vcStoreLine();
   if(MCP&&S.tab==='home'){const td=today();const st=$('#hcalst');if(st&&CAL[td]&&CAL[td].at)st.textContent='updated '+new Date(CAL[td].at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const need=!CAL[td]||CAL[td].state!=='ok'||Date.now()-CAL[td].at>120000;if(need)loadDay(td).then(()=>{if(S.tab==='home'&&!(document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName))){const y=scrollY;render();scrollTo(0,y)}});const ss=SESSEV;loadSessEv().then(()=>{if(S.tab==='home'&&SESSEV!==ss&&SESSEV&&SESSEV.state==='ok'){const y=scrollY;render();scrollTo(0,y)}})}
   if(MCP){if(S.tab==='spiritual')loadDay(S.date);if(S.tab==='today'&&(S.seg||'day')==='day'){calStamp();loadDay(S.date)}if(S.tab==='sessions')loadSessEv();if(S.tab==='setup'&&(!CALS||Date.now()-CALSAT>300000)&&!S._calLoading&&(S._calLoading=true))getCals().finally(()=>{S._calLoading=false}).then(()=>{if(S.tab==='setup'){const y=scrollY;render();scrollTo(0,y)}}).catch(e=>{CALSERR=e;const c=$('#calsel');if(c)c.innerHTML='<p class="calnote">'+esc(calErrText(e)[0])+'</p>'})}
   if(S.tab==='logs'){wro?.disconnect();wro=new ResizeObserver(drawWeight);wro.observe($('#wfig'))}
@@ -2249,10 +2584,10 @@ main.addEventListener('click',e=>{
   if(b.dataset.tkopen){S.tkopen=S.tkopen===b.dataset.tkopen?null:b.dataset.tkopen;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.tkflag){const t=findTask(b.dataset.id);if(t){t[b.dataset.tkflag]=!t[b.dataset.tkflag];save('tasks')}const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.tsort){S.tsort=b.dataset.tsort;const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.inb==='org'){const x=inbox().find(y=>y.id===b.dataset.id);if(x)capRun(x.t,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t},'organize');return}
+  if(b.dataset.inb==='org'){const x=inbox().find(y=>y.id===b.dataset.id);if(x&&x.img&&x.img.length){vcOrganize(/^(\d+ photos|Photo)$/.test(x.t)?'':x.t,x.img,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t});return}if(x)capRun(x.t,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t},'organize');return}
   if(b.dataset.inb){const l=inbox(),i=l.findIndex(x=>x.id===b.dataset.id);if(i<0)return;const x=l[i],k=b.dataset.inb,td=today();
     if(k==='today')addTask(x.t,td);else if(k==='task')addTask(x.t,'');
-    else if(k==='journal'){const d=get('day-'+td,dayDef(td));ents(d).push({id:uid(),title:'',text:x.t,cat:'',at:Date.now()});syncText(d);save('day-'+td)}
+    else if(k==='journal'){const d=get('day-'+td,dayDef(td));ents(d).push(Object.assign({id:uid(),title:'',text:x.t,cat:'',at:Date.now()},x.img?{img:x.img}:{}));syncText(d);save('day-'+td)}
     else if(k==='note'){const id=uid();cache['note-'+id]={id,date:td,type:'Other',ref:'',text:x.t,created:Date.now()};save('note-'+id)}
     tomb(get('inbox',{items:[]}),x.id);l.splice(i,1);save('inbox');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.bktog!=null){const d=get('day-'+S.date,dayDef(S.date)),x=planOf(d).blocks[Number(b.dataset.bktog)];x.done=!x.done;save('day-'+S.date);if(/^bible reading/i.test(x.t||'')){bibleDone(S.date,x.done);const y=scrollY;render();scrollTo(0,y)}else if(S.tab==='spiritual'){const y=scrollY;render();scrollTo(0,y)}else paintCal();return}
@@ -2306,6 +2641,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.act==='bset'){bible().pos=Number($('#bsec').value)||0;save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.exact!=null){const st=get('settings',setDef);st.exactTimes=b.dataset.exact==='1';save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.qsave!=null){const i=Number(b.dataset.qsave),bk=get('quotes',{items:[]});bk.items=bk.items||[];const k=bk.items.findIndex(x=>x.t===PQ[i][1]);if(k>=0){tomb(bk,bk.items[k].id);bk.items.splice(k,1)}else bk.items.push({id:'q'+i,i,c:PQ[i][0],t:PQ[i][1],at:Date.now()});save('quotes');const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.qcrm){const bk=get('quotes',{items:[]}),k=(bk.items||[]).findIndex(x=>x.id===b.dataset.qcrm);if(k>=0){tomb(bk,bk.items[k].id);bk.items.splice(k,1);save('quotes')}const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.qshare!=null){qShare(Number(b.dataset.qshare),b);return}
   if(b.dataset.qreflect!=null){const [c,t]=PQ[Number(b.dataset.qreflect)],td=today(),d=get('day-'+td,dayDef(td));ents(d);d.dtitle='Reflecting on: “'+t+'”';syncText(d);save('day-'+td);S.tab='journal';S.date=td;S.jnew=td;S.jopen=null;render();scrollTo(0,0);const ta=main.querySelector('[data-jd=draft]');if(ta){ta.scrollIntoView({block:'center'});ta.focus()}return}
   if(b.dataset.act==='dcolreset'){const st=get('settings',setDef);delete st.dayColors;save('settings');const y=scrollY;render();scrollTo(0,y);return}
@@ -2338,8 +2674,9 @@ main.addEventListener('click',e=>{
   if(b.dataset.capmode){const st=get('settings',setDef);st.capMode=b.dataset.capmode;save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.gosrc){try{capGoSrc(JSON.parse(b.dataset.gosrc))}catch(e){}return}
   if(b.dataset.jorg){const d=get('day-'+S.date,dayDef(S.date)),e=ents(d).find(x=>x.id===b.dataset.jorg);if(e)capRun([e.title,e.text].filter(Boolean).join('.\n'),{kind:'journal',key:'day-'+S.date,id:e.id,date:S.date},'organize');return}
-  if(b.dataset.act==='jsaveorg'||b.dataset.act==='jsave'){const org=b.dataset.act==='jsaveorg';const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim();if(!tx&&!ti){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
-    const eid=uid();ents(d).push({id:eid,title:ti,text:tx,cat:d.dcat||'',at:Date.now()});if(d.dcat)tickOn(d,d.dcat);d.draft='';d.dtitle='';d.dcat='';S.jnew=null;S.jopen=null;S.pi=-1;syncText(d);save('day-'+S.date);render();
+  if(b.dataset.act==='jsaveorg'||b.dataset.act==='jsave'){const org=b.dataset.act==='jsaveorg';const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim(),pics=(d.dimg||[]).slice();if(!tx&&!ti&&!pics.length){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
+    const eid=uid();ents(d).push(Object.assign({id:eid,title:ti,text:tx||(pics.length?'Photo':''),cat:d.dcat||'',at:Date.now()},pics.length?{img:pics}:{}));if(d.dcat)tickOn(d,d.dcat);d.draft='';d.dtitle='';d.dcat='';d.dimg=[];S.jnew=null;S.jopen=null;S.pi=-1;syncText(d);save('day-'+S.date);render();
+    if(pics.length&&org){vcOrganize([ti,tx].filter(Boolean).join('.\n'),pics,{kind:'journal',key:'day-'+S.date,id:eid,date:S.date});return}
     capRun([ti,tx].filter(Boolean).join('.\n'),{kind:'journal',key:'day-'+S.date,id:eid,date:S.date},org?'organize':'save');return}
   if(b.dataset.act==='sessorg'){const c=cache['session-'+S.sess]||{};capRun([c.talked,c.stuck,c.try,c.notes].filter(x=>(x||'').trim()).join('\n'),{kind:'session',key:'session-'+S.sess,id:'session',date:S.sess},'organize');if(!(c.talked||c.stuck||c.try||c.notes))capToast('Write a few session notes first, then tap Organize.',null);return}
   if(false&&b.dataset.act==='jsave'){const d=get('day-'+S.date,dayDef(S.date));const tx=(d.draft||'').trim(),ti=(d.dtitle||'').trim();if(!tx&&!ti){const t=main.querySelector('[data-jd=draft]');t&&t.focus();return}
@@ -2401,15 +2738,17 @@ document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('clic
 function shift(n){if(S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')==='day')){S.date=addDays(S.date,n);S.nform=null}else if(S.seg==='month'){const d=parse(S.month+'-01');d.setMonth(d.getMonth()+n);S.month=ymd(d).slice(0,7);S.mday=''}else if(S.view==='cycle'&&schedule().mode==='cycle'&&schedule().s1)S.cyc=addDays(S.cyc,15*n);else S.week=addDays(S.week,7*n);render()}
 $('#prev').addEventListener('click',()=>shift(-1));
 $('#fab').addEventListener('click',openCap);
-$('#capsheet').addEventListener('click',e=>{if(e.target.id==='capsheet'){CAPS=null;capSheet();return}const b=e.target.closest('[data-cs]');if(!b||!CAPS)return;const it=CAPS.items[Number(b.dataset.i)];
+$('#capsheet').addEventListener('click',e=>{if(e.target.id==='capsheet'){CAPS=null;capSheet();return}const vb=e.target.closest('[data-vcs]');if(vb&&CAPS){const k=Number(vb.dataset.k);if(vb.dataset.vcs==='reread'){const ta=$('#capsheet [data-vcs-text="'+k+'"]');if(ta)vcReread(k,ta.value)}else if(vb.dataset.vcs==='ai')vcAI(k,vb);return}const b=e.target.closest('[data-cs]');if(!b||!CAPS)return;const it=CAPS.items[Number(b.dataset.i)];
   if(b.dataset.cs==='close'){CAPS=null;capSheet();return}
   if(b.dataset.cs==='sel'){it.sel=!it.sel;if(it.sel&&it.dest==='skip')it.dest='task';capSheet();return}
   if(b.dataset.cs==='imp'){it.imp=!it.imp;capSheet();return}
-  if(b.dataset.cs==='add'){const ctx=CAPS.ctx,created=capApply(CAPS.items,ctx),n=CAPS.items.filter(x=>x.sel&&x.dest!=='skip').length;CAPS=null;capSheet();$('#cap').classList.add('hide');const y=scrollY;render();scrollTo(0,y);capToast(`${SPARK}<span>Added ${n} item${n>1?'s':''}</span>`,created,null)}});
+  if(b.dataset.cs==='add'){const ctx=CAPS.ctx,C0=CAPS,created=capApply(CAPS.items,ctx),n=CAPS.items.filter(x=>x.sel&&x.dest!=='skip').length;vcAfterAdd(C0,created);CAPS=null;capSheet();$('#cap').classList.add('hide');const y=scrollY;render();scrollTo(0,y);capToast(`${SPARK}<span>Added ${n} item${n>1?'s':''}</span>`,created,null)}});
 $('#capsheet').addEventListener('input',e=>{const t=e.target;if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];if(t.dataset.cf==='title'){it.title=t.value;asz(t)}});
-$('#capsheet').addEventListener('change',e=>{const t=e.target;if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];it[t.dataset.cf]=t.value;if(t.dataset.cf==='dest'){it.sel=t.value!=='skip';if(['task','top3','plan','spir','cal'].includes(t.value)&&!it.date&&t.value!=='task')it.date=today()}capSheet()});
+$('#capsheet').addEventListener('change',e=>{const t=e.target;if(CAPS&&t.dataset.vcsKeep!=null){CAPS.keep=t.checked;return}if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];it[t.dataset.cf]=t.value;if(t.dataset.cf==='dest'){it.sel=t.value!=='skip';if(['task','top3','plan','spir','cal'].includes(t.value)&&!it.date&&t.value!=='task')it.date=today()}capSheet()});
 $('#cap').addEventListener('click',e=>{if(e.target.id==='cap'){closeCap();return}const b=e.target.closest('[data-cap]');if(!b)return;
-  if(b.dataset.cap==='add'||b.dataset.cap==='org'){const t=$('#cap-t'),v=t.value.trim();if(!v){t.focus();return}const nid=uid();inbox().push({id:nid,t:v,at:Date.now()});save('inbox');capRun(v,{kind:'inbox',key:'inbox',id:nid,date:today(),text:v},b.dataset.cap==='org'?'organize':'save');t.value='';grow(t);$('#cap-m').textContent='Added. Jot another, or tap Done. ('+inbox().length+' in your inbox)';t.focus()}
+  if(b.dataset.cap==='add'||b.dataset.cap==='org'){const t=$('#cap-t'),v=t.value.trim(),pics=VCQ.slice();if(!v&&!pics.length){t.focus();return}const nid=uid();inbox().push(Object.assign({id:nid,t:v||(pics.length>1?pics.length+' photos':'Photo'),at:Date.now()},pics.length?{img:pics}:{}));save('inbox');VCQ=[];vcPaintQ();
+    if(pics.length){if(b.dataset.cap==='org')vcOrganize(v,pics,{kind:'inbox',key:'inbox',id:nid,date:today(),text:v});else{t.value='';grow(t);$('#cap-m').textContent='Saved to your Inbox with '+pics.length+' photo'+(pics.length>1?'s':'')+'. Organize it whenever you like.';const y=scrollY;render();scrollTo(0,y)}return}
+    capRun(v,{kind:'inbox',key:'inbox',id:nid,date:today(),text:v},b.dataset.cap==='org'?'organize':'save');t.value='';grow(t);$('#cap-m').textContent='Added. Jot another, or tap Done. ('+inbox().length+' in your inbox)';t.focus()}
   else closeCap()});
 $('#cap').addEventListener('input',e=>{if(e.target.id==='cap-t')grow(e.target)});
 $('#cap').addEventListener('keydown',e=>{if(e.key==='Escape')closeCap()});
@@ -2420,17 +2759,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&EVDLG)closeSheet()}
 // ---------- backup ----------
 function backupJSON(){const o={};Object.keys(cache).forEach(k=>{o[k]=cache[k]});return JSON.stringify({app:'anchors-journal',v:1,exported:new Date().toISOString(),data:o},null,1)}
 async function exportData(){
-  const name='kl-journal-backup-'+today()+'.json',data=backupJSON();
+  const name='kl-journal-backup-'+today()+'.json',o=JSON.parse(backupJSON());try{o.images=await vcBackupImages()}catch(e){}const data=JSON.stringify(o);
   try{const dl=window.claude?await claude.use('downloads'):null;if(dl){await dl.save({filename:name,data});return}}catch(e){if(e&&e.code)return}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 let pendingImp=null;
-function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
-  if(!keys.length)throw 0;pendingImp={d,keys};$('#impMsg').innerHTML=`<div class="note">Import ${keys.length} entries? Entries with the same date are replaced. <div class="chips" style="margin-top:8px"><button class="btn sm pri" data-act="doimp">Import</button><button class="btn sm" data-act="noimp">Cancel</button></div></div>`}
+function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
+  const imgs=j.images&&typeof j.images==='object'?j.images:null,ni=imgs?Object.keys(imgs).length:0;if(!keys.length)throw 0;pendingImp={d,keys,imgs};$('#impMsg').innerHTML=`<div class="note">Import ${keys.length} entries${ni?' and '+ni+' photo'+(ni>1?'s':''):''}? Entries with the same date are replaced. <div class="chips" style="margin-top:8px"><button class="btn sm pri" data-act="doimp">Import</button><button class="btn sm" data-act="noimp">Cancel</button></div></div>`}
   catch(e){$('#impMsg').innerHTML='<div class="note">That file isn’t an Anchors backup.</div>'}};r.readAsText(file)}
-async function doImport(){if(!pendingImp)return;const {d,keys}=pendingImp;pendingImp=null;$('#impMsg').innerHTML='<div class="note">Importing…</div>';
+async function doImport(){if(!pendingImp)return;const {d,keys,imgs}=pendingImp;pendingImp=null;$('#impMsg').innerHTML='<div class="note">Importing…</div>';
   for(const k of keys){cache[k]=d[k];if(mode==='remote'){try{await remote.doc(k).set(d[k])}catch(e){$('#impMsg').innerHTML='<div class="note">Import stopped part-way — try again.</div>';return}}}
-  if(mode!=='remote'){const t=Date.now();keys.forEach(k=>{if(cache[k]&&typeof cache[k]==='object')cache[k]._u=t;driveQueue(k)});lsSave()}$('#impMsg').innerHTML=`<div class="note">Imported ${keys.length} entries.</div>`}
+  if(mode!=='remote'){const t=Date.now();keys.forEach(k=>{if(cache[k]&&typeof cache[k]==='object')cache[k]._u=t;driveQueue(k)});lsSave()}let ni=0;if(imgs){$('#impMsg').innerHTML='<div class="note">Restoring photos…</div>';ni=await vcRestoreImages(imgs)}$('#impMsg').innerHTML=`<div class="note">Imported ${keys.length} entries${ni?' and '+ni+' photo'+(ni>1?'s':''):''}.</div>`}
 
 // ---------- startup ----------
 function useLocal(msg){mode='local';Object.assign(cache,lsLoad());READY=true;setStatus(msg||(driveOn()?'Checking Google Drive…':'Saved on this device'));render();if(driveOn()){drivePull();setInterval(drivePull,300000)}}
