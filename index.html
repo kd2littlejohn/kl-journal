@@ -67,6 +67,29 @@ details.rgrp .rt{flex:1;font-size:16px;font-weight:600;color:var(--cream)}
 .anch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .anch .tick{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:104px;padding:12px 4px 10px;border:1px solid var(--gline);border-radius:12px;background:rgba(0,0,0,.18);color:var(--cream);font-size:14px;font-weight:600}
 .anch .tick .ai{color:var(--gold)}.anch .tick .ai svg{width:30px;height:30px}
+.anch .tick .pus{font-size:11px;font-weight:500;color:rgba(245,236,216,.72);letter-spacing:.2px;margin-top:-3px}
+.purow{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:10px 14px;border:1px solid var(--gline);border-radius:12px;background:rgba(0,0,0,.18);color:var(--cream);text-align:left;font:inherit}
+.purow .ai{color:var(--gold);display:grid}.purow .ai svg{width:22px;height:22px}.purow .pt{flex:1;min-width:0}.purow b{font-size:14px}.purow small{display:block;font-size:12px;color:rgba(245,236,216,.7)}.purow .pgo{color:var(--gold);font-size:22px;line-height:1}
+.pubar{display:block;height:4px;border-radius:3px;background:rgba(212,175,97,.15);margin-top:6px;overflow:hidden}.pubar i{display:block;height:100%;background:var(--gold);border-radius:3px}
+.puday{display:flex;align-items:center;justify-content:space-between;gap:8px}.puday .ib{color:var(--gold);flex:none}.puday .ib:disabled{opacity:.3}
+.pudl{position:relative;flex:1;text-align:center;min-width:0}.pudl b{display:block;font-family:Lora,Georgia,serif;font-size:18px}.pudl small{color:var(--mute);font-size:12px}
+.pudl input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.puring{display:block;width:min(200px,62vw);height:auto;margin:10px auto 6px}
+.pustat3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center;margin:4px 0 8px}
+.pustat3 div,.pugrid div{border:1px solid var(--gline);border-radius:12px;padding:9px 6px;background:rgba(0,0,0,.14)}
+.pustat3 b,.pugrid b{display:block;font-family:Lora,Georgia,serif;font-size:20px;color:var(--cream)}.pustat3 small,.pugrid small{display:block;font-size:12px;color:var(--mute);line-height:1.3}
+.pumsg{text-align:center;color:var(--mute);font-size:14px;margin:4px 0 12px}
+.puq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.puq button{min-height:52px;border-radius:12px;border:1px solid var(--gline2);background:rgba(212,175,97,.08);color:var(--gold);font-weight:700;font-size:18px;font-family:Lora,Georgia,serif}
+.puq button:active{background:rgba(212,175,97,.2)}
+.pucus{display:grid;grid-template-columns:minmax(0,1fr) 136px auto;gap:8px;margin-top:12px;align-items:end}.pucus .btn{min-height:44px}
+.pumv{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:14px;text-align:center}.pudone{color:var(--gold);font-weight:700}
+.puset{display:grid;grid-template-columns:84px 140px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}.puset:first-of-type{border-top:0}.pusrc{min-width:0;overflow:hidden}
+.pugrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.puseg{margin:0 0 10px}.pufig svg{width:100%;height:auto;display:block}
+.purow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.puset{grid-template-columns:72px minmax(124px,1fr) auto}.puset .btn{padding:0 12px}.pusrc{grid-column:1/-1;order:5}.pusrc:empty{display:none}.pucus{grid-template-columns:minmax(0,1fr) 128px auto}}
+@media(min-width:760px){.pucard .puring{width:220px}}
 .anch .tick .bx{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(245,236,216,.6);display:grid;place-items:center;font-size:12px;color:#1a1408;margin-top:auto}
 .anch .tick[aria-pressed=true]{border-color:var(--gline2);background:rgba(212,175,97,.08)}.anch .tick[aria-pressed=true] .bx{background:var(--gold);border-color:var(--gold)}
 .chd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}.chd small{color:var(--mute);font-size:13px;text-align:right;max-width:58%}
@@ -475,7 +498,7 @@ const lvl=(d,a)=>d?.anchors?.[a]?.l||0;
 function chips(path,opts,val,cls=''){return `<div class="chips">${opts.map(([v,l])=>`<button class="chip ${cls}" data-set="${path}" data-v="${esc(v)}" aria-pressed="${String(val)===String(v)}" ${l&&l!==v?`title="${esc(l)}"`:''}>${esc(v)}</button>`).join('')}</div>`}
 
 function ring(n,t){const r=26,c=2*Math.PI*r,p=t?n/t:0;return `<svg viewBox="0 0 64 64" class="ring" role="img" aria-label="${n} of ${t}"><circle cx="32" cy="32" r="${r}" fill="none" stroke="rgba(214,171,79,.15)" stroke-width="7"/>${p>0?`<circle cx="32" cy="32" r="${r}" fill="none" stroke="#d6ab4f" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 32 32)"/>`:''}<text x="32" y="37" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="15" font-weight="700" fill="currentColor">${t?Math.round(p*100)+'%':'–'}</text></svg>`}
-const HIMG={sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
+const HIMG={move:'home',sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
 const IC=(()=>{const w=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;return{
  book:w('<path d="M12 6.5c-2-1.3-4.7-1.7-8-1.5v13c3.3-.2 6 .2 8 1.5 2-1.3 4.7-1.7 8-1.5V5c-3.3-.2-6 .2-8 1.5z"/><path d="M12 6.5V19.5"/>'),
  dumbbell:w('<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>'),
@@ -524,6 +547,7 @@ function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},t
   if(tab==='spiritual'){const B=bible(),T=track();return heroBox('book',dt===td?'Spiritual':'Spiritual · '+esc(fmtDate(dt,{month:'short',day:'numeric'})),'Read. Meditate.<br>Apply.',`${B.log[dt]!=null?'✓ ':''}${esc(portion(dt)||secLabel(nextIdx()))} · ${readPct(T)}% of the ${T===TRACKS.all?'Bible':'track'}`)}
   if(tab==='sessions'){const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;const na=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=td).sort((a,b)=>a.s<b.s?-1:1)[0]:null;
     return heroBox('talk','Sessions','Reflect. Understand.<br>Grow.',`Private · ${q?q+' question'+(q>1?'s':'')+' ready':'only you can see these'}${na?' · next '+esc(fmtDate(na.date,{weekday:'short',month:'short',day:'numeric'})):''}`)}
+  if(tab==='pushups'){const pd=puDate(),tot=puTotal(pd),tg=puTarget(pd);return heroBox('move',(pd===td?'Movement':'Movement · '+esc(fmtDate(pd,{month:'short',day:'numeric'})))+' · Push-ups','Discipline Through<br>Consistency.',puRest(pd)?'Rest day':tg?`${tot} of ${tg}${tot>=tg?' · target met':' · '+(tg-tot)+' to go'}`:`${tot} logged`,tg?Math.round(Math.min(1,tot/tg)*100):null)}
   if(tab==='setup')return heroBox('gear','More','Make It Yours.','Settings, tools, and everything else to support your journey.');
   return ''}
 // ---------- Daily Perspective: 365 original quotes, one per day, offline ----------
@@ -550,10 +574,117 @@ async function qShare(i,btn){const [c,t]=PQ[i];const text=`“${t}”`;
 let LASTDAY=today();
 function checkDay(){const t=today();if(t===LASTDAY)return;const prev=LASTDAY;LASTDAY=t;if(S.date===prev)S.date=t;const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}
 setInterval(checkDay,60000);document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='qsaved')S.qOpen=e.target.open},true);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkDay()});
+// ================= Push-Up Tracker =================
+// Part of the Movement anchor. Sets live in one synced record ("pushups"); nothing leaves the device except your own Drive backup.
+const PUK='pushups';
+function puDoc(){const d=get(PUK,{items:[],marks:[]});d.items=d.items||[];d.marks=d.marks||[];return d}
+function puSet(){const st=get('settings',setDef);st.pu=Object.assign({on:'',off:'',restWd:[],auto:false},st.pu||{});return st.pu}
+const puDate=()=>S.pudate||today();
+const puHM=at=>{const d=new Date(at);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const puTime=at=>new Date(at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+const puRe=()=>{const y=scrollY;render();scrollTo(0,y)};
+function puSets(date){return puDoc().items.filter(x=>x.date===date).sort((a,b)=>(a.at||0)-(b.at||0))}
+function puTotal(date){return puSets(date).reduce((a,x)=>a+(+x.n||0),0)}
+function puShift(date){return dayType(date)==='S'}
+function puRest(date){const m=puDoc().marks.find(x=>x.id==='r-'+date);if(m)return !!m.v;return (puSet().restWd||[]).includes(parse(date).getDay())}
+function puTarget(date){if(puRest(date))return 0;const s=puSet(),v=parseInt(puShift(date)?s.on:s.off,10);return v>0?v:0}
+// adds a set; returns {x, ticked}
+function puAdd(date,n,tm,extra){n=Math.round(+n);if(!(n>0&&n<=1000))return null;
+  let at=/^\d\d:\d\d$/.test(tm||'')?new Date(date+'T'+tm).getTime():NaN;if(isNaN(at))at=date===today()?Date.now():new Date(date+'T12:00').getTime();
+  const x=Object.assign({id:uid(),date,n,at,added:Date.now()},extra||{});puDoc().items.push(x);save(PUK);return {x,ticked:puAfter(date)}}
+function puRemove(ids){const d=puDoc();(ids||[]).forEach(id=>{const i=d.items.findIndex(x=>x.id===id);if(i>=0){tomb(d,id);d.items.splice(i,1)}});save(PUK)}
+function puRestore(x){const y=Object.assign({},x,{id:uid()});puDoc().items.push(y);save(PUK);return y}
+// optional: tick Movement when the target is reached (only if you turned it on). Never unticks on its own.
+function puAfter(date){const s=puSet(),tg=puTarget(date);if(!(s.auto&&tg&&puTotal(date)>=tg))return false;const d=get('day-'+date,dayDef(date));if(lvl(d,'movement')>0)return false;tickOn(d,'movement');save('day-'+date);return true}
+function puUntick(date){const d=cache['day-'+date];if(d&&d.anchors&&d.anchors.movement){d.anchors.movement.l=0;save('day-'+date)}}
+function puToast(msg,undo){let t=$('#captoast');if(!t){t=document.createElement('div');t.id='captoast';document.body.appendChild(t)}
+  t.innerHTML=`<div class="ctx"><span>${msg}</span></div>${undo?'<button data-ct="undo">Undo</button>':''}<button data-ct="x" aria-label="Dismiss">×</button>`;t.className='show';
+  t.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.ct==='undo'&&undo){undo();puRe()}t.className=''};clearTimeout(t._h);t._h=setTimeout(()=>{t.className=''},8000)}
+function puLog(date,n,tm){const r=puAdd(date,n,tm);if(!r)return;puRe();
+  puToast(`Logged <b>${r.x.n}</b> push-ups${date===today()?'':' · '+esc(fmtDate(date,{month:'short',day:'numeric'}))}${r.ticked?' · Movement done':''}`,()=>{puRemove([r.x.id]);if(r.ticked)puUntick(date)})}
+// Smart Capture → tracker
+function puFromCap(it,src){let sets=(it.title.match(/\(([^)]*)\)/)||[])[1];sets=sets?sets.split('+').map(x=>parseInt(x,10)).filter(n=>n>0):[];
+  const lead=parseInt(it.title,10)||0;if(!sets.length||(lead&&sets.reduce((a,b)=>a+b,0)!==lead))sets=lead?[lead]:(it.sets||[]);
+  const date=it.date&&it.date<=today()?it.date:today(),W={early:'06:00',morning:'09:00',afternoon:'14:00',evening:'19:00',night:'21:00'};
+  const tm=it.time||W[it.win]||(date===today()?'':'12:00');const ids=[];sets.forEach((n,i)=>{const r=puAdd(date,n,tm,{src,cap:it.h,ci:i});if(r)ids.push(r.x.id)});return ids}
+function puStats(dt){const by={},cnt={};let best={n:0,date:''},life=0;puDoc().items.forEach(x=>{const n=+x.n||0;life+=n;by[x.date]=(by[x.date]||0)+n;cnt[x.date]=(cnt[x.date]||0)+1;if(n>best.n)best={n,date:x.date}});
+  let bd={n:0,date:''};Object.entries(by).forEach(([d,n])=>{if(n>bd.n||(n===bd.n&&d<bd.date))bd={n,date:d}});
+  const mon=monday(dt);let wk=0;for(let i=0;i<7;i++)wk+=by[addDays(mon,i)]||0;
+  const mo=Object.entries(by).filter(([d])=>d.slice(0,7)===dt.slice(0,7)).reduce((a,[,n])=>a+n,0),act=Object.values(by).filter(n=>n>0).length;
+  return {by,cnt,life,best,bd,wk,mo,act,avg:act?Math.round(life/act):0}}
+function puRing(n,t){const r=82,c=2*Math.PI*r,p=t?Math.min(1,n/t):0;
+  return `<svg viewBox="0 0 200 200" class="puring" role="img" aria-label="${n} push-ups${t?' of '+t:''}"><circle cx="100" cy="100" r="${r}" fill="none" stroke="rgba(212,175,97,.15)" stroke-width="14"/>${p>0?`<circle cx="100" cy="100" r="${r}" fill="none" stroke="#d4af61" stroke-width="14" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 100 100)"/>`:''}
+    <text x="100" y="${t?104:110}" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="50" font-weight="700" fill="#f5ecd8">${n}</text>
+    <text x="100" y="${t?132:138}" text-anchor="middle" font-size="14" fill="#d4af61" letter-spacing="1">${t?(n>=t?'TARGET MET':'OF '+t):'PUSH-UPS'}</text></svg>`}
+function puChart(dt,by){const m=S.puch||'d',bars=[];
+  if(m==='d'){for(let i=13;i>=0;i--){const d=addDays(dt,-i);bars.push({l:fmtDate(d,{weekday:'narrow'}),v:by[d]||0,t:puTarget(d),k:i===0,tip:fmtDate(d,{weekday:'short',month:'short',day:'numeric'})})}}
+  else if(m==='w'){const mon=monday(dt);for(let i=11;i>=0;i--){const s=addDays(mon,-7*i);let v=0;for(let j=0;j<7;j++)v+=by[addDays(s,j)]||0;bars.push({l:fmtDate(s,{month:'numeric',day:'numeric'}),v,k:i===0,tip:'Week of '+fmtDate(s,{month:'short',day:'numeric'})})}}
+  else{const [y,mo]=dt.split('-').map(Number);for(let i=11;i>=0;i--){const d=new Date(y,mo-1-i,1),key=ymd(d).slice(0,7);let v=0;Object.entries(by).forEach(([k,n])=>{if(k.startsWith(key))v+=n});bars.push({l:d.toLocaleDateString(undefined,{month:'narrow'}),v,k:i===0,tip:d.toLocaleDateString(undefined,{month:'long',year:'numeric'})})}}
+  const W=340,H=160,T=20,B=22,L=4,R=4,mx=Math.max(1,...bars.map(b=>Math.max(b.v,b.t||0))),bw=(W-L-R)/bars.length,ch=H-T-B;
+  const g=bars.map((b,i)=>{const h=b.v?Math.max(2,ch*b.v/mx):0,x=L+i*bw+bw*.17,w=bw*.66,y=T+ch-h,cx=x+w/2;
+    return `<g><title>${esc(b.tip)}: ${b.v}</title>${b.t?`<line x1="${x-1}" x2="${x+w+1}" y1="${(T+ch-ch*b.t/mx).toFixed(1)}" y2="${(T+ch-ch*b.t/mx).toFixed(1)}" stroke="#f5ecd8" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="3 2"/>`:''}
+      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="#d4af61" fill-opacity="${b.k?1:.62}"/>
+      ${b.v?`<text x="${cx.toFixed(1)}" y="${(y-5).toFixed(1)}" text-anchor="middle" font-size="${bars.length>12?9:10}" fill="#f5ecd8" fill-opacity=".85">${b.v}</text>`:''}
+      <text x="${cx.toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="10" fill="#f5ecd8" fill-opacity="${b.k?.95:.55}">${esc(b.l)}</text></g>`}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Push-ups by ${m==='d'?'day':m==='w'?'week':'month'}"><line x1="${L}" x2="${W-R}" y1="${T+ch}" y2="${T+ch}" stroke="rgba(212,175,97,.25)"/>${g}</svg>`}
+function puHomeRow(){const td=today(),tot=puTotal(td),tg=puTarget(td),rest=puRest(td);
+  const sub=rest?(tot?tot+' logged · rest day':'Rest day'):tg?(tot>=tg?`${tot} of ${tg} · target met`:`${tot} of ${tg} · ${tg-tot} to go`):(tot?tot+' logged today':'Tap to log a set');
+  return `<button class="purow" data-go="pushups" aria-label="Push-up tracker: ${esc(sub)}"><span class="ai">${IC.dumbbell}</span><span class="pt"><b>Push-ups</b><small>${esc(sub)}</small>${tg?`<span class="pubar"><i style="width:${Math.min(100,Math.round(tot/tg*100))}%"></i></span>`:''}</span><span class="pgo">›</span></button>`}
+function vPushups(){const dt=puDate(),td=today(),sets=puSets(dt),tot=sets.reduce((a,x)=>a+(+x.n||0),0),tg=puTarget(dt),rest=puRest(dt),st=puSet(),sh=puShift(dt),St=puStats(dt);
+  const mv=lvl(cache['day-'+dt],'movement')>0,big=sets.reduce((a,x)=>Math.max(a,+x.n||0),0),now=new Date();
+  const tmDef=dt===td?pad(now.getHours())+':'+pad(now.getMinutes()):'12:00',dd=x=>x?esc(fmtDate(x,{month:'short',day:'numeric',year:x.slice(0,4)===td.slice(0,4)?undefined:'numeric'})):'';
+  const msg=rest?'Rest day. Recovery is part of the training.':!tg?'No target today. Anything you log still counts.':tot>=tg?'Target met. Well done.':tot?'Every set counts. Come back whenever you’re ready.':'Start whenever it fits your day.';
+  const WD=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const main1=`<div class="card pucard">
+    <div class="puday"><button class="ib" data-pu="prev" aria-label="Previous day">‹</button>
+      <label class="pudl"><b>${dt===td?'Today':esc(fmtDate(dt,{weekday:'long'}))}</b><small>${esc(fmtDate(dt,{month:'long',day:'numeric',year:'numeric'}))} · ${rest?'Rest day':sh?'On shift':'Off shift'}</small><input type="date" data-puf="date" value="${dt}" max="${td}" aria-label="Choose a day"></label>
+      <button class="ib" data-pu="next" aria-label="Next day" ${dt>=td?'disabled':''}>›</button></div>
+    ${puRing(tot,tg)}
+    <div class="pustat3"><div><b>${tot}</b><small>Completed</small></div><div><b>${tg||'—'}</b><small>${rest?'Rest day':'Target'}</small></div><div><b>${tg?Math.max(0,tg-tot):sets.length}</b><small>${tg?'Remaining':'Sets'}</small></div></div>
+    <p class="pumsg">${msg}</p>
+    <div class="puq" role="group" aria-label="Quick log">${[5,10,20,25].map(n=>`<button data-pu="add" data-n="${n}">+${n}</button>`).join('')}</div>
+    <div class="pucus"><label><span class="lbl">Custom reps</span><input id="pu-n" type="number" inputmode="numeric" min="1" max="1000" placeholder="e.g. 15" data-puf="custom"></label><label><span class="lbl">Time</span><input id="pu-tm" type="time" value="${tmDef}"></label><button class="btn pri" data-pu="custom">Log</button></div>
+    ${dt!==td?`<button class="lnkg" data-pu="today" style="margin-top:10px">Back to today</button>`:''}
+    <div class="pumv">${mv?`<span class="pudone">✓</span> Movement anchor is done${dt===td?' today':''}.`:tg&&tot>=tg?`<button class="btn sm pri" data-pu="move">Mark Movement done</button>`:`<span class="muted">Any exercise counts for Movement. Push-ups are optional.</span>`}</div></div>`;
+  const list=`<div class="card"><div class="chd"><h2>Sets${dt===td?' today':''}</h2><small>${sets.length} set${sets.length===1?'':'s'}${big?' · largest '+big:''}</small></div>
+    ${sets.length?sets.map(x=>`<div class="puset"><input type="number" inputmode="numeric" min="1" max="1000" value="${+x.n}" data-puf="n" data-id="${esc(x.id)}" aria-label="Reps"><input type="time" value="${puHM(x.at)}" data-puf="tm" data-id="${esc(x.id)}" aria-label="Time"><span class="pusrc">${x.src?capSrcLink(x.src):''}</span><button class="btn sm" data-pu="del" data-id="${esc(x.id)}" aria-label="Delete set of ${+x.n}">Delete</button></div>`).join(''):'<p class="empty">No sets logged yet. Tap +5, +10, +20 or +25 when you do some.</p>'}</div>`;
+  const stats=`<div class="pugrid">
+    <div><b>${tot}</b><small>${dt===td?'Today':'This day'}</small></div><div><b>${sets.length}</b><small>Sets</small></div><div><b>${big||'—'}</b><small>Largest set</small></div>
+    <div><b>${St.wk}</b><small>This week</small></div><div><b>${St.mo}</b><small>${esc(parse(dt).toLocaleDateString(undefined,{month:'long'}))}</small></div><div><b>${St.life}</b><small>Lifetime</small></div>
+    <div><b>${St.avg||'—'}</b><small>Daily average<br>${St.act} active day${St.act===1?'':'s'}</small></div><div><b>${St.best.n||'—'}</b><small>Best set${St.best.n?'<br>'+dd(St.best.date):''}</small></div><div><b>${St.bd.n||'—'}</b><small>Best day${St.bd.n?'<br>'+dd(St.bd.date):''}</small></div></div>`;
+  const chart=`<div class="seg3 puseg" role="group" aria-label="Chart range">${[['d','14 days'],['w','12 weeks'],['m','12 months']].map(([k,l])=>`<button data-pu="ch" data-v="${k}" aria-pressed="${(S.puch||'d')===k}">${l}</button>`).join('')}</div><div class="pufig">${puChart(dt,St.by)}</div>${(S.puch||'d')==='d'?'<p class="calnote" style="margin:4px 0 0">Dashed line = that day’s target.</p>':''}`;
+  const sets2=`<div class="purow2"><label><span class="lbl">On-shift target</span><input type="number" inputmode="numeric" min="0" max="2000" placeholder="None" value="${esc(st.on)}" data-puf="on"></label><label><span class="lbl">Off-shift target</span><input type="number" inputmode="numeric" min="0" max="2000" placeholder="None" value="${esc(st.off)}" data-puf="off"></label></div>
+    <p class="calnote">On-shift days come from your schedule in More. Leave a target blank for no target.</p>
+    <span class="lbl" style="display:block;margin-top:10px">Weekly rest days</span><div class="chips">${WD.map((w,i)=>`<button class="chip" data-pu="rw" data-w="${i}" aria-pressed="${(st.restWd||[]).includes(i)}">${w}</button>`).join('')}</div>
+    <div class="chips" style="margin-top:10px"><button class="chip" data-pu="rest" aria-pressed="${rest}">${rest?'✓ ':''}${esc(dt===td?'Today':fmtDate(dt,{month:'short',day:'numeric'}))} is a rest day</button></div>
+    <div class="chips" style="margin-top:10px"><button class="chip" data-pu="auto" aria-pressed="${!!st.auto}">${st.auto?'✓ ':''}Mark Movement done when I meet my target</button></div>
+    <p class="calnote">Targets only change when you change them. Missed days aren’t counted against you.</p>`;
+  return main1+list+rc('pu-stats',IC.glance,'Statistics',`${St.wk} this week · ${St.life} lifetime`,stats,true)+rc('pu-chart',IC.week,'Progress',S.puch==='m'?'Last 12 months':S.puch==='w'?'Last 12 weeks':'Last 14 days',chart,true)+rc('pu-set',IC.gear||IC.glance,'Targets & rest days',tg?`Target today: ${tg}`:rest?'Rest day':'No target today',sets2,false)}
+function puClick(b){const a=b.dataset.pu,dt=puDate(),td=today();
+  if(a==='add'){puLog(dt,+b.dataset.n,dt===td?'':($('#pu-tm')||{}).value);return}
+  if(a==='custom'){const n=parseInt(($('#pu-n')||{}).value,10),tm=($('#pu-tm')||{}).value;if(!(n>0&&n<=1000)){const i=$('#pu-n');if(i){i.focus();i.placeholder='1–1000'}return}
+    const nowTm=pad(new Date().getHours())+':'+pad(new Date().getMinutes());puLog(dt,n,dt===td&&tm===nowTm?'':tm);return}
+  if(a==='del'){const x=puDoc().items.find(y=>y.id===b.dataset.id);if(!x)return;puRemove([x.id]);puRe();puToast(`Deleted a set of <b>${x.n}</b>`,()=>puRestore(x));return}
+  if(a==='prev'){S.pudate=addDays(dt,-1);puRe();return}
+  if(a==='next'){const n=addDays(dt,1);S.pudate=n>=td?null:n;puRe();return}
+  if(a==='today'){S.pudate=null;puRe();return}
+  if(a==='ch'){S.puch=b.dataset.v;puRe();return}
+  if(a==='move'){const d=get('day-'+dt,dayDef(dt));tickOn(d,'movement');save('day-'+dt);puRe();puToast('Movement anchor marked done',()=>puUntick(dt));return}
+  if(a==='rest'){const doc=puDoc(),id='r-'+dt,v=!puRest(dt);let m=doc.marks.find(x=>x.id===id);if(m){m.v=v;m.at=Date.now()}else doc.marks.push({id,date:dt,v,at:Date.now()});save(PUK);puRe();return}
+  if(a==='rw'){const s=puSet(),w=+b.dataset.w;s.restWd=(s.restWd||[]).includes(w)?s.restWd.filter(x=>x!==w):[...(s.restWd||[]),w].sort();save('settings');puRe();return}
+  if(a==='auto'){const s=puSet();s.auto=!s.auto;save('settings');if(s.auto)puAfter(dt);puRe();return}}
+function puChange(el){const f=el.dataset.puf;
+  if(f==='date'){const v=el.value;if(v&&v<=today()){S.pudate=v===today()?null:v;puRe()}return}
+  if(f==='on'||f==='off'){const s=puSet(),v=parseInt(el.value,10);s[f]=v>0?String(v):'';save('settings');puAfter(puDate());puRe();return}
+  if(f==='n'||f==='tm'){const x=puDoc().items.find(y=>y.id===el.dataset.id);if(!x)return;const was={n:x.n,at:x.at};
+    if(f==='n'){const n=parseInt(el.value,10);if(!(n>0&&n<=1000)){el.value=x.n;return}x.n=n}else{const t=new Date(x.date+'T'+el.value).getTime();if(!el.value||isNaN(t))return;x.at=t}
+    x.edited=Date.now();save(PUK);const ticked=puAfter(x.date);puRe();puToast(f==='n'?`Changed set to <b>${x.n}</b>`:'Changed the time',()=>{const y=puDoc().items.find(z=>z.id===x.id);if(y){y.n=was.n;y.at=was.at;save(PUK)}if(ticked)puUntick(x.date)})}}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='pu-n'){e.preventDefault();const b=document.querySelector('[data-pu=custom]');if(b)puClick(b)}});
+// ================= /Push-Up Tracker =================
 // ================= Smart Capture: From Thought to Action =================
 // Everything here runs on this device. Notes are never sent anywhere.
 const SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>';
-const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',skip:'Don’t add'};
+const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',pushup:'Push-Up Tracker',skip:'Don’t add'};
 const CAPCAT={general:'General',spiritual:'Spiritual',movement:'Movement',journal:'Journal',reset:'Reset'};
 function capMode(){return get('settings',setDef).capMode||'review'}
 function capReg(){const r=get('capture',{items:[]});r.items=r.items||[];return r.items}
@@ -666,6 +797,26 @@ function capCombine(parent,child){const p=capRewrite(parent,'task').replace(/[.]
   return m?cap1(m[1]+' '+c+' '+m[2]):cap1(p+' — '+c)}
 const NOTNAME=new Set('for off on in at to with the a an my our your his her their this that these those each every both all new old next last first second day night morning evening weekend weekday shift home work kitchen bathroom laundry trash yard dishes floors family kids house car before after during when while no not some any more less'.split(' '));
 const isNameFrag=t=>/^[A-Z][a-z]+(?:'s)?\s+[a-z]/.test(t)&&!NOTNAME.has(t.split(/\s+/)[0].toLowerCase().replace(/'s$/,''))&&!startsWithVerb(t)&&t.split(/\s+/).length<=4;
+// ---------- push-ups: completed reps -> tracker, intentions -> plan ----------
+const PU_RE=/\bpush[\s-]?ups?\b|\bpushups?\b/i;
+const PU_FUT=/\b(tomorrow|tonight|later|will|i'?ll|going to|gonna|plan(ning)? (to|on)|need to|have to|want to|should|try to|aim (for|to)|goal|next|remember to|don'?t forget|by (the end|friday|monday|tuesday|wednesday|thursday|saturday|sunday))\b/i;
+const PU_NOT=/\b(didn'?t|did not|skipped|skip|couldn'?t|could not|missed|no push|wasn'?t able|haven'?t|not today)\b/i;
+const PU_NUM={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+function puWords(t){t=t.replace(/\b(a|one) hundred( and)?\s*/g,m=>' 100+ ').replace(/\b(two|three|four|five) hundred( and)?\s*/g,(m,a)=>' '+PU_NUM[a]*100+'+ ');
+  t=t.replace(/\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\s-](one|two|three|four|five|six|seven|eight|nine)\b/g,(m,a,b)=>String(PU_NUM[a]+PU_NUM[b]));
+  t=t.replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b/g,m=>String(PU_NUM[m]));
+  return t.replace(/(\d+)\+\s*(\d+)/g,(m,a,b)=>String(+a+ +b)).replace(/(\d+)\+/g,'$1').replace(/\ba (couple|pair) of\b/g,'2').replace(/\b(a|one) set\b/g,'1 set')}
+function puParse(s){let t=' '+puWords(s.toLowerCase().replace(/push[\s-]?ups?|pushups?/g,' pu '))+' ';const sets=[];
+  t=t.replace(/(\d+)\s*(?:sets?|rounds?)\s*(?:of\s*)?(\d+)/g,(m,a,b)=>{for(let i=0;i<Math.min(+a,30);i++)sets.push(+b);return ' '});
+  t=t.replace(/(\d+)\s*(?:pu\s*)?[x×]\s*(\d+)/g,(m,a,b)=>{let n=+a,r=+b;if(n>r&&r<=10)[n,r]=[r,n];for(let i=0;i<Math.min(n,30);i++)sets.push(r);return ' '});
+  t=t.replace(/(\d+)\s*(?:sets?|rounds?)\b/g,' ');
+  t=t.replace(/\b(?:at|by|around|before|after)\s+\d{1,2}(?::\d\d)?\b/g,' ');
+  t.replace(/(^|[^\d:.])(\d{1,4})(?![\d:]|\s*(?:am|pm|a\.m|p\.m|o'?clock|min|mins|minutes?|hrs?|hours?|mi\b|miles?|k\b|km|lbs?|pounds|sec|secs|seconds|%|st\b|nd\b|rd\b|th\b|days?|weeks?|times? a))/g,(m,p,a)=>{const n=+a;if(n>0&&n<=1000)sets.push(n);return m});
+  return sets}
+function puDetect(s,base){if(!PU_RE.test(s)||PU_NOT.test(s))return null;const dt=capDate(s,base);
+  if(PU_FUT.test(s)||(dt.date&&dt.date>base)||dt.recur)return null;            // future intention -> normal planning
+  if(/^(do|hit|get|try|aim|add|start|finish|knock out|bang out|crank out|work up)\b/i.test(s.trim()))return null; // imperative = a plan, not a record
+  const sets=puParse(s);return sets.length?{kind:'pushup',sets}:null}
 function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
   const mk=(src,title,kind,extra)=>{const dt=capDate(src,base);const it=Object.assign({id:uid(),src,title,kind,dest:'task',cat:capCat(src),group:capGroup(src,kind),date:dt.date,time:dt.time,win:dt.win,imp:PRI_RE.test(src),conf:'high',notes:[],recur:dt.recur,sel:true},extra||{});if(dt.unclear){it.notes.push(dt.unclear);it.conf='medium'}return {it,dt}};
   const route=it=>{const low=it.src.toLowerCase();
@@ -676,6 +827,7 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
     else{it.dest='task';if(it.imp&&it.date===today())it.dest='top3'}
     if(it.recur){it.notes.push('Repeats ('+it.recur+'): added for the next one');it.conf='medium';if(!it.date){const wdm=it.recur.match(new RegExp(WDRE));it.date=wdm?nextWd(base,wdIdx(wdm[0]),true):addDays(base,1)}}};
   const classify=s=>{const low=s.toLowerCase(),isQ=/\?\s*$/.test(s);
+    {const pu=puDetect(s,base);if(pu)return pu}
     if(NEG_RE.test(s)&&!/don'?t forget/i.test(s))return {skip:'not needed'};
     if((ctx.kind==='session'&&(isQ||SESS_RE.test(s)))||(SESS_RE.test(s)&&(isQ||/\b(ask|bring up|talk about|discuss)\b/i.test(s))))return {kind:'question'};
     const verb=startsWithVerb(s),act=ACT_RE.test(s)||verb,research=RESEARCH_RE.test(s);
@@ -697,6 +849,9 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
   capLines(text).forEach(node=>{const sents=splitSent(node.t);
     sents.forEach((s,si)=>{const isLast=si===sents.length-1;const c=classify(s);
       if(c.skip){kept.push({s,why:c.skip});return}
+      if(c.kind==='pushup'){const dt=capDate(s,base);let date=base;if(/\b(yesterday|last night)\b/i.test(s))date=addDays(base,-1);else if(dt.date&&dt.date<base)date=dt.date;
+        const tot=c.sets.reduce((a,b)=>a+b,0),win=/last night/i.test(s)?'evening':(dt.win||'');
+        out.push({id:uid(),src:s,kind:'pushup',dest:'pushup',cat:'movement',group:'Fitness',title:tot+' push-ups'+(c.sets.length>1?' ('+c.sets.join(' + ')+')':''),date,time:dt.time||'',win,imp:false,conf:'high',notes:[c.sets.length>1?c.sets.length+' sets':'1 set','Log as completed'],sets:c.sets,sel:true});return}
       if(c.reflect&&!(isLast&&node.kids.length)){if(ctx.kind==='inbox'||ctx.kind==='dump'){const {it}=mk(s,s,'reflection',{dest:'journal',cat:'journal',group:'Journal',date:'',conf:'medium'});out.push(it)}else kept.push({s,why:'reflection'});return}
       const kids=isLast?node.kids:[];
       // parent with modifier children -> one action per child, parent itself not added
@@ -726,7 +881,7 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
   const refl=out.filter(x=>x.dest==='journal');if(refl.length>1){refl[0].title=refl.map(x=>x.src).join(' ');refl[0].src=refl[0].title;for(let i=1;i<refl.length;i++)out.splice(out.indexOf(refl[i]),1)}
   const reg=capReg(),open=tasks().filter(t=>!t.done);
   out.forEach(it=>{it.h=capHash((ctx.key||'')+'|'+(ctx.id||'')+'|'+capNorm(it.src)+'|'+capNorm(it.title));
-    if(reg.some(r=>r.h===it.h)){it.prev=true;it.sel=false;it.notes.unshift('Already organized from this note')}
+    if(reg.some(r=>r.h===it.h)||(it.dest==='pushup'&&puDoc().items.some(x=>x.cap===it.h))){it.prev=true;it.sel=false;it.notes.unshift(it.dest==='pushup'?'Already logged from this note':'Already organized from this note')}
     if(['task','top3','plan','spir'].includes(it.dest)){const n=capNorm(it.title);const ex=open.find(t=>{const m=capNorm(t.t);return m&&(m===n||(n.length>8&&(m.includes(n)||n.includes(m))))});
       if(ex){it.dup=ex.id;if(it.date&&it.date!==ex.due){it.dest='update';it.notes.push('Already in Tasks — update its date?')}else{it.dest='skip';it.sel=false;it.notes.push('Already in Tasks: “'+ex.t+'”')}}}});
   return {items:out,kept}}
@@ -743,6 +898,7 @@ function capApply(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,k
       const rec={type:'cal',title:it.title,date:dd};created.push(rec);MCP.callTool(GC,'create_event',inp,{cache:false}).then(r=>{rec.gid=(r&&r.payload&&r.payload.id)||'';try{MCP.invalidate(GC,'list_events')}catch(e){}CAL={};RANGE={}}).catch(()=>{rec.failed=true;capToast('Couldn’t add “'+it.title+'” to Google Calendar. It wasn’t saved there.',null)})}
     else if(it.dest==='question'){const q=get('sessq',{items:[]});q.items=q.items||[];const x={id:uid(),t:it.title,done:false,src:srcRef};q.items.push(x);save('sessq');created.push({type:'q',id:x.id})}
     else if(it.dest==='journal'){const dd=ctx.date||td,day=get('day-'+dd,dayDef(dd));ents(day).push({id:uid(),title:'',text:it.title,cat:'',at:Date.now(),src:srcRef});syncText(day);save('day-'+dd);created.push({type:'entry',key:'day-'+dd,id:ents(day)[ents(day).length-1].id})}
+    else if(it.dest==='pushup'){const ids=puFromCap(it,srcRef);if(ids.length)created.push({type:'pu',ids,date:it.date})}
     else if(it.dest==='idea'){const st=get('settings',setDef);const line='• '+it.title;st.notes=(st.notes?st.notes.replace(/\s*$/,'')+'\n':'')+line;save('settings');created.push({type:'idea',line})}
     const r={id:uid(),h:it.h,at:Date.now(),dest:it.dest,title:it.title,src:srcRef};capReg().push(r);created.push({type:'reg',id:r.id})});
   save('capture');return created}
@@ -753,12 +909,13 @@ function capUndo(created){(created||[]).forEach(c=>{
   else if(c.type==='q'){const q=get('sessq',{items:[]});const i=q.items.findIndex(x=>x.id===c.id);if(i>=0){tomb(q,c.id);q.items.splice(i,1);save('sessq')}}
   else if(c.type==='entry'){const d=cache[c.key];if(d){const es=ents(d),i=es.findIndex(e=>e.id===c.id);if(i>=0){tomb(d,c.id);es.splice(i,1);syncText(d);save(c.key)}}}
   else if(c.type==='idea'){const st=get('settings',setDef);st.notes=(st.notes||'').split('\n').filter((l,i,a)=>!(l===c.line&&a.lastIndexOf(c.line)===i)).join('\n');save('settings')}
+  else if(c.type==='pu'){puRemove(c.ids)}
   else if(c.type==='cal'){capToast('“'+c.title+'” was added to Google Calendar. Remove it there if you don’t want it.',null)}
   else if(c.type==='reg'){const r=get('capture',{items:[]}),i=r.items.findIndex(x=>x.id===c.id);if(i>=0){tomb(r,c.id);r.items.splice(i,1);save('capture')}}})}
 
 // ---------- entry points ----------
 let CAPS=null;
-const CAPKIND={list:'List',project:'Project',task:'Task',subtask:'Subtask',routine:'Routine',research:'Research',objective:'Objective',proposed:'Proposed',question:'Session question',goal:'Personal goal',idea:'Idea',uncertain:'Uncertain',appt:'Appointment',reflection:'Reflection'};
+const CAPKIND={pushup:'Completed exercise',list:'List',project:'Project',task:'Task',subtask:'Subtask',routine:'Routine',research:'Research',objective:'Objective',proposed:'Proposed',question:'Session question',goal:'Personal goal',idea:'Idea',uncertain:'Uncertain',appt:'Appointment',reflection:'Reflection'};
 function capOrder(items){const order=[],seen=new Map();items.forEach((it,i)=>{const g=it.group||'General';if(!seen.has(g)){seen.set(g,[]);order.push(g)}seen.get(g).push({it,i})});const out=[];order.forEach(g=>seen.get(g).forEach((x,k)=>out.push(Object.assign({head:k===0?g:''},x))));return out}
 function capRun(text,ctx,trigger){if(!(text||'').trim())return;const res=capAnalyze(text,ctx);const mode=capMode();
   const useful=res.items.filter(x=>!x.prev&&x.dest!=='skip');
@@ -775,7 +932,7 @@ function capToast(html,created,review){let t=$('#captoast');if(!t){t=document.cr
   clearTimeout(t._h);t._h=setTimeout(()=>{t.className=''},9000)}
 function capSheet(){const sh=$('#capsheet');if(!CAPS){sh.classList.add('hide');return}const {items,kept}=CAPS,n=items.filter(x=>x.sel&&x.dest!=='skip').length;
   const destOpts=it=>Object.entries(CAPDEST).filter(([k])=>(k!=='update'||it.dup)&&(k!=='cal'||MCP)).map(([k,l])=>`<option value="${k}" ${it.dest===k?'selected':''}>${l}</option>`).join('');
-  const needsDate=d=>['task','top3','plan','spir','cal','update'].includes(d);
+  const needsDate=d=>['task','top3','plan','spir','cal','update','pushup'].includes(d);
   sh.innerHTML=`<div class="card capcard" role="dialog" aria-modal="true" aria-labelledby="caph2"><div class="caphd"><span class="spk">${SPARK}</span><div><h2 id="caph2">Smart Capture</h2><small>From Thought to Action</small></div><button class="x" data-cs="close" aria-label="Close">×</button></div>
     ${items.length?`<p class="calnote" style="margin:0 0 6px">Check what to add. Tap any part to change it. Your note stays exactly as you wrote it.</p>`:'<p class="calnote">Nothing to organize here. It reads as a reflection, so it stays in your note as written.</p>'}
     <div class="capitems">${capOrder(items).map(({it,i,head})=>`${head?`<div class="capgrp">${esc(head)}</div>`:''}<div class="capit ${it.sel?'':'off'}"><div class="cr1"><button class="cb" data-cs="sel" data-i="${i}" aria-label="${it.sel?'Don’t add':'Add'}"><span>${it.sel?'✓':''}</span></button><textarea rows="1" class="awrap capt" data-ci="${i}" data-cf="title" aria-label="Title">${esc(it.title)}</textarea><button class="capstar ${it.imp?'on':''}" data-cs="imp" data-i="${i}" aria-label="Priority">★</button></div>
@@ -834,7 +991,7 @@ function vHome(){
 `;
   return `${perspCard()}
   <div class="card"><div class="chd"><h2>My Daily Anchors</h2><small>${aN} of 4</small></div>
-    <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div></div>
+    <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}${k==='movement'&&(puTarget(td)||puTotal(td))?`<span class="pus">${puTotal(td)}${puTarget(td)?' / '+puTarget(td):' push-ups'}</span>`:''}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div>${puHomeRow()}</div>
   <div class="card"><div class="chd"><h2>Today’s Top 3</h2><button class="lnkg" data-go="today">Plan today</button></div>${top3Home(d)}</div>
   <button class="gbtn" data-go="journal" data-new="1">${IC.pen}Write a Quick Entry</button>
   ${inboxCard()}
@@ -1488,7 +1645,7 @@ function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTime
 // Item-level merge so the same page edited on two devices keeps both sets of changes.
 const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
 const ikey=x=>x&&(x.id||('t:'+(x.t||'')));
-function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];return[]}
+function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups')return['items','marks'];return[]}
 function mergeDoc(key,a,b){if(!a||a._del===true)return b;if(!b||b._del===true)return a;
   const lists=mergeLists(key);if(!lists.length)return (Number(a._u)||0)>=(Number(b._u)||0)?a:b;
   const [nw,ol]=(Number(a._u)||0)>=(Number(b._u)||0)?[a,b]:[b,a];
@@ -1838,7 +1995,7 @@ function vSetup(){
 
 // ---------- render ----------
 function render(){
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===(S.tab==='brs'?'spiritual':S.tab)?'page':'false'));if(S.tab==='brs')requestAnimationFrame(()=>document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px'));
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===(S.tab==='brs'?'spiritual':S.tab==='pushups'?'home':S.tab)?'page':'false'));if(S.tab==='brs')requestAnimationFrame(()=>document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px'));
   const pn=S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')!=='tasks');$('#prev').classList.toggle('hide',!pn);$('#next').classList.toggle('hide',!pn);
   if(heroFor()){$('#title').textContent='KL Journal';$('#sub').textContent=fmtDate((S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')==='day'))?S.date:today(),{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
   else if(S.tab==='journal'){$('#title').textContent='Journal';$('#sub').textContent=fmtDate(S.date,{weekday:'long',month:'long',day:'numeric',year:'numeric'})+(S.date===today()?'':' · tap › to come back')}
@@ -1851,7 +2008,7 @@ function render(){
   if(S.tab!=='journal'){S.jopen=null;S.jnew=null}
   const HERO=heroFor();
   document.body.classList.toggle('has-hero',!!HERO);$('#herozone').innerHTML=HERO;heroHdr();
-  $('#main').innerHTML=({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
+  $('#main').innerHTML=({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,pushups:vPushups,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
   document.querySelectorAll('details.more').forEach((x,i)=>{if(wasOpen[i]&&S._lastTab===S.tab+S.date)x.open=true});S._lastTab=S.tab+S.date;
   main.querySelectorAll('textarea.write').forEach(grow);main.querySelectorAll('textarea.awrap').forEach(asz);hydrateAudio();
   if(MCP&&S.tab==='home'){const td=today();const st=$('#hcalst');if(st&&CAL[td]&&CAL[td].at)st.textContent='updated '+new Date(CAL[td].at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const need=!CAL[td]||CAL[td].state!=='ok'||Date.now()-CAL[td].at>120000;if(need)loadDay(td).then(()=>{if(S.tab==='home'&&!(document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName))){const y=scrollY;render();scrollTo(0,y)}});const ss=SESSEV;loadSessEv().then(()=>{if(S.tab==='home'&&SESSEV!==ss&&SESSEV&&SESSEV.state==='ok'){const y=scrollY;render();scrollTo(0,y)}})}
@@ -1864,6 +2021,7 @@ function render(){
 const main=$('#main');
 main.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;if(b.closest('summary'))e.preventDefault();
+  if(b.dataset.pu){puClick(b);return}
   if(b.dataset.act==='rec'){toggleRec();return}
   if(b.dataset.act==='pastetr'){navigator.clipboard.readText().then(t=>{if(t&&t.trim())appendFW(t);else recMsg('Nothing to paste. Copy the transcript first.')},()=>recMsg('Paste was blocked. Press and hold in the writing box, then tap Paste.'));return}
   if(b.dataset.tr2fw!=null){const c=(recDoc().rec||[])[Number(b.dataset.tr2fw)];if(c&&c.tr)appendFW(c.tr);else recMsg('Paste a transcript into the box first.');return}
@@ -1905,7 +2063,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.nedit){const x=cache[b.dataset.nedit];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};render();const t=main.querySelector('[data-nf=text]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
   if(b.dataset.nfilter){S.nfilter=b.dataset.nfilter;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='spadd'){const i=$('#spadd'),v=(i.value||'').trim();if(!v){i.focus();return}const d=get('day-'+S.date,dayDef(S.date));planOf(d).blocks.push({id:uid(),win:'any',tm:'',dur:30,t:v,done:false,spir:true});save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.go){const g=b.dataset.go;S.date=today();if(g==='tasks'){S.tab='today';S.seg='tasks'}else if(g==='today'){S.tab='today';S.seg='day'}else S.tab=g;if(g==='journal'&&b.dataset.new){S.jnew=today();S.jopen=null}render();scrollTo(0,0);if(b.dataset.new){const t=main.querySelector('[data-jd=draft]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
+  if(b.dataset.go){const g=b.dataset.go;S.date=today();if(g==='tasks'){S.tab='today';S.seg='tasks'}else if(g==='today'){S.tab='today';S.seg='day'}else S.tab=g;if(g==='pushups')S.pudate=null;if(g==='journal'&&b.dataset.new){S.jnew=today();S.jopen=null}render();scrollTo(0,0);if(b.dataset.new){const t=main.querySelector('[data-jd=draft]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
   if(b.dataset.act==='fabcap'){openCap();return}
   if(b.dataset.act==='brs'){S.tab='brs';render();scrollTo(0,0);return}
   if(b.dataset.act==='brsback'){S.tab='spiritual';render();scrollTo(0,0);return}
@@ -2026,7 +2184,7 @@ main.addEventListener('input',e=>{
   else if(t.dataset.gc){const st=get('settings',setDef);setP(st,t.dataset.gc,t.checked);save('settings')}
   else if(t.id==='filter'){S.filter=t.value;const pos=t.selectionStart;render();const f=$('#filter');f.focus();f.setSelectionRange(pos,pos)}
 });
-main.addEventListener('change',e=>{if(e.target.dataset.dcol){const st=get('settings',setDef);st.dayColors=Object.assign({},st.dayColors||{},{[e.target.dataset.dcol]:e.target.value});save('settings');return}if(e.target.id==='shcal'||e.target.id==='shword'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),e.target.id==='shcal'?{cal:e.target.value}:{word:e.target.value.trim()});save('settings');SHIFTS=null;RANGE={};CAL={};loadShifts(true);const y=scrollY;render();scrollTo(0,y);return}if(e.target.dataset.brsd!=null){const B=bible(),i=Number(e.target.dataset.brsd);if(e.target.value){const old=B.read[i];B.read[i]=e.target.value;if(old&&B.log[old]===i&&old!==e.target.value&&B.log[e.target.value]==null){delete B.log[old];B.log[e.target.value]=i}save('settings')}return}if(e.target.id==='tkfile'&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>{let items=[];try{items=parseTakeout(JSON.parse(fr.result))}catch(err){}S.impOpen=true;if(!items.length){render();$('#tkmsg').textContent='That file doesn’t look like a Google Tasks export (Tasks.json).';return}const open=items.filter(x=>!x.done),r=importList(open);render();$('#tkmsg').textContent=`Imported ${r.n} open task${r.n===1?'':'s'}${r.skip?` · skipped ${r.skip} already in your list`:''}${items.length>open.length?` · left out ${items.length-open.length} completed`:''}.`};fr.readAsText(e.target.files[0]);return}if(e.target.dataset.tkd){const x=findTask(e.target.dataset.tkd);if(x){x.due=e.target.value;save('tasks');const y=scrollY;render();scrollTo(0,y)}return}if(e.target.id==='s1'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),{s1:e.target.value});save('settings');S.cyc=cycStart(today());const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='addcal'){const st=get('settings',setDef);st.addCal=e.target.value;save('settings')}if(e.target.dataset.bf==='tm'||e.target.dataset.bf==='win'){const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='kwsetup'){setKeys(e.target.value.split(','))}if(e.target.id==='imp')readImport(e.target.files[0]);if(e.target.id==='s-date'&&e.target.value){S.sess=e.target.value;render()}if(e.target.id==='recfile'&&e.target.files[0]){const fl=e.target.files[0];storeClip(fl,fl.name)}});
+main.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.puf&&e.target.dataset.puf!=='custom'){puChange(e.target);return}if(e.target.dataset.dcol){const st=get('settings',setDef);st.dayColors=Object.assign({},st.dayColors||{},{[e.target.dataset.dcol]:e.target.value});save('settings');return}if(e.target.id==='shcal'||e.target.id==='shword'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),e.target.id==='shcal'?{cal:e.target.value}:{word:e.target.value.trim()});save('settings');SHIFTS=null;RANGE={};CAL={};loadShifts(true);const y=scrollY;render();scrollTo(0,y);return}if(e.target.dataset.brsd!=null){const B=bible(),i=Number(e.target.dataset.brsd);if(e.target.value){const old=B.read[i];B.read[i]=e.target.value;if(old&&B.log[old]===i&&old!==e.target.value&&B.log[e.target.value]==null){delete B.log[old];B.log[e.target.value]=i}save('settings')}return}if(e.target.id==='tkfile'&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>{let items=[];try{items=parseTakeout(JSON.parse(fr.result))}catch(err){}S.impOpen=true;if(!items.length){render();$('#tkmsg').textContent='That file doesn’t look like a Google Tasks export (Tasks.json).';return}const open=items.filter(x=>!x.done),r=importList(open);render();$('#tkmsg').textContent=`Imported ${r.n} open task${r.n===1?'':'s'}${r.skip?` · skipped ${r.skip} already in your list`:''}${items.length>open.length?` · left out ${items.length-open.length} completed`:''}.`};fr.readAsText(e.target.files[0]);return}if(e.target.dataset.tkd){const x=findTask(e.target.dataset.tkd);if(x){x.due=e.target.value;save('tasks');const y=scrollY;render();scrollTo(0,y)}return}if(e.target.id==='s1'){const st=get('settings',setDef);st.sched=Object.assign({},schedule(),{s1:e.target.value});save('settings');S.cyc=cycStart(today());const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='addcal'){const st=get('settings',setDef);st.addCal=e.target.value;save('settings')}if(e.target.dataset.bf==='tm'||e.target.dataset.bf==='win'){const y=scrollY;render();scrollTo(0,y)}if(e.target.id==='kwsetup'){setKeys(e.target.value.split(','))}if(e.target.id==='imp')readImport(e.target.files[0]);if(e.target.id==='s-date'&&e.target.value){S.sess=e.target.value;render()}if(e.target.id==='recfile'&&e.target.files[0]){const fl=e.target.files[0];storeClip(fl,fl.name)}});
 main.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('awrap')){e.preventDefault();e.target.blur();return}if(e.key==='Enter'&&e.target.id==='spadd'){e.preventDefault();main.querySelector('[data-act=spadd]').click()}if(e.key==='Enter'&&e.target.id==='tknew'){e.preventDefault();main.querySelector('[data-act=tkadd]').click()}if(e.key==='Enter'&&e.target.id==='tknew2'){e.preventDefault();main.querySelector('[data-act=tkadd2]').click()}if(e.target.id==='qnew'&&e.key==='Enter'){e.preventDefault();addQ()}if(e.target.id==='sesskey'&&e.key==='Enter'){e.preventDefault();main.querySelector('[data-act=sesskey]').click()}});
 function asz(t){t.style.height='auto';t.style.height=t.scrollHeight+(t.offsetHeight-t.clientHeight)+'px'}
 function grow(t){t.style.height='auto';if(t.classList.contains('wsm')){t.style.height=Math.max(t.scrollHeight,parseFloat(getComputedStyle(t).lineHeight)*2+8)+'px';return}t.style.height=Math.max(t.scrollHeight,innerHeight*(t.dataset.je?0.3:(t.dataset.jd&&main.querySelector('.jent')?0.35:0.52)))+'px'}
@@ -2059,7 +2217,7 @@ async function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 let pendingImp=null;
-function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
+function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
   if(!keys.length)throw 0;pendingImp={d,keys};$('#impMsg').innerHTML=`<div class="note">Import ${keys.length} entries? Entries with the same date are replaced. <div class="chips" style="margin-top:8px"><button class="btn sm pri" data-act="doimp">Import</button><button class="btn sm" data-act="noimp">Cancel</button></div></div>`}
   catch(e){$('#impMsg').innerHTML='<div class="note">That file isn’t an Anchors backup.</div>'}};r.readAsText(file)}
 async function doImport(){if(!pendingImp)return;const {d,keys}=pendingImp;pendingImp=null;$('#impMsg').innerHTML='<div class="note">Importing…</div>';
