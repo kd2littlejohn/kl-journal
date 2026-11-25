@@ -1069,7 +1069,7 @@ async function vcOrganize(note,ids,ctx){ids=(ids||[]).filter(Boolean);let items=
       catch(e){ocr={text:'',conf:0,lines:[],err:e&&e.message||'ocr'}}}
     const dup=vcFindDup(m.ph,id),ictx={kind:'image',key:'img',id:m.ph,img:id,date:ctx.date||today()};
     const u=ocr.err?{type:'photo',label:'Photo',items:[],uncertain:[],text:''}:vcUnderstand(ocr,ictx,note);
-    if(ocr.err)u.items.push({id:uid(),src:'(photo)',kind:'photo',dest:'journal',cat:'journal',group:'Journal',title:(note||'').trim()||'Photo',date:'',time:'',win:'',imp:false,conf:'low',notes:['Couldn’t read text '+(navigator.onLine?'here':'offline yet — the text reader downloads once when you’re online')+'. You can keep it as a photo'],sel:false,img:id});
+    if(ocr.err)u.items.push({id:uid(),src:'(photo)',kind:'photo',dest:'journal',cat:'journal',group:'Journal',title:(note||'').trim()||'Photo',date:'',time:'',win:'',imp:false,conf:'low',notes:[window.claude?'Photo reading works in the home-screen app (kd2littlejohn.github.io/kl-journal). Here you can keep it as a photo':'Couldn’t read text '+(navigator.onLine?'here':'offline yet — the text reader downloads once when you’re online')+'. You can keep it as a photo'],sel:false,img:id});
     m.type=u.type;save('images');
     if(dup){u.items.forEach(it=>{it.prev=true;it.sel=false;it.notes.unshift('Already processed from this photo on '+fmtDate(ymd(new Date(dup.proc.at)),{month:'short',day:'numeric'}))})}
     imgs.push({id,type:u.type,label:u.label,conf:ocr.conf||0,text:u.text,unc:u.uncertain,dup:dup?dup.id:'',err:ocr.err||'',by:'device'});items=items.concat(u.items)}
