@@ -1,5 +1,5 @@
 // KL Journal service worker: makes the app open offline.
-const CACHE = 'kl-journal-v46';
+const CACHE = 'kl-journal-v47';
 const OCR = 'kl-ocr-v1';   // text reader files (~7 MB): kept across app updates
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/favicon.png',
@@ -36,3 +36,20 @@ self.addEventListener('fetch', e => {
     })));
   }
 });
+
+// Mindful Reset: a push from your Apps Script means a check-in is due. Pushes carry no content.
+const MR_LINES = ['Return to what matters. Time for a quick check-in.', 'How are you doing? Water, a stretch, a breath?',
+  'Still on track, or chasing perfection? Take a moment.', 'You’ve been at it a while. A short reset can help.',
+  'Is this still the best use of your time?', 'A quick pause for your body and mind.'];
+self.addEventListener('push', e => {
+  const body = MR_LINES[Math.floor(Math.random() * MR_LINES.length)];
+  e.waitUntil(self.registration.showNotification('Mindful Reset', { body, tag: 'kl-mreset', icon: './icons/icon-192.png', badge: './icons/icon-192.png', data: { url: './?mr=checkin' } }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) { if ('focus' in c) { c.postMessage({ type: 'mr-checkin' }); return c.focus(); } }
+    return self.clients.openWindow('./?mr=checkin');
+  }));
+});
+

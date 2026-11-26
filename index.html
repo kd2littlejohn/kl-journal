@@ -1219,7 +1219,7 @@ function mrDoc(){const d=get(MRK,{log:[],sessions:[],resumes:[]});d.log=d.log||[
 // device-only runtime state (timestamps), so a reload or app switch restores timers precisely
 let MRST=null;
 function mrState(){if(MRST)return MRST;try{MRST=JSON.parse(localStorage.getItem(MRLS)||'{}')}catch(e){MRST={}}return MRST}
-function mrSave(){try{localStorage.setItem(MRLS,JSON.stringify(MRST||{}))}catch(e){}}
+function mrSave(){try{localStorage.setItem(MRLS,JSON.stringify(MRST||{}))}catch(e){}try{if(typeof mrPushSync==='function'&&mrPush().on)mrPushSync()}catch(e){}}
 const mrNow=()=>Date.now();
 const mrHM=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
 function mrDurTxt(ms){const m=Math.max(0,Math.round(ms/60000));return m<60?m+' min':Math.floor(m/60)+' hr'+(m%60?' '+m%60+' min':'')}
@@ -1391,7 +1391,7 @@ function vMreset(){const s=mrState(),m=mrSet(),d=mrDoc(),f=s.focus,res=mrResumeL
       <div class="chips" style="margin-top:10px"><button class="btn sm pri" data-mrb="resume" data-id="${esc(res.id)}">Resume</button>${res.next?`<button class="btn sm" data-mrb="capnext" data-id="${esc(res.id)}"><span class="orgbtn">${SPARK}Add next step</span></button>`:''}<button class="btn sm" data-mrb="dismiss" data-id="${esc(res.id)}">Clear</button></div></div>`:'';
   const status=`<div class="card"><div class="chd"><h2>Check-ins</h2><small>${m.on?esc(mvKNameSafe())+' · every '+mrInterval()+' min':'Off'}</small></div><p data-mrclock="next">${esc(mrNextTxt())}</p>
     <div class="chips">${s.pauseUntil&&mrNow()<s.pauseUntil?`<button class="chip" data-mrb="unpause">Resume reminders</button>`:[['60','Pause 1 hr'],['120','Pause 2 hr'],['day','Pause rest of today']].map(([k,l])=>`<button class="chip" data-mrb="pause" data-n="${k}">${l}</button>`).join('')}<button class="chip" data-mrb="prefs">Preferences</button></div>
-    <p class="calnote">Check-ins appear while KL Journal is open. <button class="lnkg" data-mrb="why">What about when it’s closed?</button></p>${S.mrwhy?mrWhyCard():''}</div>`;
+    <p class="calnote">${mrPush().on?'Check-ins also arrive as notifications when the app is closed.':'Check-ins appear while KL Journal is open.'} <button class="lnkg" data-mrb="why">What about when it’s closed?</button></p>${S.mrwhy?mrWhyCard():''}</div>`;
   const sess=d.sessions.slice().sort((a,b)=>b.start-a.start).slice(0,10),logT=d.log.filter(x=>x.kind==='reset').slice(-12).reverse();
   const hist=`${sess.length?`<p class="lbl" style="margin:0 0 6px">Focus sessions</p>${sess.map(x=>`<div class="mrhist"><b>${esc(x.intent||'Focus session')}</b><small>${esc(fmtDate(x.date,{weekday:'short',month:'short',day:'numeric'}))} · ${mrDurTxt(x.end-x.start)}</small>${x.prog?`<span>Done: ${esc(x.prog)}</span>`:''}${x.unf?`<span>Unfinished: ${esc(x.unf)}</span>`:''}${x.next?`<span>Next: ${esc(x.next)}</span>`:''}</div>`).join('')}`:''}
     ${logT.length?`<p class="lbl" style="margin:12px 0 6px">Resets</p>${logT.map(x=>`<div class="mrhist"><b>${esc((MRACT[x.act]||['Reset'])[0])}</b><small>${esc(fmtDate(x.date,{weekday:'short',month:'short',day:'numeric'}))} · ${x.actual} min</small></div>`).join('')}`:''}${!sess.length&&!logT.length?'<p class="empty">Your resets and focus sessions will show here. No streaks, no scores.</p>':''}`;
@@ -1400,7 +1400,7 @@ function mrWhyCard(){const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navi
   return `<div class="mrwhy"><p><b>Works now</b> — check-ins, guided timers and focus sessions whenever KL Journal is on screen. If you leave and come back, timers resume exactly; missed check-ins are skipped, never stacked.</p>
     <p><b>${ios?'On this iPhone/iPad':'On this device'}</b> — ${ios?'iOS pauses web apps in the background and when the screen locks, so KL Journal can’t schedule reminders by itself while it’s closed.':hasN?'If you allow notifications, a check-in can appear while this browser tab is open in the background. It stops when the browser or tab is closed.':'This browser doesn’t support notifications.'}</p>
     ${hasN&&perm!=='granted'&&perm!=='denied'?`<button class="btn sm" data-mrb="notif">Allow notifications</button>`:hasN?`<p class="calnote">Notifications: ${perm==='granted'?'allowed':'blocked in your browser settings'}.</p>`:''}
-    <p><b>Reminders while closed (not built yet)</b> — would need Web Push: the home-screen app subscribes to push, and a small always-on server sends each reminder at the right time (it would know your reminder schedule, not your journal). Google Apps Script can’t do this reliably. Ask if you want it set up.</p></div>`}
+    <p><b>Reminders while closed</b> — ${mrPush().on?'On for this device.':'Turn on under More › Mindful Reset › “When KL Journal is closed”. Your Apps Script sends a notification at each check-in time; it only knows the times.'}${ios?' Requires opening KL Journal from the Home Screen icon (iOS 16.4 or later).':''}</p></div>`}
 function mrBannerClick(b){const a=b.dataset.mrb,s=mrState();
   if(a==='open'){mrRestore();return}
   if(a==='reset'){MRUI={view:'note',cat:mrNextCat().id,after:'pick',src:'focus'};const c=MRCAT.find(x=>x.id===MRUI.cat);MRUI.act=c.act;MRUI.dur=c.min;mrPaint();return}
@@ -1427,14 +1427,76 @@ function mrPrefsCard(){const m=mrSet(),canVib=!!navigator.vibrate;
     <span class="lbl" style="display:block;margin-top:12px">Check-in topics (they take turns)</span><div class="chips">${MRCAT.map(c=>`<button class="chip" data-mrp="cat" data-k="${c.id}" aria-pressed="${m.cats.includes(c.id)}">${m.cats.includes(c.id)?'✓ ':''}${esc(c.name)}</button>`).join('')}</div>
     <span class="lbl" style="display:block;margin-top:12px">Sound</span><div class="chips">${[['none','Silent'],['chime','Soft chime']].concat(canVib?[['vibrate','Vibrate']]:[]).map(([k,l])=>`<button class="chip" data-mrp="sound" data-k="${k}" aria-pressed="${m.sound===k}">${l}</button>`).join('')}</div>
     <div class="chips" style="margin-top:10px"><button class="chip" data-mrp="anchor" aria-pressed="${!!m.anchor}">${m.anchor?'✓ ':''}Offer to count resets toward the Reset anchor</button></div>
-    <p class="calnote">Reminders appear while KL Journal is open. iPhone and iPad pause web apps in the background, so they can’t remind you while it’s closed. Open Mindful Reset › “What about when it’s closed?” for details.</p>`;
+    ${mrPushSection()}`;
   return rc('mo-mreset',IC.reset,'Mindful Reset',m.on?'Every '+mrInterval()+' min · '+(m.ambient?'sessions + active use':'during focus sessions'):'Off',body,false)}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mrp]');if(!b||b.tagName==='SELECT'||b.tagName==='INPUT')return;const m=mrSet(),a=b.dataset.mrp,k=b.dataset.k;
   if(a==='on')m.on=!m.on;else if(a==='ambient'){m.ambient=!m.ambient;const s=mrState();s.amb=0;s.ambAt=mrNow();mrSave()}else if(a==='day')m.days[k].on=!m.days[k].on;else if(a==='cat'){m.cats=m.cats.includes(k)?m.cats.filter(x=>x!==k):m.cats.concat(k)}else if(a==='sound')m.sound=k;else if(a==='anchor')m.anchor=!m.anchor;else return;
-  save('settings');const y=scrollY;render();scrollTo(0,y)},true);
+  save('settings');mrPushSync();const y=scrollY;render();scrollTo(0,y)},true);
 document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.mrp)return;const m=mrSet(),a=t.dataset.mrp;
   if(a==='int'){m.days[t.dataset.k].int=+t.value;const s=mrState();if(s.focus)s.nextDue=Math.min(s.nextDue||Infinity,mrNow()+(+t.value)*60000);mrSave()}
-  else if(a==='a0'||a==='a1'){if(t.value)m.active[a==='a0'?0:1]=t.value}else if(a==='q0'||a==='q1')m.quiet[a==='q0'?0:1]=t.value||'';else return;save('settings')},true);
+  else if(a==='a0'||a==='a1'){if(t.value)m.active[a==='a0'?0:1]=t.value}else if(a==='q0'||a==='q1')m.quiet[a==='q0'?0:1]=t.value||'';else return;save('settings');mrPushSync()},true);
+// ---------- reminders while KL Journal is closed (Web Push through your own Apps Script) ----------
+const MRPK='kl-mr-push';
+function mrPush(){try{return Object.assign({on:false,always:false,dev:''},JSON.parse(localStorage.getItem(MRPK)||'{}'))}catch(e){return {on:false,always:false,dev:''}}}
+function mrPushSave(p){try{localStorage.setItem(MRPK,JSON.stringify(p))}catch(e){}}
+function mrDev(){const p=mrPush();if(!p.dev){p.dev='d'+uid();mrPushSave(p)}return p.dev}
+const mrStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+const mrIOS=()=>/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const mrPushCan=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window&&!window.claude;
+function mrKindAt(t){try{return mvKind(ymd(new Date(t)))}catch(e){return 'O'}}
+function mrQuietAt(t){const m=mrSet(),s=mrState();if(!m.on)return true;if(s.pauseUntil&&t<s.pauseUntil)return true;if(!(m.days[mrKindAt(t)]||{}).on)return true;
+  if(!mrInWin(m.active[0],m.active[1],t))return true;if(m.quiet[0]&&m.quiet[1]&&mrInWin(m.quiet[0],m.quiet[1],t))return true;return false}
+const mrIntAt=t=>((mrSet().days[mrKindAt(t)]||{}).int||60)*60000;
+// upcoming check-in times for the next 7 days (times only — nothing about your journal)
+function mrPlan(){const p=mrPush(),s=mrState(),now=mrNow(),m=mrSet(),out=[];if(!m.on)return out;
+  if(s.focus){let t=s.nextDue&&s.nextDue>now?s.nextDue:now+mrIntAt(now);const end=s.focus.start+12*3600000;let g=0;while(t<end&&out.length<80&&g++<400){if(!mrQuietAt(t))out.push(t);t+=mrIntAt(t)}}
+  if(p.always){for(let i=0;i<7;i++){const d=addDays(today(),i),a=m.active[0],b=m.active[1];let t=new Date(d+'T'+a).getTime();const end=b>a?new Date(d+'T'+b).getTime():new Date(addDays(d,1)+'T'+b).getTime();t+=mrIntAt(t);let g=0;
+    while(t<end&&g++<100){if(t>now+60000&&!mrQuietAt(t))out.push(t);t+=mrIntAt(t)}}}
+  out.sort((x,y)=>x-y);const res=[];out.forEach(t=>{if(!res.length||t-res[res.length-1]>=10*60000)res.push(t)});return res.slice(0,300)}
+let MRPT=null;
+function mrPushBody(op,args){return JSON.stringify(Object.assign({key:BRIDGE.key,op},args))}
+function mrPushSync(seen){const p=mrPush();if(!p.on||!bridgeOn())return;const vis=seen==null?document.visibilityState==='visible':seen,times=mrPlan(),sig=JSON.stringify(times)+vis;
+  if(!vis){// leaving the app: send right away; a beacon survives the app being suspended
+    let ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(BRIDGE.url,new Blob([mrPushBody('pushplan',{device:mrDev(),times,seen:false})],{type:'text/plain;charset=utf-8'}))}catch(e){}
+    if(!ok)bcall('pushplan',{device:mrDev(),times,seen:false}).catch(()=>{});p.sig=sig;p.last=mrNow();mrPushSave(p);return}
+  if(p.sig===sig&&mrNow()-(p.last||0)<15*60000)return;
+  clearTimeout(MRPT);MRPT=setTimeout(()=>{bcall('pushplan',{device:mrDev(),times,seen:true}).then(()=>{const q=mrPush();q.sig=sig;q.last=mrNow();q.err='';mrPushSave(q)})
+    .catch(e=>{const q=mrPush();q.err=e&&(e.message||e.code)||'offline';if(q.err==='not_subscribed')q.on=false;mrPushSave(q)})},800)}
+setInterval(()=>{const p=mrPush();if(p.on&&bridgeOn()&&document.visibilityState==='visible')bcall('pushbeat',{device:mrDev()}).catch(()=>{})},4*60000);
+document.addEventListener('visibilitychange',()=>{const p=mrPush();if(!p.on||!bridgeOn())return;if(document.visibilityState==='visible'){bcall('pushbeat',{device:mrDev()}).catch(()=>{});mrPushSync(true)}else mrPushSync(false)});
+addEventListener('pagehide',()=>{if(mrPush().on&&bridgeOn())mrPushSync(false)});
+function b64uBytes(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const r=atob(s),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+function mrPushMsg(t){const el=$('#mrpushmsg');if(el)el.textContent=t}
+const MRPERR={unknown_op:'Update your Apps Script first: paste the new Code.gs, run setupPush once, then deploy a new version.',needs_setup:'In Apps Script, choose setupPush in the function menu and click Run once to allow the timer, then try again.',
+  bridge_offline:'Couldn’t reach your Google connection. Check your internet and try again.',bridge_key:'Your Google connection key doesn’t match. Check More › Google connection.'};
+async function mrPushOn(){if(!mrPushCan()){mrPushMsg(mrIOS()&&!mrStandalone()?'Open KL Journal from its Home Screen icon to turn this on.':'This browser can’t receive push notifications.');return}
+  if(!bridgeOn()){mrPushMsg('Connect Google first (More › Google connection).');return}
+  let perm;try{perm=await Notification.requestPermission()}catch(e){perm='denied'}   // must be the first step after your tap
+  if(perm!=='granted'){mrPushMsg(mrIOS()?'Notifications are off for KL Journal. Turn them on in iPhone Settings › Notifications › KL Journal, then try again.':'Notifications are blocked for this site in your browser settings.');return}
+  mrPushMsg('Setting up…');
+  try{const reg=await navigator.serviceWorker.ready,k=await bcall('pushkey',{});if(!k||!k.key)throw {message:'unknown_op'};
+    let sub=await reg.pushManager.getSubscription();
+    if(sub){const cur=sub.options&&sub.options.applicationServerKey;const same=cur&&btoa(String.fromCharCode(...new Uint8Array(cur))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')===k.key;if(!same){try{await sub.unsubscribe()}catch(e){}sub=null}}
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uBytes(k.key)});
+    const j=sub.toJSON?sub.toJSON():sub;await bcall('pushsub',{device:mrDev(),sub:{endpoint:j.endpoint},name:mrIOS()?(/iPad|Macintosh/.test(navigator.userAgent)?'iPad':'iPhone'):'Browser'});
+    const p=mrPush();p.on=true;p.sig='';p.err='';mrPushSave(p);mrPushSync(true);const y=scrollY;render();scrollTo(0,y);mrPushMsg('On. You’ll get check-ins on this device even when KL Journal is closed.')}
+  catch(e){const c=e&&(e.message||e.code)||'';mrPushMsg(MRPERR[c]||('Couldn’t turn it on ('+(c||'unknown error')+').'))}}
+async function mrPushOff(){const p=mrPush();p.on=false;mrPushSave(p);try{await bcall('pushunsub',{device:mrDev()})}catch(e){}try{const reg=await navigator.serviceWorker.getRegistration();const s=reg&&await reg.pushManager.getSubscription();if(s)await s.unsubscribe()}catch(e){}const y=scrollY;render();scrollTo(0,y)}
+async function mrPushTest(){mrPushMsg('Sending a test…');try{await bcall('pushtest',{device:mrDev()});mrPushMsg('Sent. It should arrive in a few seconds'+(document.visibilityState==='visible'?' (it may show even while the app is open).':'.'))}catch(e){const c=e&&(e.message||e.code)||'';mrPushMsg(c==='expired'||c==='not_subscribed'?'This device’s subscription ended. Turn it off and on again.':MRPERR[c]||'Couldn’t send ('+c+').')}}
+function mrPushSection(){const p=mrPush(),can=mrPushCan();let body;
+  if(window.claude)body='<p class="calnote">Available in the home-screen app (kd2littlejohn.github.io/kl-journal), not in this preview.</p>';
+  else if(!can)body=`<p class="calnote">${mrIOS()&&!mrStandalone()?'Open KL Journal from its Home Screen icon to turn this on (iPhone or iPad with iOS 16.4 or later).':'This browser can’t receive push notifications.'}</p>`;
+  else if(!bridgeOn())body='<p class="calnote">Needs your Google connection (More › Google connection).</p>';
+  else if(p.on)body=`<p class="calnote" style="margin-top:0">On for this device · during focus sessions${p.always?' and throughout your active hours':''}.${p.err?' Last update didn’t go through ('+esc(p.err)+'); it will retry.':p.last?' Updated '+esc(mrHM(p.last))+'.':''}</p>
+    <div class="chips"><button class="chip" data-mrpush="always" aria-pressed="${!!p.always}">${p.always?'✓ ':''}Also remind me throughout my active hours</button><button class="chip" data-mrpush="test">Send a test</button><button class="chip" data-mrpush="off">Turn off</button></div>`;
+  else body=`<p class="calnote" style="margin-top:0">Check-ins arrive as notifications even when the app is closed or the phone is locked. Your Google Apps Script sends them; it only knows the times, never your journal.</p>
+    <button class="btn pri" data-mrpush="on">Turn on reminders when the app is closed</button><p class="calnote">First time: update your Apps Script with the new Code.gs and run setupPush once (steps are at the top of the script).</p>`;
+  return `<h3 class="vh3">When KL Journal is closed</h3>${body}<p class="calnote" id="mrpushmsg" aria-live="polite"></p><p class="calnote">Times can be up to 5 minutes late, and a check-in more than 10 minutes late is skipped. While the app is open, check-ins appear inside it instead.</p>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mrpush]');if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.mrpush;
+  if(a==='on')mrPushOn();else if(a==='off')mrPushOff();else if(a==='test')mrPushTest();else if(a==='always'){const p=mrPush();p.always=!p.always;p.sig='';mrPushSave(p);mrPushSync(true);const y=scrollY;render();scrollTo(0,y)}},true);
+// a tapped notification opens a check-in
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='mr-checkin'&&!MRUI.view)setTimeout(()=>{try{mrPrompt('push')}catch(_){}},300)});
+setTimeout(()=>{try{if(/[?&]mr=checkin\b/.test(location.search)){history.replaceState(null,'',location.pathname+location.hash);if(!MRUI.view)mrPrompt('push')}if(mrPush().on)mrPushSync(true)}catch(e){}},1700);
 // resume anything in progress once the app has started
 setTimeout(()=>{try{if(READY){mrRestore();mrTick()}}catch(e){}},1500);
 // ================= /Mindful Reset =================
