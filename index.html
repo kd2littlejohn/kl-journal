@@ -135,6 +135,28 @@ body.vdrag::after{content:'Drop a photo to capture it';position:fixed;inset:12px
 .mrwhy{margin-top:8px;padding:10px 12px;border:1px solid var(--gline);border-radius:12px;font-size:14px;display:grid;gap:6px}.mrwhy p{margin:0}
 .mrnow button{min-height:64px;line-height:1.15;padding:6px 0}
 .mrdays{display:grid;gap:8px}.mrday{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:8px;align-items:center}.mrday select{width:100%}
+.sttiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}.sttile{display:grid;gap:4px;justify-items:start;text-align:left;padding:14px;border:1px solid var(--gline);border-radius:14px;background:var(--card);color:var(--cream);font:inherit;min-height:104px}
+.sttile .ai{color:var(--gold)}.sttile svg{width:24px;height:24px}.sttile b{font-family:Lora,Georgia,serif;font-size:16px}.sttile small{color:var(--mute);font-size:12px;line-height:1.3}
+@media(min-width:760px){.sttiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.stsearch input{width:100%}.stres{display:grid;gap:2px;margin-top:8px}.sttitle{font-family:Lora,Georgia,serif;font-size:22px;margin:0 0 4px;color:var(--cream)}
+.sttitlein{font-family:Lora,Georgia,serif!important;font-size:22px!important;border:0!important;background:transparent!important;padding:2px 0!important;color:var(--cream)}.stdescin{border:0!important;background:transparent!important;padding:2px 0!important;color:var(--mute)}
+.stq{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}.stq:first-of-type{border-top:0}.stq>span{flex:1;min-width:0;font-size:15px}.stq small{color:var(--mute)}.stans{display:block}.chip.sm{min-height:32px;padding:0 10px}
+.stbadge{display:inline-block;font-style:normal;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--gline);color:var(--mute);margin-right:6px;vertical-align:1px;white-space:nowrap}
+.stbadge.scripture{color:#f5ecd8;border-color:rgba(245,236,216,.45)}.stbadge.pub{color:#c9b38a;border-color:rgba(201,179,138,.5)}.stbadge.fact{color:#a9c1d6;border-color:rgba(169,193,214,.45)}.stbadge.concl{color:#d4af61;border-color:rgba(212,175,97,.6);background:rgba(212,175,97,.08)}.stbadge.sugg{color:#b8a7d9;border-color:rgba(184,167,217,.5);border-style:dashed}
+.stitem{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line)}.stitem>span{flex:1;min-width:0}.stsrc{display:block;color:var(--mute);font-size:12px}.x.sm{width:28px;height:28px;font-size:16px}
+a.stref{color:var(--gold);text-decoration:underline;text-decoration-color:rgba(212,175,97,.45);text-underline-offset:3px}.strefs{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:15px}
+.stdots{display:flex;gap:6px;margin-top:6px}.stdots i{width:22px;height:4px;border-radius:3px;background:rgba(212,175,97,.18)}.stdots i.on{background:var(--gold)}
+.ststep>summary{display:flex;gap:12px;align-items:center;cursor:pointer;list-style:none}.ststep>summary::-webkit-details-marker{display:none}.ststep summary b{display:block;font-family:Lora,Georgia,serif;font-size:17px}.ststep summary small{color:var(--mute);font-size:13px}
+.stn{width:28px;height:28px;border-radius:50%;border:1px solid var(--gline2);display:grid;place-items:center;color:var(--gold);font-weight:700;flex:none}.stok{margin-left:auto;color:var(--gold)}.ststep textarea{margin-top:10px}
+.stana{margin-top:10px;padding:10px 12px;border:1px solid var(--gline);border-radius:12px;background:rgba(0,0,0,.2)}.stpick{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:14px}.stpick .stbadge,.stitem .stbadge{white-space:normal;max-width:100%}.stpick span{min-width:0;overflow-wrap:anywhere}
+.stpick input{width:18px!important;min-height:0;height:18px;margin-top:2px;accent-color:#d4af61;flex:none}
+.sthist{display:grid;gap:3px;padding:9px 0;border-top:1px solid var(--line)}.sthist:first-child{border-top:0}.sthist small{color:var(--mute);font-size:12px}.sthist span{font-size:14px}.sthist em{font-style:normal;color:var(--gold)}
+.vcb2{display:inline-flex;align-items:center;cursor:pointer}
+.stmedwrap{position:fixed;inset:0;z-index:90;background:#0b0a09;overflow:auto;display:grid;place-items:start center;padding:max(24px,env(safe-area-inset-top)) 18px 40px}.stmedwrap.hide,#stmed.hide{display:none}
+.stmedin{width:100%;max-width:620px;display:grid;gap:12px;text-align:center;position:relative;padding-top:20px}.stmx{position:absolute;right:0;top:0}
+.stmref{font-family:Lora,Georgia,serif;font-size:30px;margin:6px 0}.stmref a.stref{text-decoration:none;color:var(--cream)}.stmq{font-family:Lora,Georgia,serif;font-style:italic;font-size:21px;line-height:1.45;margin:4px auto;max-width:28ch;color:var(--cream)}
+.stmmat{margin:0;text-align:left;font-size:15px;color:var(--mute);border-left:3px solid var(--gline2);padding:6px 12px;white-space:pre-wrap}.stmtime{font-family:Lora,Georgia,serif;font-size:56px;color:var(--gold);margin-top:8px}.stmdur{grid-template-columns:repeat(4,minmax(0,1fr))!important}.stmedin .hk{color:var(--gold);letter-spacing:.16em;text-transform:uppercase;font-size:13px;font-weight:600}
+.stmthought{text-align:left;display:grid;gap:4px;margin-top:6px}
 .anch .tick .bx{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(245,236,216,.6);display:grid;place-items:center;font-size:12px;color:#1a1408;margin-top:auto}
 .anch .tick[aria-pressed=true]{border-color:var(--gline2);background:rgba(212,175,97,.08)}.anch .tick[aria-pressed=true] .bx{background:var(--gold);border-color:var(--gold)}
 .chd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}.chd small{color:var(--mute);font-size:13px;text-align:right;max-width:58%}
@@ -549,7 +571,7 @@ const lvl=(d,a)=>d?.anchors?.[a]?.l||0;
 function chips(path,opts,val,cls=''){return `<div class="chips">${opts.map(([v,l])=>`<button class="chip ${cls}" data-set="${path}" data-v="${esc(v)}" aria-pressed="${String(val)===String(v)}" ${l&&l!==v?`title="${esc(l)}"`:''}>${esc(v)}</button>`).join('')}</div>`}
 
 function ring(n,t){const r=26,c=2*Math.PI*r,p=t?n/t:0;return `<svg viewBox="0 0 64 64" class="ring" role="img" aria-label="${n} of ${t}"><circle cx="32" cy="32" r="${r}" fill="none" stroke="rgba(214,171,79,.15)" stroke-width="7"/>${p>0?`<circle cx="32" cy="32" r="${r}" fill="none" stroke="#d6ab4f" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 32 32)"/>`:''}<text x="32" y="37" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="15" font-weight="700" fill="currentColor">${t?Math.round(p*100)+'%':'–'}</text></svg>`}
-const HIMG={reset:'journal',move:'home',sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
+const HIMG={study:'spiritual',reset:'journal',move:'home',sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
 const IC=(()=>{const w=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;return{
  book:w('<path d="M12 6.5c-2-1.3-4.7-1.7-8-1.5v13c3.3-.2 6 .2 8 1.5 2-1.3 4.7-1.7 8-1.5V5c-3.3-.2-6 .2-8 1.5z"/><path d="M12 6.5V19.5"/>'),
  dumbbell:w('<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>'),
@@ -598,6 +620,7 @@ function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},t
   if(tab==='spiritual'){const B=bible(),T=track();return heroBox('book',dt===td?'Spiritual':'Spiritual · '+esc(fmtDate(dt,{month:'short',day:'numeric'})),'Read. Meditate.<br>Apply.',`${B.log[dt]!=null?'✓ ':''}${esc(portion(dt)||secLabel(nextIdx()))} · ${readPct(T)}% of the ${T===TRACKS.all?'Bible':'track'}`)}
   if(tab==='sessions'){const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;const na=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=td).sort((a,b)=>a.s<b.s?-1:1)[0]:null;
     return heroBox('talk','Sessions','Reflect. Understand.<br>Grow.',`Private · ${q?q+' question'+(q>1?'s':'')+' ready':'only you can see these'}${na?' · next '+esc(fmtDate(na.date,{weekday:'short',month:'short',day:'numeric'})):''}`)}
+  if(tab==='study'){const c=stCur(),v=ST.view,t=v==='topic'&&stTopic(ST.topic),ss=v==='sess'&&stSess(ST.sess);return heroBox('study',ss?'Personal Study · Session':t?'Personal Study · Topic':v==='library'?'Personal Study · Research Library':v==='journal'?'Personal Study · Study Journal':'Spiritual · Personal Study',ss?esc((stTopic(ss.topic)||{title:'Study session'}).title):t?esc(t.title):'Read. Research.<br>Meditate. Apply.',ss?'Write what helps. Skip what doesn’t.':t?esc(t.desc||''):c?'Current topic: '+esc(c.title):'Build a personal library of what you learn about Jehovah.',null)}
   if(tab==='mreset'){const s=mrState(),f=s.focus;return heroBox('reset','Reset · Mindful Reset','Return to<br>what matters.',f?'Focusing'+(f.intent?' on '+esc(f.intent):'')+' · '+mrDurTxt(mrNow()-f.start):'Move, breathe, refuel, then choose your next step on purpose.',null)}
   if(tab==='move'){const ac=S.mvAct&&mvAct(S.mvAct);if(!ac){const f=mvFeat(),g=f?mvGoal(f.id,td):0,v=f?mvDay(f.id,td):0;return heroBox('move','Movement · Today','Build. Strengthen.<br>Repeat.','Consistency is the foundation of strength.',g?Math.round(Math.min(1,v/g)*100):null)}
     const pd=mvDate(),v=mvDay(ac.id,pd),g=mvGoal(ac.id,pd);return heroBox('move',(pd===td?'Movement':'Movement · '+esc(fmtDate(pd,{month:'short',day:'numeric'})))+' · '+esc(ac.name),ac.tag||'Build. Strengthen.<br>Repeat.',mvKind(pd)==='X'?'Rest day':g?`${esc(mvFmt(ac,v,true))} of ${esc(mvFmt(ac,g))}${v>=g?' · goal met':' · '+esc(mvFmt(ac,g-v,true))+' to go'}`:`${esc(mvFmt(ac,v))} ${pd===td?'today':'this day'}`,g?Math.round(Math.min(1,v/g)*100):null)}
@@ -1506,10 +1529,209 @@ setTimeout(()=>{try{if(/[?&]mr=checkin\b/.test(location.search)){history.replace
 // resume anything in progress once the app has started
 setTimeout(()=>{try{if(READY){mrRestore();mrTick()}}catch(e){}},1500);
 // ================= /Mindful Reset =================
+// ================= Personal Study =================
+// Read. Research. Meditate. Apply.
+// Topics, guided study sessions, focused meditation, a growing research library and an open-questions tracker.
+// Source integrity: KL Journal never writes scripture or publication text. It links references to the
+// New World Translation on jw.org / JW Library, keeps citations exactly as you entered them, and labels
+// every item as Scripture, Publication, Fact & date, My conclusion, or Suggested (by KL Journal).
+const STK='study';
+const SBOOKS=[['Genesis','ge|gen'],['Exodus','ex|exo|exod'],['Leviticus','le|lev'],['Numbers','nu|num'],['Deuteronomy','de|deut|dt'],['Joshua','jos|josh'],['Judges','jg|judg'],['Ruth','ru'],['1 Samuel','1sa|1 sam|1sam'],['2 Samuel','2sa|2 sam|2sam'],['1 Kings','1ki|1 kings|1kgs'],['2 Kings','2ki|2 kings|2kgs'],['1 Chronicles','1ch|1 chron|1chr'],['2 Chronicles','2ch|2 chron|2chr'],['Ezra','ezr'],['Nehemiah','ne|neh'],['Esther','es|esth'],['Job','job'],['Psalms','ps|psalm|psa'],['Proverbs','pr|prov'],['Ecclesiastes','ec|eccl'],['Song of Solomon','ca|song|song of songs'],['Isaiah','isa'],['Jeremiah','jer'],['Lamentations','la|lam'],['Ezekiel','eze|ezek'],['Daniel','da|dan'],['Hosea','ho|hos'],['Joel','joe'],['Amos','am'],['Obadiah','ob|obad'],['Jonah','jon'],['Micah','mic'],['Nahum','na|nah'],['Habakkuk','hab'],['Zephaniah','zep|zeph'],['Haggai','hag'],['Zechariah','zec|zech'],['Malachi','mal'],
+  ['Matthew','mt|matt'],['Mark','mr|mk'],['Luke','lu|lk'],['John','joh|jn'],['Acts','ac'],['Romans','ro|rom'],['1 Corinthians','1co|1 cor'],['2 Corinthians','2co|2 cor'],['Galatians','ga|gal'],['Ephesians','eph'],['Philippians','php|phil'],['Colossians','col'],['1 Thessalonians','1th|1 thess'],['2 Thessalonians','2th|2 thess'],['1 Timothy','1ti|1 tim'],['2 Timothy','2ti|2 tim'],['Titus','tit'],['Philemon','phm|philem'],['Hebrews','heb'],['James','jas'],['1 Peter','1pe|1 pet'],['2 Peter','2pe|2 pet'],['1 John','1jo|1 jn'],['2 John','2jo|2 jn'],['3 John','3jo|3 jn'],['Jude','jude'],['Revelation','re|rev']];
+const SBMAP=(()=>{const m={};SBOOKS.forEach(([n,ab],i)=>{[n,...ab.split('|')].forEach(x=>{m[x.toLowerCase().replace(/\s+/g,' ')]=i+1});if(/^\d /.test(n))m[n.replace(' ','').toLowerCase()]=i+1;if(n==='Psalms')m['psalm']=19});return m})();
+const SBRE=(()=>{const keys=Object.keys(SBMAP).sort((a,b)=>b.length-a.length).map(k=>k.replace(/ /g,'\\s?').replace(/\./g,''));return new RegExp('\\b('+keys.join('|')+')\\.?\\s+(\\d{1,3})(?::(\\d{1,3})(?:\\s?[-–]\\s?(\\d{1,3}))?)?','gi')})();
+// find scripture references, including "Genesis 12:1-3; 22:18" (same book continues after ; or ,)
+function stRefs(text){const out=[],seen=new Set();let m;const t=String(text||'');SBRE.lastIndex=0;
+  while((m=SBRE.exec(t))){const b=SBMAP[m[1].toLowerCase().replace(/\s+/g,' ').replace(/\.$/,'')]||SBMAP[m[1].toLowerCase().replace(/\s+/g,'')];if(!b)continue;const push=(c,v1,v2,raw)=>{const r=stRef(b,+c,v1?+v1:0,v2?+v2:0);r.raw=raw||'';if(!seen.has(r.label)){seen.add(r.label);out.push(r)}};
+    push(m[2],m[3],m[4],m[0]);let rest=t.slice(SBRE.lastIndex),mm;const cont=/^\s*[;,]\s*(\d{1,3}):(\d{1,3})(?:\s?[-–]\s?(\d{1,3}))?/;
+    while((mm=rest.match(cont))){push(mm[1],mm[2],mm[3]);SBRE.lastIndex+=mm[0].length;rest=t.slice(SBRE.lastIndex)}}
+  return out}
+function stRef(b,c,v1,v2){const name=SBOOKS[b-1][0],label=name+' '+c+(v1?':'+v1+(v2&&v2>v1?'-'+v2:''):''),id=n=>String(b)+String(c).padStart(3,'0')+String(n).padStart(3,'0');
+  const bible=v1?id(v1)+(v2&&v2>v1?'-'+id(v2):''):String(b)+String(c).padStart(3,'0');return {b,c,v1,v2,label,url:'https://www.jw.org/finder?wtlocale=E&prefer=lang&bible='+bible+'&pub=nwtsty'}}
+const stLink=r=>`<a class="stref" href="${esc(r.url)}" target="_blank" rel="noopener" title="Open in JW Library / jw.org">${esc(r.label)}</a>`;
+function stLinkify(t){const refs=stRefs(t);let h=esc(t);const done=new Set();refs.forEach(r=>{[r.raw,r.label].filter(Boolean).forEach(x=>{const k=esc(x);if(done.has(k)||!h.includes(k))return;done.add(k);h=h.split(k).join(`<a class="stref" href="${esc(r.url)}" target="_blank" rel="noopener" title="Open in JW Library / jw.org">${k}</a>`)})});return h}
+// publication citations, kept exactly as written (w23.05 p. 12 · it-1 p. 34 · "Insight" ...)
+const STPUB=/\b(?:w|g|ws|wp|km|mwb|it-[12]|si|rs|ia|lfb|bh|bhs|lff|cl|jy|be|kr|dp|ip-[12]|re|sjj|th|od|lvs|nwtsty|bt|ce|gt|my|lr|rr|jr|ws)\s?\d{0,2}(?:\.\d{1,2})?\s?(?:pp?\.\s?\d{1,4}(?:-\d{1,4})?)?(?:\s?par[s]?\.\s?\d{1,3}(?:-\d{1,3})?)?|\bInsight on the Scriptures\b|\bThe Watchtower\b|\bAwake!/g;
+const STQUAL=['love','justice','wisdom','power','loyalty','loyal love','mercy','patience','faithfulness','holiness','humility','generosity','kindness','forgiveness','reliability','compassion','impartiality','reasonableness','goodness','righteousness','sovereignty','purpose'];
+const STKINDS={scripture:['Scripture','Bible reference'],pub:['Publication','From a publication, as you cited it'],fact:['Fact & date','Historical fact or chronology'],concl:['My conclusion','Your own understanding'],sugg:['Suggested','A question from KL Journal for you to think through'],note:['Note','Something you noted']};
+const STSTEPS=[['prep','Preparation','What do I want to understand?'],['read','Reading','What does the material actually say?'],['research','Research','What facts, scriptures or connections have I discovered?'],['meditate','Meditation','Why is this significant? What does it reveal about Jehovah?'],['conclude','Conclusion','What deeper understanding have I gained?'],['apply','Application (optional)','How might this influence my thinking or conduct?'],['further','Further research','What questions remain unanswered?']];
+function stDoc(){const d=get(STK,{topics:[],sessions:[],questions:[],items:[]});['topics','sessions','questions','items'].forEach(k=>d[k]=d[k]||[]);return d}
+const stTopic=id=>stDoc().topics.find(t=>t.id===id);
+const stSess=id=>stDoc().sessions.find(s=>s.id===id);
+function stCur(){const d=stDoc();return d.topics.find(t=>t.id===d.cur&&!t.done)||d.topics.filter(t=>!t.done).sort((a,b)=>(b.at||0)-(a.at||0))[0]||null}
+function stTouch(t){if(t){t.at=Date.now()}}
+// ---------- understanding pasted material / notes (local, no AI) ----------
+function stSentences(t){return String(t||'').replace(/\r/g,'').split(/(?<=[.!?])\s+|\n+/).map(s=>s.trim()).filter(s=>s.length>2)}
+function stAnalyze(text,topic,step){const refs=stRefs(text),pubs=[...new Set((String(text).match(STPUB)||[]).map(x=>x.trim()).filter(x=>/\d|Insight|Watchtower|Awake/.test(x)))];
+  const dates=[...new Set((String(text).match(/\b(?:c\.\s?)?\d{1,4}\s?(?:B\.?\s?C\.?\s?E\.?|C\.?\s?E\.?)(?=\W|$)/g)||[]).map(x=>x.replace(/\s+/g,' ').trim()))];
+  const low=String(text).toLowerCase(),quals=STQUAL.filter(q=>new RegExp('\\b'+q+'\\b').test(low)&&/jehovah|god|his /i.test(text));
+  const sents=stSentences(text),qs=sents.filter(s=>/\?$/.test(s)),facts=sents.filter(s=>!/\?$/.test(s)&&(/\b\d{1,4}\s?(B\.?C\.?E|C\.?E)\b/i.test(s)||/\b(years?|century|centuries|generations?)\b/i.test(s)&&/\d/.test(s)));
+  const concl=['meditate','conclude','apply'].includes(step)?sents.filter(s=>!/\?$/.test(s)&&/\b(shows?|reveals?|teaches|means|helps me|I (see|learned|realize|understand)|this tells|so I|I can)\b/i.test(s)):[];
+  const others=(stDoc().topics||[]).filter(t=>topic&&t.id!==topic.id).filter(t=>{const tr=stTopicRefs(t.id).map(r=>SBOOKS[r.b-1][0]);return refs.some(r=>tr.includes(SBOOKS[r.b-1][0]))||low.includes(t.title.toLowerCase())});
+  const sugg=stSuggest(topic,refs,quals,dates);
+  return {refs,pubs,dates,quals,qs,facts,concl,others,sugg}}
+// suggested questions: invite thinking, never supply conclusions
+function stSuggest(topic,refs,quals,dates){const out=[],T=topic&&topic.title;
+  refs.slice(0,3).forEach(r=>out.push(quals[0]?`What does ${r.label} reveal about Jehovah’s ${quals[0]}?`:`What does ${r.label} reveal about Jehovah?`));
+  if(refs[0])out.push(`Why might Jehovah have had ${refs[0].label} recorded? How does it fit his purpose?`);
+  if(dates.length>1)out.push(`What does the time between ${dates[0]} and ${dates[1]} show about Jehovah’s patience and dependability?`);
+  if(T){out.push(`How does studying ${T} strengthen my trust in Jehovah’s promises?`);out.push(`What about ${T} would I want to explain to someone else, and how?`)}
+  quals.slice(0,2).forEach(q=>out.push(`Where else in the Bible do I see Jehovah’s ${q} shown this way?`));
+  return [...new Set(out)].slice(0,6)}
+function stTopicRefs(tid){const d=stDoc(),out=[],seen=new Set();const add=r=>{if(!seen.has(r.label)){seen.add(r.label);out.push(r)}};
+  d.items.filter(i=>i.topic===tid&&i.kind==='scripture').forEach(i=>stRefs(i.ref||i.text).forEach(add));
+  d.sessions.filter(s=>s.topic===tid).forEach(s=>STSTEPS.forEach(([k])=>stRefs((s.steps||{})[k]).forEach(add)));
+  stNotes().filter(n=>n.topic===tid).forEach(n=>stRefs((n.ref||'')+' '+(n.text||'')).forEach(add));return out}
+function stNotes(){return Object.keys(cache).filter(k=>k.startsWith('note-')).map(k=>cache[k]).filter(Boolean)}
+// ---------- views ----------
+let ST={view:'dash',topic:null,sess:null,q:'',ana:null,anaStep:'',med:null,open:{}};
+function stRow(){const c=stCur(),open=stDoc().questions.filter(q=>!q.done).length;const sub=c?'Studying: '+c.title+(open?' · '+open+' open question'+(open>1?'s':''):''):'Read. Research. Meditate. Apply.';
+  return `<button class="purow" data-go="study" aria-label="Personal Study: ${esc(sub)}"><span class="ai">${IC.book}</span><span class="pt"><b>Personal Study</b><small>${esc(sub)}</small></span><span class="pgo">›</span></button>`}
+function vStudy(){if(ST.view==='topic'&&stTopic(ST.topic))return vStTopic(stTopic(ST.topic));if(ST.view==='sess'&&stSess(ST.sess))return vStSess(stSess(ST.sess));if(ST.view==='library')return vStLibrary();if(ST.view==='journal')return vStJournal();return vStDash()}
+const stBack=(to,lbl)=>`<button class="lnkg mvback" data-st="nav" data-v="${to}">‹ ${lbl}</button>`;
+function vStDash(){const d=stDoc(),c=stCur(),openQ=d.questions.filter(q=>!q.done),recent=d.sessions.slice().sort((a,b)=>(b.at||0)-(a.at||0)).slice(0,4),notes=stNotes();
+  const tiles=[['brs',IC.book,'Bible Reading','Scriptures and observations'],['library',mvI?mvI('<path d="M4 4.5h4v15H4zM10 4.5h4v15h-4zM16.5 5l3.5 1-3.5 13.5-3.5-1z"/>'):IC.list,'Research Library','Topics and discoveries'],['meditate',mvI?mvI('<circle cx="12" cy="6" r="2.2"/><path d="M6 20c1.5-2.5 3.5-4 6-4s4.5 1.5 6 4M8 13c1.2-1.4 2.5-2 4-2s2.8.6 4 2"/>'):IC.reset,'Meditation','Focused spiritual reflection'],['journal',IC.pen,'Study Journal','Conclusions and insights']];
+  return `<div class="card stsearch"><input type="search" data-stf="q" placeholder="Search your studies, notes and questions" value="${esc(ST.q)}" aria-label="Search studies">${ST.q.trim()?stSearch(ST.q):''}</div>
+  <div class="sttiles">${tiles.map(([k,ic,t,s])=>`<button class="sttile" data-st="tile" data-k="${k}"><span class="ai">${ic}</span><b>${t}</b><small>${s}</small></button>`).join('')}</div>
+  ${c?`<div class="card stcur"><div class="chd"><h2>Current research topic</h2><button class="lnkg" data-st="topic" data-id="${esc(c.id)}">Open ›</button></div><p class="sttitle">${esc(c.title)}</p>${c.desc?`<p class="calnote" style="margin:0">${stLinkify(c.desc)}</p>`:''}
+      <p class="calnote">${d.sessions.filter(s=>s.topic===c.id).length} sessions · ${stTopicRefs(c.id).length} scriptures · ${d.questions.filter(q=>q.topic===c.id&&!q.done).length} open questions</p>
+      <div class="chips"><button class="btn pri" data-st="newsess" data-id="${esc(c.id)}">New study session</button>${(()=>{const dr=d.sessions.filter(s=>s.topic===c.id&&!s.done).sort((a,b)=>b.at-a.at)[0];return dr?`<button class="btn" data-st="sess" data-id="${esc(dr.id)}">Continue: ${esc(fmtDate(dr.date,{month:'short',day:'numeric'}))}</button>`:''})()}</div></div>`
+    :`<div class="card"><div class="chd"><h2>Start a research topic</h2></div><p class="calnote" style="margin-top:0">A topic gathers your sessions, scriptures, discoveries and questions in one place, for example “Abrahamic Covenant”.</p>${stNewTopicForm()}</div>`}
+  <div class="card"><div class="chd"><h2>Open questions</h2><small>${openQ.length||'None yet'}</small></div>${openQ.length?openQ.slice(0,6).map(stQRow).join(''):'<p class="empty">Questions you want to research later collect here.</p>'}${openQ.length>6?`<button class="lnkg" data-st="nav" data-v="library">See all ${openQ.length}</button>`:''}</div>
+  ${recent.length?`<div class="card"><div class="chd"><h2>Recent sessions</h2></div>${recent.map(stSessRow).join('')}</div>`:''}
+  ${notes.length?rc('st-notes',IC.pen,'Study notes',notes.length+' note'+(notes.length>1?'s':'')+' from Spiritual',notes.slice().sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,12).map(n=>`<div class="sthist"><b>${n.ref?stLinkify(n.ref)+' · ':''}${esc(n.type||'Note')}</b><small>${esc(fmtDate(n.date||today(),{month:'short',day:'numeric',year:'numeric'}))}${n.topic&&stTopic(n.topic)?' · '+esc(stTopic(n.topic).title):''}</small><span>${stLinkify((n.text||'').slice(0,220))}</span></div>`).join(''),false):''}`}
+function stNewTopicForm(){return `<div class="mvform"><label><span class="lbl">Topic</span><input data-stf="ntitle" maxlength="80" placeholder="e.g. Abrahamic Covenant"></label><label><span class="lbl">What it covers (optional)</span><input data-stf="ndesc" maxlength="200" placeholder="Chronology, promised offspring, Jehovah’s purpose"></label><button class="btn pri" data-st="addtopic">Create topic</button></div>`}
+function stQRow(q){const t=q.topic&&stTopic(q.topic);return `<div class="stq"><button class="chip sm" data-st="qdone" data-id="${esc(q.id)}" aria-pressed="${!!q.done}" aria-label="${q.done?'Answered':'Mark answered'}">${q.done?'✓':'○'}</button><span>${stLinkify(q.text)}${t?`<small> · ${esc(t.title)}</small>`:''}${q.src==='sugg'?' <em class="stbadge sugg">Suggested</em>':''}${q.answer?`<small class="stans">Answer: ${stLinkify(q.answer)}</small>`:''}</span></div>`}
+function stSessRow(s){const t=stTopic(s.topic),done=STSTEPS.filter(([k])=>((s.steps||{})[k]||'').trim()).length;return `<button class="mvact" data-st="sess" data-id="${esc(s.id)}"><span class="ai">${IC.pen}</span><span class="pt"><b>${esc(t?t.title:'Study session')}</b><small>${esc(fmtDate(s.date,{weekday:'short',month:'short',day:'numeric'}))} · ${done}/7 steps${s.done?' · finished':''}</small></span><span class="pgo">›</span></button>`}
+function stItemRow(i,del){return `<div class="stitem"><em class="stbadge ${i.kind}" title="${esc(STKINDS[i.kind][1])}">${STKINDS[i.kind][0]}</em><span>${i.kind==='scripture'?stRefs(i.ref||i.text).map(stLink).join(', ')||esc(i.text):stLinkify(i.text)}${i.src?`<small class="stsrc">Source: ${esc(i.src)}</small>`:''}</span>${del?`<button class="x sm" data-st="idel" data-id="${esc(i.id)}" aria-label="Remove">×</button>`:''}</div>`}
+function vStLibrary(){const d=stDoc(),act=d.topics.filter(t=>!t.done).sort((a,b)=>(b.at||0)-(a.at||0)),done=d.topics.filter(t=>t.done),openQ=d.questions.filter(q=>!q.done);
+  return `${stBack('dash','Personal Study')}<div class="card"><div class="chd"><h2>Research Library</h2><small>${d.topics.length} topic${d.topics.length===1?'':'s'}</small></div>
+    ${act.map(t=>`<button class="mvact" data-st="topic" data-id="${esc(t.id)}"><span class="ai">${IC.book}</span><span class="pt"><b>${esc(t.title)}</b><small>${d.sessions.filter(s=>s.topic===t.id).length} sessions · ${d.items.filter(i=>i.topic===t.id).length} discoveries · ${d.questions.filter(q=>q.topic===t.id&&!q.done).length} open</small></span><span class="pgo">›</span></button>`).join('')||'<p class="empty">No topics yet.</p>'}
+    ${done.length?`<p class="lbl" style="margin:12px 0 4px">Finished topics</p>${done.map(t=>`<button class="mvact" data-st="topic" data-id="${esc(t.id)}"><span class="ai">${IC.book}</span><span class="pt"><b>${esc(t.title)}</b><small>Finished</small></span><span class="pgo">›</span></button>`).join('')}`:''}</div>
+    <div class="card"><div class="chd"><h2>New topic</h2></div>${stNewTopicForm()}</div>
+    <div class="card"><div class="chd"><h2>All open questions</h2><small>${openQ.length}</small></div>${openQ.map(stQRow).join('')||'<p class="empty">None right now.</p>'}</div>`}
+function vStJournal(){const d=stDoc(),ss=d.sessions.filter(s=>((s.steps||{}).conclude||'').trim()||((s.steps||{}).meditate||'').trim()).sort((a,b)=>(b.at||0)-(a.at||0)),cs=d.items.filter(i=>i.kind==='concl').sort((a,b)=>b.at-a.at);
+  return `${stBack('dash','Personal Study')}<div class="card"><div class="chd"><h2>Study Journal</h2><small>Conclusions and insights</small></div>
+    ${ss.map(s=>{const t=stTopic(s.topic);return `<div class="sthist"><b>${esc(t?t.title:'Study')}</b><small>${esc(fmtDate(s.date,{weekday:'short',month:'short',day:'numeric',year:'numeric'}))}</small>${s.steps.meditate?`<span><em>Meditation:</em> ${stLinkify(s.steps.meditate)}</span>`:''}${s.steps.conclude?`<span><em>Conclusion:</em> ${stLinkify(s.steps.conclude)}</span>`:''}<button class="lnkg" data-st="sess" data-id="${esc(s.id)}">Open session ›</button></div>`}).join('')||'<p class="empty">Your meditations and conclusions will gather here.</p>'}
+    ${cs.length?`<p class="lbl" style="margin:12px 0 4px">Saved conclusions</p>${cs.map(i=>stItemRow(i)).join('')}`:''}</div>`}
+function vStTopic(t){const d=stDoc(),items=d.items.filter(i=>i.topic===t.id),refs=stTopicRefs(t.id),sess=d.sessions.filter(s=>s.topic===t.id).sort((a,b)=>(b.at||0)-(a.at||0)),qs=d.questions.filter(q=>q.topic===t.id),rel=(t.related||[]).map(stTopic).filter(Boolean);
+  const auto=d.topics.filter(o=>o.id!==t.id&&!(t.related||[]).includes(o.id)).filter(o=>{const or=stTopicRefs(o.id).map(r=>r.b);return refs.some(r=>or.includes(r.b))});
+  const notes=stNotes(),linked=notes.filter(n=>n.topic===t.id),free=notes.filter(n=>!n.topic).slice(0,20);
+  const by=k=>items.filter(i=>i.kind===k);
+  return `${stBack('library','Research Library')}<div class="card stcur"><input class="sttitlein" data-stf="ttitle" data-id="${esc(t.id)}" value="${esc(t.title)}" aria-label="Topic"><input class="stdescin" data-stf="tdesc" data-id="${esc(t.id)}" value="${esc(t.desc||'')}" placeholder="What this topic covers" aria-label="Description">
+      <div class="chips" style="margin-top:10px"><button class="btn pri" data-st="newsess" data-id="${esc(t.id)}">New study session</button>${refs[0]?`<button class="btn" data-st="medtopic" data-id="${esc(t.id)}">Meditate</button>`:''}${stCur()&&stCur().id===t.id?'<span class="calnote">★ Current topic</span>':`<button class="chip" data-st="setcur" data-id="${esc(t.id)}">Make current</button>`}<button class="chip" data-st="tdone" data-id="${esc(t.id)}">${t.done?'Reopen':'Mark finished'}</button></div></div>
+    ${rc('stt-refs',IC.book,'Scriptures',refs.length+' reference'+(refs.length===1?'':'s'),refs.length?`<div class="strefs">${refs.map(stLink).join('')}</div><p class="calnote">Each opens in JW Library or on jw.org (New World Translation).</p>`:'<p class="empty">Scriptures you mention in sessions or add below appear here.</p>',true)}
+    ${rc('stt-items',IC.list,'Discoveries',items.length+' saved',`${['scripture','fact','pub','concl','note'].map(k=>by(k).length?`<p class="lbl" style="margin:8px 0 4px">${STKINDS[k][0]}</p>${by(k).map(i=>stItemRow(i,true)).join('')}`:'').join('')||'<p class="empty">Nothing saved yet.</p>'}
+      <div class="mvform" style="margin-top:10px"><label><span class="lbl">Add</span><select data-stf="ikind">${['scripture','fact','pub','concl','note'].map(k=>`<option value="${k}">${STKINDS[k][0]}</option>`).join('')}</select></label><label style="grid-column:span 2"><span class="lbl">Text or reference</span><input data-stf="itext" maxlength="600" placeholder="e.g. Galatians 3:17 or a discovery"></label><label><span class="lbl">Source (publications)</span><input data-stf="isrc" maxlength="120" placeholder="e.g. it-1 p. 1234"></label><button class="btn" data-st="iadd" data-id="${esc(t.id)}">Add</button></div><p class="calnote" id="st-imsg"></p>`,items.length>0)}
+    ${rc('stt-qs',IC.glance,'Questions',qs.filter(q=>!q.done).length+' open',`${qs.map(stQRow).join('')||'<p class="empty">No questions yet.</p>'}<div class="mvform" style="margin-top:8px"><label style="grid-column:1/-2"><span class="lbl">New question</span><input data-stf="qtext" maxlength="300" placeholder="What do I still want to find out?"></label><button class="btn" data-st="qadd" data-id="${esc(t.id)}">Add</button></div>`,qs.some(q=>!q.done))}
+    ${rc('stt-sess',IC.pen,'Study sessions',sess.length+'',sess.map(stSessRow).join('')||'<p class="empty">Start your first session above.</p>',sess.length>0)}
+    ${rc('stt-rel',IC.layers,'Related topics',rel.length+' linked',`${rel.map(o=>`<span class="chip">${esc(o.title)} <button class="x sm" data-st="unrel" data-id="${esc(t.id)}" data-o="${esc(o.id)}" aria-label="Unlink">×</button></span>`).join('')}
+      ${auto.length?`<p class="calnote">Share scriptures with this topic: ${auto.map(o=>`<button class="chip" data-st="rel" data-id="${esc(t.id)}" data-o="${esc(o.id)}">+ ${esc(o.title)}</button>`).join(' ')}</p>`:''}
+      ${d.topics.filter(o=>o.id!==t.id&&!(t.related||[]).includes(o.id)).length?`<select data-stf="relpick" data-id="${esc(t.id)}"><option value="">Link a topic…</option>${d.topics.filter(o=>o.id!==t.id&&!(t.related||[]).includes(o.id)).map(o=>`<option value="${esc(o.id)}">${esc(o.title)}</option>`).join('')}</select>`:''}`,rel.length>0)}
+    ${rc('stt-notes',IC.pen,'Study notes',linked.length+' linked',`${linked.map(n=>`<div class="sthist"><b>${n.ref?stLinkify(n.ref)+' · ':''}${esc(n.type||'Note')}</b><small>${esc(fmtDate(n.date||today(),{month:'short',day:'numeric'}))}</small><span>${stLinkify((n.text||'').slice(0,240))}</span><button class="lnkg" data-st="nunlink" data-k="note-${esc(n.id)}">Unlink</button></div>`).join('')||'<p class="empty">None linked.</p>'}
+      ${free.length?`<select data-stf="nlink" data-id="${esc(t.id)}"><option value="">Link a study note from Spiritual…</option>${free.map(n=>`<option value="note-${esc(n.id)}">${esc((n.ref?n.ref+' · ':'')+(n.type||'Note')+' · '+fmtDate(n.date||today(),{month:'short',day:'numeric'}))}</option>`).join('')}</select>`:''}`,linked.length>0)}`}
+function vStSess(s){const t=stTopic(s.topic),done=STSTEPS.filter(([k])=>((s.steps||{})[k]||'').trim()).length,A=ST.ana&&ST.anaSess===s.id?ST.ana:null;
+  return `${stBack(t?'topic':'dash',t?t.title:'Personal Study')}<div class="card stcur"><div class="chd"><h2>${esc(t?t.title:'Study session')}</h2><small>${esc(fmtDate(s.date,{weekday:'short',month:'short',day:'numeric'}))}</small></div>
+      <div class="stdots" aria-label="${done} of 7 steps written">${STSTEPS.map(([k])=>`<i class="${((s.steps||{})[k]||'').trim()?'on':''}"></i>`).join('')}</div>
+      <p class="calnote" style="margin:4px 0 0">No step is required. Write what helps; skip the rest.</p></div>
+    ${STSTEPS.map(([k,l,q],i)=>{const v=(s.steps||{})[k]||'',isOpen=ST.open[s.id+k]!=null?ST.open[s.id+k]:(i===0||!!v.trim());
+      return `<details class="card ststep" data-k="${k}" ${isOpen?'open':''}><summary><span class="stn">${i+1}</span><span><b>${l}</b><small>${q}</small></span>${v.trim()?'<span class="stok">✓</span>':''}</summary>
+        <textarea class="write wsm" data-stw="${k}" data-id="${esc(s.id)}" placeholder="${esc(q)}" aria-label="${esc(l)}">${esc(v)}</textarea>
+        ${k==='research'||k==='read'?`<div class="chips"><button class="btn sm" data-st="paste" data-id="${esc(s.id)}" data-k="${k}">Paste material</button><label class="btn sm vcb2"><input type="file" accept="image/*" data-stimg="${k}" data-id="${esc(s.id)}" hidden>Photo or screenshot</label></div>`:''}
+        ${v.trim()?`<div class="chips" style="margin-top:6px"><button class="btn sm" data-st="analyze" data-id="${esc(s.id)}" data-k="${k}"><span class="orgbtn">${SPARK}Organize this step</span></button>${k==='meditate'||k==='read'||k==='research'?`<button class="btn sm" data-st="medsess" data-id="${esc(s.id)}" data-k="${k}">Meditate on this</button>`:''}</div>`:''}
+        ${A&&ST.anaStep===k?stAnaHTML(A,s):''}</details>`}).join('')}
+    <div class="card"><div class="chips"><button class="btn pri" data-st="finish" data-id="${esc(s.id)}">${s.done?'Finished ✓':'Finish session'}</button><button class="btn" data-st="copy" data-id="${esc(s.id)}">Copy study entry</button><button class="btn" data-st="delsess" data-id="${esc(s.id)}">Delete</button></div><p class="calnote" id="st-smsg"></p></div>`}
+function stAnaHTML(A,s){const rows=[];let n=0;const add=(kind,text,extra)=>{rows.push({i:n++,kind,text,extra})};
+  A.refs.forEach(r=>add('scripture',r.label));A.pubs.forEach(p=>add('pub',p,{src:p}));A.dates.forEach(x=>add('fact',x));A.facts.slice(0,4).forEach(x=>add('fact',x));A.concl.slice(0,4).forEach(x=>add('concl',x));
+  A.qs.forEach(x=>add('q',x));A.sugg.forEach(x=>add('sugg',x));ST.anaRows=rows;
+  if(!rows.length&&!A.quals.length&&!A.others.length)return '<div class="stana"><p class="calnote">Nothing to organize in this step yet.</p></div>';
+  const lab={scripture:'Scripture',pub:'Publication',fact:'Fact & date',concl:'My conclusion',q:'My question',sugg:'Suggested'};
+  return `<div class="stana"><p class="lbl" style="margin:0 0 6px">Found in what you wrote</p>${rows.map(r=>`<label class="stpick"><input type="checkbox" data-stpick="${r.i}" ${r.kind==='sugg'?'':'checked'}><em class="stbadge ${r.kind==='q'?'note':r.kind}">${lab[r.kind]}</em><span>${r.kind==='scripture'?stLinkify(r.text):esc(r.text)}</span></label>`).join('')}
+    ${A.quals.length?`<p class="calnote">Qualities of Jehovah you mentioned: ${A.quals.map(esc).join(', ')}</p>`:''}${A.others.length?`<p class="calnote">Connects with: ${A.others.map(o=>`<button class="chip" data-st="rel" data-id="${esc(s.topic)}" data-o="${esc(o.id)}">+ ${esc(o.title)}</button>`).join(' ')}</p>`:''}
+    <p class="calnote">“My question” goes to your open questions. “Suggested” is a question from KL Journal for you to think through. KL Journal only sorts what you wrote; it never adds scripture text or conclusions.</p><div class="chips"><button class="btn sm pri" data-st="anasave" data-id="${esc(s.id)}">Save checked</button><button class="btn sm" data-st="anaclose">Close</button></div></div>`}
+function stSearch(q){const w=q.toLowerCase().trim(),d=stDoc(),hits=[];const has=t=>String(t||'').toLowerCase().includes(w);
+  d.topics.forEach(t=>{if(has(t.title)||has(t.desc))hits.push(['Topic',t.title,'topic',t.id])});
+  d.sessions.forEach(s=>{const k=STSTEPS.find(([k])=>has((s.steps||{})[k]));if(k){const t=stTopic(s.topic),txt=s.steps[k[0]],i=txt.toLowerCase().indexOf(w);hits.push(['Session · '+k[1],(t?t.title+' — ':'')+'…'+txt.slice(Math.max(0,i-40),i+80)+'…','sess',s.id])}});
+  d.items.forEach(i=>{if(has(i.text)||has(i.src)||has(i.ref))hits.push([STKINDS[i.kind][0],i.text,'topic',i.topic])});
+  d.questions.forEach(x=>{if(has(x.text)||has(x.answer))hits.push(['Question',x.text,x.topic?'topic':'',x.topic||''])});
+  stNotes().forEach(n=>{if(has(n.text)||has(n.ref))hits.push(['Study note',(n.ref?n.ref+' — ':'')+(n.text||'').slice(0,120),n.topic?'topic':'',n.topic||''])});
+  return `<div class="stres">${hits.slice(0,30).map(([k,t,go,id])=>`<button class="mvhrow" ${go?`data-st="${go}" data-id="${esc(id)}"`:''}><span><em class="stbadge note">${esc(k)}</em> ${esc(String(t).slice(0,160))}</span></button>`).join('')||'<p class="empty">No matches.</p>'}</div>`}
+// ---------- focused meditation ----------
+function stMed(o){ST.med=Object.assign({min:10,start:0,dur:0,thought:''},o);stMedPaint()}
+function stMedPaint(){let sh=$('#stmed');if(!sh){sh=document.createElement('div');sh.id='stmed';document.body.appendChild(sh);sh.addEventListener('click',stMedClick);sh.addEventListener('input',e=>{if(e.target.dataset.stmt!=null&&ST.med)ST.med.thought=e.target.value})}
+  const M=ST.med;if(!M){sh.className='hide';sh.innerHTML='';return}const run=M.start&&!M.over,left=run?M.start+M.dur*60000-Date.now():M.min*60000;
+  sh.className='stmedwrap';sh.innerHTML=`<div class="stmedin" role="dialog" aria-modal="true" aria-label="Focused meditation"><button class="x stmx" data-sm="close" aria-label="Close">×</button>
+    <div class="hk">Focused Meditation</div>${M.refs&&M.refs.length?`<h2 class="stmref">${M.refs.map(stLink).join(' · ')}</h2>`:''}${M.material?`<blockquote class="stmmat">${esc(M.material.slice(0,1200))}</blockquote><small class="calnote">Your own notes</small>`:''}
+    <p class="stmq">${esc(M.q||'What does this reveal about Jehovah?')}</p>${M.qs&&M.qs.length>1?`<div class="chips" style="justify-content:center">${M.qs.map((q,i)=>`<button class="chip sm" data-sm="q" data-i="${i}" aria-pressed="${q===M.q}">${i+1}</button>`).join('')}</div>`:''}
+    <div class="stmtime" data-stclock>${M.over?'Time for a pause':mrClock(left)}</div><small class="calnote">${M.over?'Stretch, breathe, or keep going if you’d like.':run?'Reflection time remaining':'Suggested reflection period'}</small>
+    ${M.over?`<div class="chips" style="justify-content:center"><button class="btn" data-sm="more" data-n="5">5 more minutes</button><button class="btn pri" data-sm="done">Finish</button></div>`:run?`<div class="chips" style="justify-content:center"><button class="btn" data-sm="stop">Stop timer</button></div>`:`<div class="seg3 mrdur stmdur" style="max-width:380px;margin:0 auto">${[5,10,15,20].map(n=>`<button data-sm="min" data-n="${n}" aria-pressed="${M.min===n}">${n} min</button>`).join('')}</div><div class="chips" style="justify-content:center;margin-top:10px"><button class="btn pri" data-sm="start">Begin</button><button class="btn" data-sm="notimer">No timer</button></div>`}
+    <label class="stmthought"><span class="lbl">Capture a thought (optional)</span><textarea class="write wsm" data-stmt rows="2" placeholder="Anything that comes to mind…">${esc(M.thought||'')}</textarea></label>
+    <div class="chips" style="justify-content:center"><button class="chip" data-sm="anchor" aria-pressed="${M.anchor!==false}">${M.anchor!==false?'✓ ':''}Count toward today’s Spiritual anchor</button><button class="btn" data-sm="done">Done</button></div></div>`;
+  clearInterval(stMedPaint.t);if(run)stMedPaint.t=setInterval(()=>{const L=M.start+M.dur*60000-Date.now();const el=$('#stmed [data-stclock]');if(L<=0){M.over=true;clearInterval(stMedPaint.t);try{mrChime()}catch(e){}stMedPaint();return}if(el)el.textContent=mrClock(L)},1000)}
+function stMedClick(e){const b=e.target.closest('[data-sm]');if(!b)return;const M=ST.med,a=b.dataset.sm;if(!M)return;
+  if(a==='min'){M.min=+b.dataset.n;stMedPaint();return}if(a==='start'){M.start=Date.now();M.dur=M.min;M.over=false;stMedPaint();return}
+  if(a==='notimer'){M.start=0;M.notimer=true;b.closest('.chips').remove();return}if(a==='stop'){M.over=true;clearInterval(stMedPaint.t);stMedPaint();return}
+  if(a==='more'){M.start=Date.now();M.dur=+b.dataset.n;M.over=false;stMedPaint();return}if(a==='q'){M.q=M.qs[+b.dataset.i];stMedPaint();return}
+  if(a==='anchor'){M.anchor=M.anchor===false;stMedPaint();return}
+  if(a==='close'||a==='done'){clearInterval(stMedPaint.t);const th=(M.thought||'').trim();
+    if(a==='done'){const mins=M.start?Math.max(1,Math.round(((M.over?M.start+M.dur*60000:Date.now())-M.start)/60000)):0;
+      if(th){const s=M.sess&&stSess(M.sess);if(s){s.steps=s.steps||{};s.steps.meditate=((s.steps.meditate||'').trim()?s.steps.meditate.trim()+'\n':'')+th;stTouch(s);save(STK)}else if(M.topic){stDoc().items.push({id:uid(),topic:M.topic,kind:'concl',text:th,at:Date.now()});save(STK)}}
+      if(M.anchor!==false&&(mins||th)){const d=get('day-'+today(),dayDef(today()));if(lvl(d,'spiritual')<=0){tickOn(d,'spiritual');save('day-'+today())}}
+      capToast('Meditation saved'+(mins?' · '+mins+' min':'')+'.',null)}
+    ST.med=null;stMedPaint();const y=scrollY;render();scrollTo(0,y)}}
+// ---------- events ----------
+function stNewSess(tid){const d=stDoc(),s={id:uid(),topic:tid,date:today(),start:Date.now(),at:Date.now(),steps:{},done:false};d.sessions.push(s);const t=stTopic(tid);stTouch(t);d.cur=tid;save(STK);ST.view='sess';ST.sess=s.id;ST.ana=null;render();scrollTo(0,0)}
+function stCopy(s){const t=stTopic(s.topic),L=[`Personal Study — ${t?t.title:'Study'}`,fmtDate(s.date,{weekday:'long',month:'long',day:'numeric',year:'numeric'}),''];
+  STSTEPS.forEach(([k,l],i)=>{const v=((s.steps||{})[k]||'').trim();if(v)L.push(`${i+1}. ${l}`,v,'')});const refs=[];STSTEPS.forEach(([k])=>stRefs((s.steps||{})[k]).forEach(r=>{if(!refs.includes(r.label))refs.push(r.label)}));if(refs.length)L.push('Scriptures: '+refs.join('; '));return L.join('\n').trim()}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-st]');if(!b||!document.getElementById('main').contains(b))return;e.preventDefault();e.stopPropagation();const a=b.dataset.st,id=b.dataset.id,d=stDoc(),re=()=>{const y=scrollY;render();scrollTo(0,y)};
+  if(a==='nav'){ST.view=b.dataset.v;if(ST.view==='topic'&&!ST.topic)ST.view='dash';render();scrollTo(0,0);return}
+  if(a==='tile'){const k=b.dataset.k;if(k==='brs'){S.tab='brs';render();scrollTo(0,0);return}if(k==='meditate'){const c=stCur(),refs=c?stTopicRefs(c.id):[];stMed({refs:refs.slice(0,1),q:refs[0]?stSuggest(c,refs.slice(0,1),[],[])[0]:'What has Jehovah shown me about himself recently?',qs:c?stSuggest(c,refs.slice(0,2),[],[]):null,topic:c&&c.id});return}ST.view=k;render();scrollTo(0,0);return}
+  if(a==='topic'){if(!id||!stTopic(id))return;ST.view='topic';ST.topic=id;render();scrollTo(0,0);return}
+  if(a==='sess'){ST.view='sess';ST.sess=id;ST.ana=null;const s=stSess(id);if(s)ST.topic=s.topic;render();scrollTo(0,0);return}
+  if(a==='addtopic'){const box=b.closest('.mvform'),ti=(box.querySelector('[data-stf=ntitle]').value||'').trim(),de=(box.querySelector('[data-stf=ndesc]').value||'').trim();if(!ti){box.querySelector('[data-stf=ntitle]').focus();return}
+    const t={id:uid(),title:ti.slice(0,80),desc:de.slice(0,200),created:Date.now(),at:Date.now(),related:[],done:false};d.topics.push(t);d.cur=t.id;save(STK);ST.view='topic';ST.topic=t.id;render();scrollTo(0,0);return}
+  if(a==='newsess'){stNewSess(id);return}
+  if(a==='setcur'){d.cur=id;save(STK);re();return}
+  if(a==='tdone'){const t=stTopic(id);t.done=!t.done;stTouch(t);save(STK);re();return}
+  if(a==='qdone'){const q=d.questions.find(x=>x.id===id);if(q){q.done=!q.done;q.doneAt=q.done?Date.now():0;save(STK)}re();return}
+  if(a==='qadd'){const i=$('[data-stf=qtext]'),v=(i&&i.value||'').trim();if(!v)return;d.questions.push({id:uid(),topic:id,text:v.slice(0,300),src:'me',done:false,at:Date.now()});save(STK);re();return}
+  if(a==='iadd'){const k=$('[data-stf=ikind]').value,tx=($('[data-stf=itext]').value||'').trim(),src=($('[data-stf=isrc]').value||'').trim(),msg=$('#st-imsg');if(!tx)return;
+    if(k==='scripture'&&!stRefs(tx).length){msg.textContent='That doesn’t look like a Bible reference (for example, Galatians 3:17).';return}
+    if(k==='pub'&&!src){msg.textContent='Add where it’s from (for example, it-1 p. 1234), so the citation is never lost.';return}
+    d.items.push({id:uid(),topic:id,kind:k,text:tx.slice(0,600),ref:k==='scripture'?stRefs(tx).map(r=>r.label).join('; '):'',src:src.slice(0,120),at:Date.now()});stTouch(stTopic(id));save(STK);re();return}
+  if(a==='idel'){const i=d.items.findIndex(x=>x.id===id);if(i>=0){const it=d.items[i];tomb(d,id);d.items.splice(i,1);save(STK);re();capToast('Removed.',null)}return}
+  if(a==='rel'||a==='unrel'){const t=stTopic(id),o=b.dataset.o,ot=stTopic(o);if(!t||!ot)return;t.related=t.related||[];ot.related=ot.related||[];if(a==='rel'){if(!t.related.includes(o))t.related.push(o);if(!ot.related.includes(id))ot.related.push(id)}else{t.related=t.related.filter(x=>x!==o);ot.related=ot.related.filter(x=>x!==id)}save(STK);re();return}
+  if(a==='nunlink'){const n=cache[b.dataset.k];if(n){delete n.topic;save(b.dataset.k)}re();return}
+  if(a==='medtopic'){const t=stTopic(id),refs=stTopicRefs(id);stMed({refs:refs.slice(0,1),q:stSuggest(t,refs.slice(0,1),[],[])[0],qs:stSuggest(t,refs.slice(0,3),[],[]),topic:id});return}
+  if(a==='medsess'){const s=stSess(id),k=b.dataset.k,txt=(s.steps||{})[k]||'',A=stAnalyze(txt,stTopic(s.topic),k),qs=A.sugg.length?A.sugg:[STSTEPS[3][2]];stMed({refs:A.refs.slice(0,2),material:k==='meditate'?'':txt,q:qs[0],qs,sess:id,topic:s.topic});return}
+  if(a==='analyze'){const s=stSess(id),k=b.dataset.k;ST.ana=stAnalyze((s.steps||{})[k]||'',stTopic(s.topic),k);ST.anaSess=id;ST.anaStep=k;ST.open[id+k]=true;re();return}
+  if(a==='anaclose'){ST.ana=null;re();return}
+  if(a==='anasave'){const s=stSess(id),picks=[...document.querySelectorAll('[data-stpick]')].filter(x=>x.checked).map(x=>ST.anaRows[+x.dataset.stpick]);let n=0;
+    picks.forEach(r=>{if(r.kind==='q'||r.kind==='sugg'){if(!d.questions.some(q=>q.text===r.text&&q.topic===s.topic)){d.questions.push({id:uid(),topic:s.topic,session:s.id,text:r.text,src:r.kind==='sugg'?'sugg':'me',done:false,at:Date.now()});n++}}
+      else if(!d.items.some(i=>i.topic===s.topic&&i.kind===r.kind&&i.text===r.text)){d.items.push({id:uid(),topic:s.topic,session:s.id,kind:r.kind,text:r.text,ref:r.kind==='scripture'?r.text:'',src:r.extra&&r.extra.src||'',at:Date.now()});n++}});
+    save(STK);ST.ana=null;re();capToast(n?'Saved '+n+' to '+esc((stTopic(s.topic)||{}).title||'your topic')+'.':'Already saved.',null);return}
+  if(a==='paste'){const s=stSess(id),k=b.dataset.k;(navigator.clipboard&&navigator.clipboard.readText?navigator.clipboard.readText():Promise.reject()).then(tx=>{tx=(tx||'').trim();if(!tx){capToast('Nothing on the clipboard to paste.',null);return}s.steps=s.steps||{};s.steps[k]=((s.steps[k]||'').trim()?s.steps[k].trim()+'\n\n':'')+tx;stTouch(s);save(STK);ST.ana=stAnalyze(tx,stTopic(s.topic),k);ST.anaSess=id;ST.anaStep=k;re()})
+    .catch(()=>{const ta=$(`[data-stw="${k}"][data-id="${id}"]`);if(ta){ta.focus();capToast('Press and hold in the box and choose Paste.',null)}});return}
+  if(a==='finish'){const s=stSess(id);s.done=!s.done;stTouch(s);save(STK);if(s.done){const dd=get('day-'+today(),dayDef(today()));if(lvl(dd,'spiritual')<=0&&STSTEPS.some(([k])=>((s.steps||{})[k]||'').trim())){tickOn(dd,'spiritual');save('day-'+today())}}re();if(s.done)capToast('Session finished. Counted toward today’s Spiritual anchor.',null);return}
+  if(a==='copy'){const s=stSess(id),txt=stCopy(s),m=$('#st-smsg');(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{if(m)m.textContent='Copied. Paste it anywhere.'}).catch(()=>{if(m)m.textContent='Copy was blocked. Long-press to select instead.'});return}
+  if(a==='delsess'){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);return}const s=stSess(id),i=d.sessions.indexOf(s);tomb(d,id);d.sessions.splice(i,1);save(STK);ST.view=s.topic&&stTopic(s.topic)?'topic':'dash';ST.topic=s.topic;render();scrollTo(0,0);return}},true);
+document.addEventListener('input',e=>{const t=e.target;if(!t.dataset)return;
+  if(t.dataset.stw){const s=stSess(t.dataset.id);if(!s)return;s.steps=s.steps||{};s.steps[t.dataset.stw]=t.value;stTouch(s);save(STK);const dots=document.querySelectorAll('.stdots i');STSTEPS.forEach(([k],i)=>{if(dots[i])dots[i].classList.toggle('on',!!((s.steps[k]||'').trim()))});return}
+  if(t.dataset.stf==='q'){ST.q=t.value;const card=t.closest('.stsearch');const old=card&&card.querySelector('.stres');if(old)old.remove();if(card&&ST.q.trim())card.insertAdjacentHTML('beforeend',stSearch(ST.q));return}},true);
+document.addEventListener('change',e=>{const t=e.target;if(!t.dataset)return;const d=stDoc(),re=()=>{const y=scrollY;render();scrollTo(0,y)};
+  if(t.dataset.stf==='ttitle'||t.dataset.stf==='tdesc'){const tp=stTopic(t.dataset.id);if(!tp)return;if(t.dataset.stf==='ttitle'){if(t.value.trim())tp.title=t.value.trim().slice(0,80)}else tp.desc=t.value.trim().slice(0,200);stTouch(tp);save(STK);return}
+  if(t.dataset.stf==='relpick'&&t.value){const tp=stTopic(t.dataset.id),o=stTopic(t.value);tp.related=tp.related||[];o.related=o.related||[];if(!tp.related.includes(o.id))tp.related.push(o.id);if(!o.related.includes(tp.id))o.related.push(tp.id);save(STK);re();return}
+  if(t.dataset.stf==='nlink'&&t.value){const n=cache[t.value];if(n){n.topic=t.dataset.id;save(t.value)}re();return}
+  if(t.dataset.stimg){const f=t.files&&t.files[0],s=stSess(t.dataset.id),k=t.dataset.stimg;t.value='';if(!f||!s)return;capToast('Reading the photo on this device…',null);
+    vcIngest(f,'study').then(m=>vcOcr(m.id).then(o=>({m,o}))).then(({m,o})=>{const tx=vcRedact(o.text||'').trim();if(!tx){capToast('Couldn’t find text in that photo. It’s saved in your photos.',null);return}
+      s.steps=s.steps||{};s.steps[k]=((s.steps[k]||'').trim()?s.steps[k].trim()+'\n\n':'')+tx;s.imgs=(s.imgs||[]).concat(m.id);stTouch(s);save(STK);ST.ana=stAnalyze(tx,stTopic(s.topic),k);ST.anaSess=s.id;ST.anaStep=k;ST.open[s.id+k]=true;re();capToast('Added the text from your photo. Check it for misread words.',null)})
+      .catch(()=>capToast('Couldn’t read that photo here.',null));return}},true);
+document.addEventListener('toggle',e=>{const dt=e.target;if(dt.classList&&dt.classList.contains('ststep')&&ST.sess)ST.open[ST.sess+dt.dataset.k]=dt.open},true);
+// ================= /Personal Study =================
 // ================= Smart Capture: From Thought to Action =================
 // Everything here runs on this device. Notes are never sent anywhere.
 const SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>';
-const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',move:'Movement hub',body:'Body check-in (Logs)',snote:'Study note',quote:'Saved perspectives',skip:'Don’t add'};
+const CAPDEST={task:'Tasks',top3:'Top 3',plan:'Day plan',spir:'Spiritual activity',cal:'Google Calendar',question:'Session question',journal:'Journal entry',idea:'Notes & ideas',update:'Update existing task',move:'Movement hub',studyq:'Study question',body:'Body check-in (Logs)',snote:'Study note',quote:'Saved perspectives',skip:'Don’t add'};
 const CAPCAT={general:'General',spiritual:'Spiritual',movement:'Movement',journal:'Journal',reset:'Reset'};
 function capMode(){return get('settings',setDef).capMode||'review'}
 function capReg(){const r=get('capture',{items:[]});r.items=r.items||[];return r.items}
@@ -1687,6 +1909,7 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
   const route=it=>{const low=it.src.toLowerCase();
     if(it.kind==='appt'){it.dest=MCP&&it.time?'cal':'plan';if(!it.date){it.date=base;it.notes.push('Day assumed: today');it.conf='medium'}}
     else if(it.kind==='question')it.dest='question';
+    else if(it.kind==='research'&&it.cat==='spiritual'&&typeof stCur==='function'&&stCur()){it.dest='studyq';it.notes.push('Adds to “'+stCur().title+'” open questions')}
     else if(it.cat==='spiritual'&&it.date&&/\b(read|study|prep|field service|ministry|family worship|meeting|bible|research|pray)\b/i.test(low))it.dest='spir';
     else if((it.cat==='movement'||it.cat==='reset')&&it.date)it.dest='plan';
     else{it.dest='task';if(it.imp&&it.date===today())it.dest='top3'}
@@ -1768,7 +1991,8 @@ function capApply1(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,
     else if(it.dest==='journal'){const dd=ctx.date||td,day=get('day-'+dd,dayDef(dd));ents(day).push(Object.assign({id:uid(),title:'',text:it.title,cat:'',at:Date.now(),src:srcRef},it.img&&['photo','reflection'].includes(it.kind)?{img:[it.img]}:{}));syncText(day);save('day-'+dd);created.push({type:'entry',key:'day-'+dd,id:ents(day)[ents(day).length-1].id})}
     else if(it.dest==='move'){const aid=(it.rec&&it.rec.a)||'pushups',wasOn=mvOn(aid);const ids=mvFromCap(it,srcRef);if(ids.length)created.push({type:'mv',ids,date:it.date,aid,wasOn})}
     else if(it.dest==='body')vcApplyBody(it,srcRef,created);
-    else if(it.dest==='snote'){const r=it.rec||{},nid=uid();cache['note-'+nid]=Object.assign({id:nid,date:it.date||td,type:r.type||'Personal study',ref:r.ref||'',text:r.text||it.title,created:Date.now(),src:srcRef},it.img?{img:[it.img]}:{});save('note-'+nid);created.push({type:'snote',key:'note-'+nid})}
+    else if(it.dest==='studyq'){const sd=stDoc(),cur=stCur(),q={id:uid(),topic:cur?cur.id:'',text:it.title,src:'me',done:false,at:Date.now(),from:srcRef};sd.questions.push(q);save('study');created.push({type:'studyq',id:q.id})}
+    else if(it.dest==='snote'){const r=it.rec||{},nid=uid(),cur=typeof stCur==='function'&&stCur(),tb=cur?stTopicRefs(cur.id).map(x=>x.b):[],nb=stRefs((r.ref||'')+' '+(r.text||it.title)).map(x=>x.b),link=cur&&(nb.some(b=>tb.includes(b))||String(r.text||it.title).toLowerCase().includes(cur.title.toLowerCase()));cache['note-'+nid]=Object.assign({id:nid,date:it.date||td,type:r.type||'Personal study',ref:r.ref||'',text:r.text||it.title,created:Date.now(),src:srcRef},it.img?{img:[it.img]}:{},link?{topic:cur.id}:{});save('note-'+nid);created.push({type:'snote',key:'note-'+nid})}
     else if(it.dest==='quote'){const b=get('quotes',{items:[]});b.items=b.items||[];const x={id:'qc'+uid(),custom:true,t:(it.rec&&it.rec.q)||it.title,c:(it.rec&&it.rec.by)||'From a photo',at:Date.now(),src:srcRef};b.items.push(x);save('quotes');created.push({type:'quote',id:x.id})}
     else if(it.dest==='idea'){const st=get('settings',setDef);const line='• '+it.title;st.notes=(st.notes?st.notes.replace(/\s*$/,'')+'\n':'')+line;save('settings');created.push({type:'idea',line})}
     const r={id:uid(),h:it.h,at:Date.now(),dest:it.dest,title:it.title,src:srcRef};capReg().push(r);created.push({type:'reg',id:r.id})});
@@ -1782,6 +2006,7 @@ function capUndo(created){(created||[]).forEach(c=>{
   else if(c.type==='idea'){const st=get('settings',setDef);st.notes=(st.notes||'').split('\n').filter((l,i,a)=>!(l===c.line&&a.lastIndexOf(c.line)===i)).join('\n');save('settings')}
   else if(c.type==='mv'||c.type==='pu'){mvRemove(c.ids);if(c.aid&&c.wasOn===false&&!mvItems(c.aid).length){mvCfg(c.aid).on=false;save('settings')}}
   else if(c.type==='snote'){del(c.key)}
+  else if(c.type==='studyq'){const sd=stDoc(),i=sd.questions.findIndex(x=>x.id===c.id);if(i>=0){tomb(sd,c.id);sd.questions.splice(i,1);save('study')}}
   else if(c.type==='quote'){const b=get('quotes',{items:[]}),i=(b.items||[]).findIndex(x=>x.id===c.id);if(i>=0){tomb(b,c.id);b.items.splice(i,1);save('quotes')}}
   else if(c.type==='body'){if(c.prev){cache[c.key]=c.prev;save(c.key)}else del(c.key)}
   else if(c.type==='cal'){capToast('“'+c.title+'” was added to Google Calendar. Remove it there if you don’t want it.',null)}
@@ -1866,7 +2091,7 @@ function vHome(){
 `;
   return `${perspCard()}
   <div class="card"><div class="chd"><h2>My Daily Anchors</h2><small>${aN} of 4</small></div>
-    <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}${k==='movement'&&mvTickSub()?`<span class="pus">${esc(mvTickSub())}</span>`:''}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div>${mvHomeRow()}${mrHomeRow()}</div>
+    <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}${k==='movement'&&mvTickSub()?`<span class="pus">${esc(mvTickSub())}</span>`:''}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div>${stRow()}${mvHomeRow()}${mrHomeRow()}</div>
   <div class="card"><div class="chd"><h2>Today’s Top 3</h2><button class="lnkg" data-go="today">Plan today</button></div>${top3Home(d)}</div>
   <button class="gbtn" data-go="journal" data-new="1">${IC.pen}Write a Quick Entry</button>
   ${inboxCard()}
@@ -1968,7 +2193,7 @@ function vSpiritual(){
   const notes=notesAll().filter(x=>(ft==='All'||x.type===ft)&&(!q||((x.ref||'')+' '+(x.text||'')).toLowerCase().includes(q)));
   if(S.nform){S.rc=S.rc||{};S.rc['sp-notes']=true}
   const mp=notesAll().filter(x=>x.type==='Meeting prep').slice(0,6),mon=S.date.slice(0,7),fsN=Object.keys(cache).filter(k=>k.startsWith('day-'+mon)&&cache[k]&&cache[k].min&&cache[k].min.did).length;
-  return `
+  return `${stRow()}
   ${rc('sp-bible',IC.book,`<span class="rk">Bible Reading</span>${logged?'✓ ':''}${esc(portion(S.date)||secLabel(ni))}`,`${readPct(T)}% complete · Take time to meditate`,`    <div class="prog" style="margin:0 0 12px"><div class="pbar"><i style="width:${readPct(T)}%"></i></div><span>${readPct(T)}% of the ${T===TRACKS.all?'Bible':'track'}</span></div>
     <div class="chips"><button class="btn ${logged?'':'pri'}" data-act="bread">${logged?'Mark not read':'Mark as read'}</button><button class="btn" data-act="bnote">Write notes</button><button class="btn" data-act="brs">Full schedule</button></div>
     <p class="calnote" style="margin-top:8px">Missed days don’t pile up. It always picks up where you left off.</p>
@@ -2521,7 +2746,7 @@ function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTime
 // Item-level merge so the same page edited on two devices keeps both sets of changes.
 const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
 const ikey=x=>x&&(x.id||('t:'+(x.t||'')));
-function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];if(key==='mreset')return['log','sessions','resumes'];return[]}
+function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];if(key==='mreset')return['log','sessions','resumes'];if(key==='study')return['topics','sessions','questions','items'];return[]}
 function mergeDoc(key,a,b){if(!a||a._del===true)return b;if(!b||b._del===true)return a;
   const lists=mergeLists(key);if(!lists.length)return (Number(a._u)||0)>=(Number(b._u)||0)?a:b;
   const [nw,ol]=(Number(a._u)||0)>=(Number(b._u)||0)?[a,b]:[b,a];
@@ -2873,7 +3098,7 @@ function vSetup(){
 
 // ---------- render ----------
 function render(){
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===(S.tab==='brs'?'spiritual':S.tab==='move'||S.tab==='mreset'?'home':S.tab)?'page':'false'));if(S.tab==='brs')requestAnimationFrame(()=>document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px'));
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===(S.tab==='brs'?'spiritual':S.tab==='move'||S.tab==='mreset'?'home':S.tab==='study'?'spiritual':S.tab)?'page':'false'));if(S.tab==='brs')requestAnimationFrame(()=>document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px'));
   const pn=S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')!=='tasks');$('#prev').classList.toggle('hide',!pn);$('#next').classList.toggle('hide',!pn);
   if(heroFor()){$('#title').textContent='KL Journal';$('#sub').textContent=fmtDate((S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')==='day'))?S.date:today(),{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
   else if(S.tab==='journal'){$('#title').textContent='Journal';$('#sub').textContent=fmtDate(S.date,{weekday:'long',month:'long',day:'numeric',year:'numeric'})+(S.date===today()?'':' · tap › to come back')}
@@ -2886,7 +3111,7 @@ function render(){
   if(S.tab!=='journal'){S.jopen=null;S.jnew=null}
   const HERO=heroFor();
   document.body.classList.toggle('has-hero',!!HERO);$('#herozone').innerHTML=HERO;heroHdr();
-  $('#main').innerHTML=mrBanner()+({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,move:vMove,mreset:vMreset,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
+  $('#main').innerHTML=mrBanner()+({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,move:vMove,mreset:vMreset,study:vStudy,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
   document.querySelectorAll('details.more').forEach((x,i)=>{if(wasOpen[i]&&S._lastTab===S.tab+S.date)x.open=true});S._lastTab=S.tab+S.date;
   main.querySelectorAll('textarea.write').forEach(grow);main.querySelectorAll('textarea.awrap').forEach(asz);hydrateAudio();vcHydrate(main);if(S.tab==='setup')vcStoreLine();
   if(MCP&&S.tab==='home'){const td=today();const st=$('#hcalst');if(st&&CAL[td]&&CAL[td].at)st.textContent='updated '+new Date(CAL[td].at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const need=!CAL[td]||CAL[td].state!=='ok'||Date.now()-CAL[td].at>120000;if(need)loadDay(td).then(()=>{if(S.tab==='home'&&!(document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName))){const y=scrollY;render();scrollTo(0,y)}});const ss=SESSEV;loadSessEv().then(()=>{if(S.tab==='home'&&SESSEV!==ss&&SESSEV&&SESSEV.state==='ok'){const y=scrollY;render();scrollTo(0,y)}})}
@@ -2941,7 +3166,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.nedit){const x=cache[b.dataset.nedit];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};render();const t=main.querySelector('[data-nf=text]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
   if(b.dataset.nfilter){S.nfilter=b.dataset.nfilter;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='spadd'){const i=$('#spadd'),v=(i.value||'').trim();if(!v){i.focus();return}const d=get('day-'+S.date,dayDef(S.date));planOf(d).blocks.push({id:uid(),win:'any',tm:'',dur:30,t:v,done:false,spir:true});save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.go){const g=b.dataset.go;S.date=today();if(g==='tasks'){S.tab='today';S.seg='tasks'}else if(g==='today'){S.tab='today';S.seg='day'}else S.tab=g;if(g==='pushups'){S.tab='move';S.mvAct='pushups'}else if(g==='move')S.mvAct=b.dataset.mva||null;if(g==='move'||g==='pushups'){S.mvdate=null;S.mvEdit=null}if(g==='journal'&&b.dataset.new){S.jnew=today();S.jopen=null}render();scrollTo(0,0);if(b.dataset.new){const t=main.querySelector('[data-jd=draft]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
+  if(b.dataset.go){const g=b.dataset.go;S.date=today();if(g==='tasks'){S.tab='today';S.seg='tasks'}else if(g==='today'){S.tab='today';S.seg='day'}else S.tab=g;if(g==='study'){ST.view='dash';ST.ana=null}if(g==='pushups'){S.tab='move';S.mvAct='pushups'}else if(g==='move')S.mvAct=b.dataset.mva||null;if(g==='move'||g==='pushups'){S.mvdate=null;S.mvEdit=null}if(g==='journal'&&b.dataset.new){S.jnew=today();S.jopen=null}render();scrollTo(0,0);if(b.dataset.new){const t=main.querySelector('[data-jd=draft]');if(t){t.scrollIntoView({block:'center'});t.focus()}}return}
   if(b.dataset.act==='fabcap'){openCap();return}
   if(b.dataset.act==='brs'){S.tab='brs';render();scrollTo(0,0);return}
   if(b.dataset.act==='brsback'){S.tab='spiritual';render();scrollTo(0,0);return}
@@ -3105,7 +3330,7 @@ async function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 let pendingImp=null;
-function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture|mreset)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
+function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture|mreset|study)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
   const imgs=j.images&&typeof j.images==='object'?j.images:null,ni=imgs?Object.keys(imgs).length:0;if(!keys.length)throw 0;pendingImp={d,keys,imgs};$('#impMsg').innerHTML=`<div class="note">Import ${keys.length} entries${ni?' and '+ni+' photo'+(ni>1?'s':''):''}? Entries with the same date are replaced. <div class="chips" style="margin-top:8px"><button class="btn sm pri" data-act="doimp">Import</button><button class="btn sm" data-act="noimp">Cancel</button></div></div>`}
   catch(e){$('#impMsg').innerHTML='<div class="note">That file isn’t an Anchors backup.</div>'}};r.readAsText(file)}
 async function doImport(){if(!pendingImp)return;const {d,keys,imgs}=pendingImp;pendingImp=null;$('#impMsg').innerHTML='<div class="note">Importing…</div>';
