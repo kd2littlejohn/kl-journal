@@ -122,6 +122,19 @@ img.vmissing{opacity:.35}
 #vcview{z-index:80}.vcard{max-width:720px;margin:0 auto;max-height:92vh;overflow:auto}.vfull{display:block;max-width:100%;max-height:62vh;margin:8px auto;border-radius:12px;border:1px solid var(--gline)}
 .vrecs{margin:0;padding-left:18px;font-size:14px}.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}.vgrid img{width:100%;height:auto;aspect-ratio:1}.vh3{font-size:16px;margin:16px 0 4px}.vh3 small{color:var(--mute);font-weight:400;font-size:13px}
 body.vdrag::after{content:'Drop a photo to capture it';position:fixed;inset:12px;border:2px dashed var(--gold);border-radius:18px;background:rgba(13,12,11,.82);color:var(--gold);display:grid;place-items:center;font:600 20px Lora,Georgia,serif;z-index:99;pointer-events:none}
+.mrcard .mrbody{display:grid;gap:10px}.mrmsg{font-family:Lora,Georgia,serif;font-size:19px;line-height:1.4;margin:2px 0 0;color:var(--cream)}.mrel{margin:0;color:var(--mute);font-size:14px}.mrel b{color:var(--cream)}
+.mrq{margin:2px 0;padding:10px 14px;border-left:3px solid var(--gold);background:rgba(212,175,97,.07);border-radius:0 10px 10px 0;font-family:Lora,Georgia,serif;font-style:italic;font-size:17px;color:var(--cream)}
+.mrsug{display:grid;gap:2px;padding:10px 14px;border:1px solid var(--gline);border-radius:12px;background:rgba(0,0,0,.18)}.mrsug small{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mrsug b{color:var(--gold);font-size:16px}.mrsug span{color:var(--mute);font-size:13px}
+.mrbtns{display:flex;flex-wrap:wrap;gap:8px}.mrbtns .btn{flex:1 1 auto;min-height:46px}.mrfine{margin:0}.mrf{display:grid;gap:4px}.mrf input,.mrf textarea{width:100%}
+.mrrun{justify-items:center;text-align:center}.mrring{width:min(210px,64vw)}.mrguide{font-family:Lora,Georgia,serif;font-size:17px;max-width:30ch;margin:0}
+.mrres{display:grid;gap:2px}.mrres small{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mrres span{color:var(--mute);font-size:14px}
+.mrbanner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:9px 14px;border:1px solid var(--gline2);border-radius:999px;background:rgba(212,175,97,.08);font-size:14px}
+.mrbanner>span{flex:1;min-width:0;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mrbanner svg{width:18px;height:18px;color:var(--gold);flex:none}.mrbanner b{color:var(--gold)}
+.mrintent{font-family:Lora,Georgia,serif;font-size:18px;margin:0}.mrbig{font-family:Lora,Georgia,serif;font-size:34px;color:var(--gold);margin:4px 0}
+.mrhist{display:grid;gap:2px;padding:8px 0;border-top:1px solid var(--line)}.mrhist small{color:var(--mute);font-size:12px}.mrhist span{font-size:14px;color:var(--mute)}
+.mrwhy{margin-top:8px;padding:10px 12px;border:1px solid var(--gline);border-radius:12px;font-size:14px;display:grid;gap:6px}.mrwhy p{margin:0}
+.mrnow button{min-height:64px;line-height:1.15;padding:6px 0}
+.mrdays{display:grid;gap:8px}.mrday{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:8px;align-items:center}.mrday select{width:100%}
 .anch .tick .bx{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(245,236,216,.6);display:grid;place-items:center;font-size:12px;color:#1a1408;margin-top:auto}
 .anch .tick[aria-pressed=true]{border-color:var(--gline2);background:rgba(212,175,97,.08)}.anch .tick[aria-pressed=true] .bx{background:var(--gold);border-color:var(--gold)}
 .chd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}.chd small{color:var(--mute);font-size:13px;text-align:right;max-width:58%}
@@ -530,7 +543,7 @@ const lvl=(d,a)=>d?.anchors?.[a]?.l||0;
 function chips(path,opts,val,cls=''){return `<div class="chips">${opts.map(([v,l])=>`<button class="chip ${cls}" data-set="${path}" data-v="${esc(v)}" aria-pressed="${String(val)===String(v)}" ${l&&l!==v?`title="${esc(l)}"`:''}>${esc(v)}</button>`).join('')}</div>`}
 
 function ring(n,t){const r=26,c=2*Math.PI*r,p=t?n/t:0;return `<svg viewBox="0 0 64 64" class="ring" role="img" aria-label="${n} of ${t}"><circle cx="32" cy="32" r="${r}" fill="none" stroke="rgba(214,171,79,.15)" stroke-width="7"/>${p>0?`<circle cx="32" cy="32" r="${r}" fill="none" stroke="#d6ab4f" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 32 32)"/>`:''}<text x="32" y="37" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="15" font-weight="700" fill="currentColor">${t?Math.round(p*100)+'%':'–'}</text></svg>`}
-const HIMG={move:'home',sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
+const HIMG={reset:'journal',move:'home',sun:'home',moon:'home',cal:'today',pen:'journal',book:'spiritual',talk:'sessions',gear:'more'};
 const IC=(()=>{const w=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;return{
  book:w('<path d="M12 6.5c-2-1.3-4.7-1.7-8-1.5v13c3.3-.2 6 .2 8 1.5 2-1.3 4.7-1.7 8-1.5V5c-3.3-.2-6 .2-8 1.5z"/><path d="M12 6.5V19.5"/>'),
  dumbbell:w('<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>'),
@@ -579,6 +592,7 @@ function heroFor(){const tab=S.tab,td=today(),dt=S.date,d=cache['day-'+dt]||{},t
   if(tab==='spiritual'){const B=bible(),T=track();return heroBox('book',dt===td?'Spiritual':'Spiritual · '+esc(fmtDate(dt,{month:'short',day:'numeric'})),'Read. Meditate.<br>Apply.',`${B.log[dt]!=null?'✓ ':''}${esc(portion(dt)||secLabel(nextIdx()))} · ${readPct(T)}% of the ${T===TRACKS.all?'Bible':'track'}`)}
   if(tab==='sessions'){const q=(get('sessq',{items:[]}).items||[]).filter(x=>!x.done).length;const na=SESSEV&&SESSEV.state==='ok'?SESSEV.events.filter(e=>e.date>=td).sort((a,b)=>a.s<b.s?-1:1)[0]:null;
     return heroBox('talk','Sessions','Reflect. Understand.<br>Grow.',`Private · ${q?q+' question'+(q>1?'s':'')+' ready':'only you can see these'}${na?' · next '+esc(fmtDate(na.date,{weekday:'short',month:'short',day:'numeric'})):''}`)}
+  if(tab==='mreset'){const s=mrState(),f=s.focus;return heroBox('reset','Reset · Mindful Reset','Return to<br>what matters.',f?'Focusing'+(f.intent?' on '+esc(f.intent):'')+' · '+mrDurTxt(mrNow()-f.start):'Move, breathe, refuel, then choose your next step on purpose.',null)}
   if(tab==='move'){const ac=S.mvAct&&mvAct(S.mvAct);if(!ac){const f=mvFeat(),g=f?mvGoal(f.id,td):0,v=f?mvDay(f.id,td):0;return heroBox('move','Movement · Today','Build. Strengthen.<br>Repeat.','Consistency is the foundation of strength.',g?Math.round(Math.min(1,v/g)*100):null)}
     const pd=mvDate(),v=mvDay(ac.id,pd),g=mvGoal(ac.id,pd);return heroBox('move',(pd===td?'Movement':'Movement · '+esc(fmtDate(pd,{month:'short',day:'numeric'})))+' · '+esc(ac.name),ac.tag||'Build. Strengthen.<br>Repeat.',mvKind(pd)==='X'?'Rest day':g?`${esc(mvFmt(ac,v,true))} of ${esc(mvFmt(ac,g))}${v>=g?' · goal met':' · '+esc(mvFmt(ac,g-v,true))+' to go'}`:`${esc(mvFmt(ac,v))} ${pd===td?'today':'this day'}`,g?Math.round(Math.min(1,v/g)*100):null)}
   if(tab==='setup')return heroBox('gear','More','Make It Yours.','Settings, tools, and everything else to support your journey.');
@@ -632,7 +646,8 @@ const MVCAT=[
   {id:'walk',name:'Walking',type:'dist',icon:'walk'},
   {id:'cycle',name:'Cycling',type:'dist',icon:'bike'},
   {id:'strength',name:'Strength Training',type:'strength',icon:'strength'},
-  {id:'workout',name:'Workouts',type:'time',quick:[900,1800,2700,3600],icon:'time'}];
+  {id:'workout',name:'Workouts',type:'time',quick:[900,1800,2700,3600],icon:'time'},
+  {id:'stretch',name:'Stretching',type:'time',quick:[60,120,300,600],icon:'time'}];
 const MVTYPE={reps:'Repetitions',time:'Duration',dist:'Distance · Time · Pace',strength:'Sets · Reps · Weight'};
 const MVKIND=[['S','On shift'],['O','Off shift'],['L','Light duty'],['R','Recovery'],['X','Rest day']];
 const mvKName=k=>(MVKIND.find(x=>x[0]===k)||['',''])[1];
@@ -1172,6 +1187,257 @@ document.addEventListener('dragover',e=>{if(e.dataTransfer&&[...e.dataTransfer.t
 document.addEventListener('dragleave',e=>{if(e.target===document.documentElement||!e.relatedTarget)document.body.classList.remove('vdrag')});
 document.addEventListener('drop',e=>{document.body.classList.remove('vdrag');const fs=[...(e.dataTransfer&&e.dataTransfer.files||[])].filter(f=>/^image\//.test(f.type));if(!fs.length)return;e.preventDefault();vcIncoming(fs,'drop')});
 // ================= /Visual Capture =================
+// ================= Mindful Reset =================
+// Return to what matters. Supportive check-ins, guided resets, focus sessions and resume points.
+// In-app only: browsers pause timers when the app is in the background (always on iPhone/iPad), so
+// nothing here pretends to remind you while KL Journal is closed. Timestamps are saved, so timers
+// pick up exactly where they should when you come back, and missed check-ins are never piled up.
+const MRK='mreset',MRLS='kl-mr-state';
+const MRACT={walk:['Take a short walk','Walk at an easy pace. Indoors or out, any distance counts.'],water:['Drink water','Pour a glass of water and drink it slowly.'],
+  stretch:['Stretch','Gentle stretches only — neck, shoulders, back, legs. Nothing should hurt.'],outside:['Step outside','Step out, look around, notice the air and the light.'],
+  eyes:['Rest your eyes','Look at something far away, or close your eyes and let them soften.'],shoulders:['Relax your shoulders','Let your shoulders drop. Unclench your jaw and hands.'],
+  breathe:['Comfortable breathing','Breathe at a pace that feels natural. No counting needed.'],pray:['Pray or meditate','Take a quiet moment with Jehovah, or sit with a verse you love.'],
+  family:['Connect with family','Check in with someone at home — a hug, a word, a quick text.'],snack:['Have a snack','Eat something real and take a few minutes away from the screen.']};
+const MRCAT=[
+  {id:'move',name:'Movement & walking',msg:'You’ve been still for a while. A short walk can reset your mind.',q:'Have I moved my body recently?',act:'walk',min:5},
+  {id:'water',name:'Hydration',msg:'When did you last have some water?',q:'Have I neglected eating, drinking, movement, or rest?',act:'water',min:2},
+  {id:'food',name:'Nutrition',msg:'Have you eaten recently? Fuel helps focus more than pushing through.',q:'Have I neglected eating, drinking, movement, or rest?',act:'snack',min:10},
+  {id:'stretch',name:'Stretching',msg:'A minute or two of stretching can loosen what sitting tightens.',q:'Where am I holding tension right now?',act:'stretch',min:2},
+  {id:'mind',name:'Mental check-in',msg:'A quick check-in with yourself.',q:'Am I still working toward my original objective?',act:'breathe',min:2},
+  {id:'emotion',name:'Emotional awareness',msg:'Notice how you’re feeling — tired, tense, calm, frustrated, content?',q:'What am I feeling right now?',act:'breathe',min:2},
+  {id:'family',name:'Family connection',msg:'Is there someone at home you could check in with?',q:'Who would appreciate hearing from me?',act:'family',min:5},
+  {id:'spirit',name:'Spiritual reflection',msg:'A short prayer or a favorite verse can bring you back to what matters.',q:'What matters most right now?',act:'pray',min:5},
+  {id:'rest',name:'Rest & recovery',msg:'Rest is part of doing good work.',q:'Do I need a real break?',act:'eyes',min:2},
+  {id:'transition',name:'Task transitions',msg:'A good stopping point makes it easier to come back.',q:'Does this need to be finished right now, or can I return to it later?',act:'shoulders',min:2},
+  {id:'perfect',name:'Perfectionism awareness',msg:'Good enough to move forward is often good enough.',q:'Am I making progress, or chasing perfection?',act:'breathe',min:2},
+  {id:'time',name:'Time awareness',msg:'',q:'Is this still the best use of my time?',act:'outside',min:5}];
+const MRDUR=[2,5,10,15],MRINT=[30,45,60,90,120];
+const MRKINDS=[['S','On shift'],['O','Off shift'],['L','Light duty'],['R','Recovery'],['X','Rest day']];
+function mrSet(){const st=get('settings',setDef);if(!st.mr)st.mr={on:true,ambient:false,days:{S:{on:true,int:60},O:{on:true,int:60},L:{on:true,int:60},R:{on:true,int:60},X:{on:true,int:60}},active:['07:00','21:00'],quiet:['',''],cats:MRCAT.map(c=>c.id),sound:'chime',anchor:true};
+  const m=st.mr;m.days=m.days||{};MRKINDS.forEach(([k])=>{m.days[k]=Object.assign({on:true,int:60},m.days[k]||{})});m.cats=m.cats||MRCAT.map(c=>c.id);m.active=m.active||['07:00','21:00'];m.quiet=m.quiet||['',''];return m}
+function mrDoc(){const d=get(MRK,{log:[],sessions:[],resumes:[]});d.log=d.log||[];d.sessions=d.sessions||[];d.resumes=d.resumes||[];return d}
+// device-only runtime state (timestamps), so a reload or app switch restores timers precisely
+let MRST=null;
+function mrState(){if(MRST)return MRST;try{MRST=JSON.parse(localStorage.getItem(MRLS)||'{}')}catch(e){MRST={}}return MRST}
+function mrSave(){try{localStorage.setItem(MRLS,JSON.stringify(MRST||{}))}catch(e){}}
+const mrNow=()=>Date.now();
+const mrHM=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+function mrDurTxt(ms){const m=Math.max(0,Math.round(ms/60000));return m<60?m+' min':Math.floor(m/60)+' hr'+(m%60?' '+m%60+' min':'')}
+const mrClock=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+pad(s%60)};
+function mrInWin(a,b,now){if(!a||!b)return false;const n=new Date(now),m=n.getHours()*60+n.getMinutes(),x=+a.slice(0,2)*60+ +a.slice(3),y=+b.slice(0,2)*60+ +b.slice(3);return x<=y?(m>=x&&m<y):(m>=x||m<y)}
+function mrKind(){try{return mvKind(today())}catch(e){return 'O'}}
+function mrInterval(){const m=mrSet();return (m.days[mrKind()]||{}).int||60}
+// why reminders are quiet right now ('' = they can run)
+function mrQuietWhy(now){const m=mrSet(),s=mrState();now=now||mrNow();if(!m.on)return 'off';if(s.pauseUntil&&now<s.pauseUntil)return 'paused';if(!(m.days[mrKind()]||{}).on)return 'day';
+  if(!mrInWin(m.active[0],m.active[1],now))return 'hours';if(m.quiet[0]&&m.quiet[1]&&mrInWin(m.quiet[0],m.quiet[1],now))return 'quiet';return ''}
+function mrNextCat(){const m=mrSet(),on=MRCAT.filter(c=>m.cats.includes(c.id));if(!on.length)return MRCAT[4];const s=mrState();s.catI=((s.catI==null?-1:s.catI)+1)%on.length;mrSave();return on[s.catI]}
+// ---------- engine ----------
+let MRLAST=0,MRTYPING=0;
+['pointerdown','keydown','touchstart','wheel'].forEach(ev=>document.addEventListener(ev,()=>{MRLAST=mrNow();if(!mrAudioCtx)mrAudioUnlock()},{passive:true,capture:true}));
+document.addEventListener('input',e=>{if(e.target&&/TEXTAREA|INPUT/.test(e.target.tagName)&&!e.target.closest('#mrsheet'))MRTYPING=mrNow()},true);
+function mrSheetOpen(){return ['#mrsheet','#capsheet','#vcview','#cap'].some(s=>{const e=$(s);return e&&!e.classList.contains('hide')})}
+function mrTick(){const s=mrState(),m=mrSet(),now=mrNow();if(!READY)return;
+  // a guided reset in progress finishes on time even after the app was away
+  if(s.reset&&!s.reset.doneAt&&now>=s.reset.start+s.reset.dur*60000){s.reset.doneAt=s.reset.start+s.reset.dur*60000;mrSave();if(MRUI.view==='run'){mrChime();MRUI.view='done';mrPaint()}}
+  if(s.reset&&!s.reset.doneAt){mrPaintClock();return}
+  const iv=mrInterval()*60000,why=mrQuietWhy(now),focus=!!s.focus;
+  if(why){if(s.nextDue&&now>s.nextDue)s.nextDue=0;s.amb=0;mrSave();mrPaintClock();return}
+  if(focus){if(!s.nextDue){s.nextDue=Math.max(now,(s.focus.start||now))+iv;mrSave()}
+    if(now>=s.nextDue){if(now-s.nextDue>180000){s.nextDue=now+iv;mrSave()}            // came back late: no pile-up, no catch-up pop-up
+      else if(document.visibilityState==='visible'&&!mrSheetOpen()&&now-MRTYPING>20000)mrPrompt('focus');
+      else if(document.visibilityState!=='visible')mrNotify();}}
+  else if(m.ambient){// only counts time you're actually using the app, never just "open"
+    const active=document.visibilityState==='visible'&&now-MRLAST<5*60000;if(active){s.amb=(s.amb||0)+(now-(s.ambAt||now));}s.ambAt=now;mrSave();
+    if((s.amb||0)>=iv&&!mrSheetOpen()&&now-MRTYPING>20000)mrPrompt('ambient')}
+  mrPaintClock()}
+setInterval(()=>{try{mrTick()}catch(e){}},15000);
+document.addEventListener('visibilitychange',()=>{const s=mrState();if(document.visibilityState==='visible'){s.ambAt=mrNow();mrSave();setTimeout(()=>{try{mrTick();mrRestore()}catch(e){}},300)}});
+// ---------- sound / notifications ----------
+let mrAudioCtx=null;
+function mrAudioUnlock(){try{const C=window.AudioContext||window.webkitAudioContext;if(C){mrAudioCtx=new C();const o=mrAudioCtx.createOscillator(),g=mrAudioCtx.createGain();g.gain.value=0;o.connect(g);g.connect(mrAudioCtx.destination);o.start();o.stop(mrAudioCtx.currentTime+.01)}}catch(e){}}
+function mrChime(){const m=mrSet();if(m.sound==='vibrate'&&navigator.vibrate){try{navigator.vibrate([120,80,120])}catch(e){}return}if(m.sound!=='chime'||!mrAudioCtx)return;
+  try{const t=mrAudioCtx.currentTime;[[659.25,0],[880,.22]].forEach(([f,d])=>{const o=mrAudioCtx.createOscillator(),g=mrAudioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.06,t+d+.04);g.gain.exponentialRampToValueAtTime(.0005,t+d+.9);o.connect(g);g.connect(mrAudioCtx.destination);o.start(t+d);o.stop(t+d+1)})}catch(e){}}
+const mrNotifOK=()=>'Notification' in window&&Notification.permission==='granted';
+async function mrNotify(){const s=mrState();if(!mrNotifOK()||s.notified===s.nextDue)return;s.notified=s.nextDue;mrSave();
+  const body='Return to what matters. Tap for a quick check-in.';try{const r=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(r&&r.showNotification){r.showNotification('Mindful Reset',{body,tag:'kl-mreset',renotify:false,silent:mrSet().sound==='none'})}else new Notification('Mindful Reset',{body,tag:'kl-mreset'})}catch(e){}}
+// ---------- the pop-up and guided reset ----------
+let MRUI={view:'',cat:null,why:''};
+function mrPrompt(why){const s=mrState();const c=mrNextCat();MRUI={view:'prompt',cat:c.id,why};s.lastShown=mrNow();s.nextDue=0;s.amb=0;mrSave();mrChime();mrPaint()}
+function mrOpen(view,extra){MRUI=Object.assign({view,cat:MRUI.cat},extra||{});mrPaint()}
+function mrClose(){MRUI={view:''};const sh=$('#mrsheet');if(sh)sh.classList.add('hide');const y=scrollY;render();scrollTo(0,y)}
+function mrResched(ms){const s=mrState();s.nextDue=mrNow()+ms;s.amb=0;s.ambAt=mrNow();if(!s.focus&&mrSet().ambient){s.amb=Math.max(0,mrInterval()*60000-ms)}mrSave()}
+function mrElapsed(){const s=mrState();return s.focus?mrNow()-s.focus.start:0}
+function mrRing(left,total){const r=82,c=2*Math.PI*r,p=total?Math.max(0,Math.min(1,left/total)):0;
+  return `<svg viewBox="0 0 200 200" class="puring mrring" role="img" aria-label="${mrClock(left)} left"><circle cx="100" cy="100" r="${r}" fill="none" stroke="rgba(212,175,97,.15)" stroke-width="12"/><circle cx="100" cy="100" r="${r}" fill="none" stroke="#d4af61" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 100 100)"/>
+    <text x="100" y="108" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="44" font-weight="700" fill="#f5ecd8" data-mrclock="left">${mrClock(left)}</text><text x="100" y="134" text-anchor="middle" font-size="12" fill="#d4af61" letter-spacing="1">REMAINING</text></svg>`}
+function mrHead(sub){return `<div class="caphd"><span class="spk">${IC.reset}</span><div><h2>Mindful Reset</h2><small>${sub||'Return to what matters.'}</small></div><button class="x" data-mr="close" aria-label="Close">×</button></div>`}
+function mrResumeLatest(){return mrDoc().resumes.filter(r=>!r.used).sort((a,b)=>b.at-a.at)[0]||null}
+function mrPaint(){let sh=$('#mrsheet');if(!sh){sh=document.createElement('div');sh.id='mrsheet';sh.className='sheet hide';document.body.appendChild(sh);sh.addEventListener('click',mrClick);sh.addEventListener('change',mrChangeEv)}
+  const v=MRUI.view,s=mrState(),c=MRCAT.find(x=>x.id===MRUI.cat)||MRCAT[4],m=mrSet();if(!v){sh.classList.add('hide');return}{const t=$('#captoast');if(t){t.className='';clearTimeout(t._h)}}
+  let h='';
+  if(v==='prompt'){const el=mrElapsed(),msg=c.id==='time'?'It’s '+mrHM(mrNow())+'.':c.msg;
+    h=`${mrHead()}<div class="mrbody"><p class="mrmsg">${esc(msg)}</p>${el>60000?`<p class="mrel">Focused on <b>${esc(s.focus.intent||'your session')}</b> for <b>${mrDurTxt(el)}</b></p>`:MRUI.why==='ambient'?`<p class="mrel">You’ve been actively using KL Journal for about <b>${mrInterval()} min</b>.</p>`:''}
+      <blockquote class="mrq">${esc(c.q)}</blockquote>
+      <div class="mrsug"><small>Suggested reset</small><b>${esc(MRACT[c.act][0])}</b><span>${c.min} minutes</span></div>
+      <div class="mrbtns"><button class="btn pri" data-mr="start">Start Reset</button><button class="btn" data-mr="snoozemenu">Snooze</button><button class="btn" data-mr="continue">Continue Working</button></div>
+      ${MRUI.snooze?`<div class="chips mrsnooze" role="group" aria-label="Snooze for">${[5,15,30].map(n=>`<button class="chip" data-mr="snooze" data-n="${n}">${n} min</button>`).join('')}</div>`:''}
+      <p class="calnote mrfine">Just a check-in, not a rule. <button class="lnkg" data-mr="pausemenu">Pause reminders</button></p>
+      ${MRUI.pause?`<div class="chips" role="group" aria-label="Pause for">${[['60','1 hour'],['120','2 hours'],['day','Rest of today']].map(([k,l])=>`<button class="chip" data-mr="pause" data-n="${k}">${l}</button>`).join('')}</div>`:''}</div>`}
+  else if(v==='note'){const r=MRUI.prefill||{};h=`${mrHead('Leave yourself a note (optional)')}<div class="mrbody"><p class="calnote" style="margin-top:0">So it’s easy to pick back up. Skip it if you don’t need it.</p>
+      <label class="mrf"><span class="lbl">What was I working on?</span><input data-mrn="what" value="${esc(r.what||(s.focus&&s.focus.intent)||'')}" maxlength="200"></label>
+      <label class="mrf"><span class="lbl">Where did I stop?</span><input data-mrn="stop" value="${esc(r.stop||'')}" maxlength="200"></label>
+      <label class="mrf"><span class="lbl">What is my next step?</span><input data-mrn="next" value="${esc(r.next||'')}" maxlength="200"></label>
+      <div class="mrbtns"><button class="btn pri" data-mr="notesave">Save & continue</button><button class="btn" data-mr="noteskip">Skip</button></div></div>`}
+  else if(v==='pick'){const act=MRUI.act||c.act,dur=MRUI.dur||c.min;h=`${mrHead('Choose your reset')}<div class="mrbody">
+      <span class="lbl">How long?</span><div class="seg3 mrdur" role="group" aria-label="Minutes">${MRDUR.map(n=>`<button data-mr="dur" data-n="${n}" aria-pressed="${dur===n}">${n} min</button>`).join('')}</div>
+      <span class="lbl" style="display:block;margin-top:12px">What would help?</span><div class="chips mracts">${Object.entries(MRACT).map(([k,[l]])=>`<button class="chip" data-mr="act" data-k="${k}" aria-pressed="${act===k}">${esc(l)}</button>`).join('')}</div>
+      <div class="mrbtns"><button class="btn pri" data-mr="go">Begin ${dur}-minute reset</button><button class="btn" data-mr="close">Not now</button></div></div>`}
+  else if(v==='run'){const R=s.reset;if(!R){MRUI.view='';return mrPaint()}const left=R.start+R.dur*60000-mrNow();
+    h=`${mrHead(esc(MRACT[R.act][0]))}<div class="mrbody mrrun">${mrRing(left,R.dur*60000)}<p class="mrguide">${esc(MRACT[R.act][1])}</p>
+      <div class="mrbtns"><button class="btn" data-mr="extend" data-n="2">+2 min</button><button class="btn" data-mr="extend" data-n="5">+5 min</button><button class="btn" data-mr="stop">I’m done</button></div>
+      <p class="calnote mrfine">You can close this. The timer keeps its place and you’ll see it when you come back.</p></div>`}
+  else if(v==='done'){const R=s.reset||{},mins=Math.max(1,Math.round(((R.doneAt||mrNow())-R.start)/60000)),res=mrResumeLatest(),lg=['walk','stretch'].includes(R.act);
+    if(MRUI.anchor==null)MRUI.anchor=!!m.anchor;
+    h=`${mrHead('Reset complete')}<div class="mrbody"><p class="mrmsg">${mins>=(R.dur||0)?'Nice. You took '+mins+' minute'+(mins>1?'s':'')+' for yourself.':'Any reset counts. You took '+mins+' minute'+(mins>1?'s':'')+'.'}</p>
+      <div class="chips"><button class="chip" data-mr="tanchor" aria-pressed="${MRUI.anchor}">${MRUI.anchor?'✓ ':''}Count toward today’s Reset anchor</button>
+      ${lg?`<button class="chip" data-mr="tmove" aria-pressed="${!!MRUI.move}">${MRUI.move?'✓ ':''}Log ${mins} min ${R.act==='walk'?'walk':'stretching'} in Movement</button>`:''}</div>
+      <label class="mrf"><span class="lbl">Anything worth noting? (optional, saves to Journal)</span><textarea class="awrap" data-mrn="refl" rows="2" maxlength="1000">${esc(MRUI.refl||'')}</textarea></label>
+      ${res?`<div class="mrres"><small>Where you left off</small><b>${esc(res.what||'Your last task')}</b>${res.stop?`<span>Stopped: ${esc(res.stop)}</span>`:''}${res.next?`<span>Next: ${esc(res.next)}</span>`:''}</div>`:''}
+      <div class="mrbtns">${res?`<button class="btn pri" data-mr="resume">Resume this</button>`:''}<button class="btn${res?'':' pri'}" data-mr="choose">Choose another priority</button><button class="btn" data-mr="finish">Done</button></div></div>`}
+  else if(v==='fstart'){h=`${mrHead('Start a focus session')}<div class="mrbody"><label class="mrf"><span class="lbl">What do you intend to accomplish?</span><input data-mrn="intent" maxlength="200" placeholder="e.g. Draft the talk outline" value="${esc(MRUI.intent||'')}"></label>
+      <span class="lbl" style="display:block;margin-top:10px">Planned length (optional)</span><div class="seg3 mrdur">${[[0,'Open'],[25,'25'],[45,'45'],[60,'60'],[90,'90']].map(([n,l])=>`<button data-mr="plan" data-n="${n}" aria-pressed="${(MRUI.plan||0)===n}">${l}${n?' min':''}</button>`).join('')}</div>
+      <p class="calnote">${mrQuietWhy()?'Check-ins are off right now ('+esc(mrWhyTxt(mrQuietWhy()))+'), so this session will run quietly.':'You’ll get a gentle check-in every '+mrInterval()+' minutes while KL Journal is open.'}</p>
+      <div class="mrbtns"><button class="btn pri" data-mr="fgo">Start Focus Session</button><button class="btn" data-mr="close">Cancel</button></div></div>`}
+  else if(v==='fend'){const f=s.focus||{};h=`${mrHead('Wrap up your session')}<div class="mrbody"><p class="mrel">${esc(f.intent||'Focus session')} · <b>${mrDurTxt(mrNow()-(f.start||mrNow()))}</b></p>
+      <label class="mrf"><span class="lbl">What did you get done?</span><textarea class="awrap" data-mrn="prog" rows="2" maxlength="1000"></textarea></label>
+      <label class="mrf"><span class="lbl">What’s unfinished?</span><textarea class="awrap" data-mrn="unf" rows="2" maxlength="1000"></textarea></label>
+      <label class="mrf"><span class="lbl">Next steps</span><textarea class="awrap" data-mrn="nxt" rows="2" maxlength="1000" placeholder="One per line. Smart Capture can turn these into tasks."></textarea></label>
+      <div class="chips"><button class="chip" data-mr="tjournal" aria-pressed="${!!MRUI.journal}">${MRUI.journal?'✓ ':''}Also save to today’s Journal</button></div>
+      <div class="mrbtns"><button class="btn pri" data-mr="fsave">End session</button><button class="btn" data-mr="close">Keep going</button></div></div>`}
+  sh.innerHTML=`<div class="card capcard mrcard" role="dialog" aria-modal="true" aria-label="Mindful Reset">${h}</div>`;sh.classList.remove('hide');sh.querySelectorAll('textarea.awrap').forEach(asz)}
+const mrWhyTxt=w=>({off:'turned off',paused:'paused',day:'off on '+mvKNameSafe()+' days',hours:'outside your active hours',quiet:'quiet hours'})[w]||'';
+function mvKNameSafe(){try{return mvKName(mrKind()).toLowerCase()}catch(e){return 'these'}}
+function mrPaintClock(){const s=mrState();document.querySelectorAll('[data-mrclock]').forEach(el=>{const k=el.dataset.mrclock;if(k==='left'&&s.reset)el.textContent=mrClock(s.reset.start+s.reset.dur*60000-mrNow());else if(k==='focus'&&s.focus)el.textContent=mrDurTxt(mrNow()-s.focus.start);else if(k==='next')el.textContent=mrNextTxt()});
+  if(MRUI.view==='run'){const R=s.reset;if(R){const left=R.start+R.dur*60000-mrNow(),c=$('#mrsheet .mrring circle:nth-of-type(2)');if(c){const C=2*Math.PI*82;c.setAttribute('stroke-dasharray',(C*Math.max(0,left)/(R.dur*60000)).toFixed(1)+' '+C.toFixed(1))}}}}
+let MRFAST=null;function mrFast(on){clearInterval(MRFAST);MRFAST=on?setInterval(()=>{const s=mrState();if(s.reset&&!s.reset.doneAt&&mrNow()>=s.reset.start+s.reset.dur*60000)mrTick();else mrPaintClock()},1000):null}
+function mrLog(o){const d=mrDoc();d.log.push(Object.assign({id:uid(),at:mrNow(),date:today()},o));save(MRK)}
+function mrStartReset(act,dur,src){const s=mrState();s.reset={id:uid(),start:mrNow(),dur,act,cat:MRUI.cat||'',src:src||'manual'};mrSave();MRUI.view='run';mrPaint();mrFast(true)}
+function mrFinishReset(after){const s=mrState(),R=s.reset;if(!R)return;const end=R.doneAt||mrNow(),mins=Math.max(1,Math.round((end-R.start)/60000));
+  mrLog({kind:'reset',act:R.act,cat:R.cat,planned:R.dur,actual:mins,src:R.src,full:mins>=R.dur});
+  if(MRUI.anchor){const d=get('day-'+today(),dayDef(today()));if(lvl(d,'reset')<=0){tickOn(d,'reset');save('day-'+today())}}
+  if(MRUI.move){try{mvAdd(R.act==='walk'?'walk':'stretch',today(),R.act==='walk'?{mi:0,dur:mins*60}:{sec:mins*60},'',{src:{kind:'reset',key:MRK,id:R.id,date:today()}})}catch(e){}}
+  const refl=(MRUI.refl||'').trim();if(refl){const d=get('day-'+today(),dayDef(today()));ents(d).push({id:uid(),title:'Mindful Reset',text:refl,cat:'reset',at:mrNow()});syncText(d);save('day-'+today())}
+  s.reset=null;mrResched(mrInterval()*60000);mrFast(false);
+  if(after==='resume'){const r=mrResumeLatest();if(r){r.used=mrNow();save(MRK)}MRUI={view:''};$('#mrsheet').classList.add('hide');capToast(r?'Welcome back. Picking up: '+esc(r.next||r.stop||r.what||'where you left off'):'Welcome back.',null);mrGoBack(r);return}
+  if(after==='choose'){MRUI={view:''};$('#mrsheet').classList.add('hide');S.tab='today';S.seg='tasks';S.date=today();render();scrollTo(0,0);capToast('Here’s your day. Pick what deserves your attention next.',null);return}
+  mrClose()}
+function mrGoBack(r){const y=scrollY;render();scrollTo(0,y)}
+function mrSaveResume(n){const what=(n.what||'').trim(),stop=(n.stop||'').trim(),next=(n.next||'').trim();if(!what&&!stop&&!next)return null;const d=mrDoc();d.resumes.forEach(r=>{if(!r.used)r.used=mrNow()});const r={id:uid(),at:mrNow(),date:today(),what,stop,next};d.resumes.push(r);
+  if(d.resumes.length>60)d.resumes=d.resumes.slice(-60);save(MRK);return r}
+function mrReadNote(){const o={};document.querySelectorAll('#mrsheet [data-mrn]').forEach(e=>o[e.dataset.mrn]=e.value);return o}
+function mrClick(e){if(e.target.id==='mrsheet'){if(MRUI.view==='run'){$('#mrsheet').classList.add('hide');MRUI.view='';return}if(MRUI.view==='prompt'){mrResched(mrInterval()*60000)}mrClose();return}
+  const b=e.target.closest('[data-mr]');if(!b)return;const a=b.dataset.mr,s=mrState();
+  if(a==='close'){if(MRUI.view==='prompt')mrResched(mrInterval()*60000);if(MRUI.view==='run'){$('#mrsheet').classList.add('hide');MRUI.view='';return}mrClose();return}
+  if(a==='continue'){mrLog({kind:'checkin',cat:MRUI.cat,res:'continue'});mrResched(mrInterval()*60000);mrClose();return}
+  if(a==='snoozemenu'){MRUI.snooze=!MRUI.snooze;MRUI.pause=false;mrPaint();return}
+  if(a==='snooze'){const n=+b.dataset.n;mrLog({kind:'checkin',cat:MRUI.cat,res:'snooze',n});mrResched(n*60000);if(!s.focus&&mrSet().ambient){s.amb=0;s.snoozeAmb=n;s.amb=Math.max(0,mrInterval()*60000-n*60000);mrSave()}mrClose();capToast('I’ll check in again in '+n+' minutes.',null);return}
+  if(a==='pausemenu'){MRUI.pause=!MRUI.pause;MRUI.snooze=false;mrPaint();return}
+  if(a==='pause'){const n=b.dataset.n,until=n==='day'?new Date(new Date().setHours(23,59,59,0)).getTime():mrNow()+(+n)*60000;s.pauseUntil=until;s.nextDue=0;s.amb=0;mrSave();mrLog({kind:'checkin',cat:MRUI.cat,res:'pause'});mrClose();capToast('Reminders paused until '+mrHM(until)+'.',null);return}
+  if(a==='start'){mrLog({kind:'checkin',cat:MRUI.cat,res:'reset'});const c=MRCAT.find(x=>x.id===MRUI.cat)||MRCAT[4];MRUI.act=c.act;MRUI.dur=c.min;MRUI.view='note';MRUI.after='pick';mrPaint();return}
+  if(a==='notesave'||a==='noteskip'){if(a==='notesave'){const r=mrSaveResume(mrReadNote());MRUI.resumeId=r&&r.id}MRUI.view=MRUI.after||'pick';mrPaint();return}
+  if(a==='dur'){MRUI.dur=+b.dataset.n;mrPaint();return}
+  if(a==='act'){MRUI.act=b.dataset.k;mrPaint();return}
+  if(a==='go'){const c=MRCAT.find(x=>x.id===MRUI.cat)||MRCAT[4];mrStartReset(MRUI.act||c.act,MRUI.dur||c.min,MRUI.src||'reminder');return}
+  if(a==='extend'){if(s.reset){s.reset.dur+=+b.dataset.n;mrSave();mrPaint()}return}
+  if(a==='stop'){if(s.reset){s.reset.doneAt=mrNow();mrSave()}mrFast(false);MRUI.view='done';mrPaint();return}
+  if(a==='tanchor'){MRUI.anchor=!MRUI.anchor;MRUI.refl=($('#mrsheet [data-mrn=refl]')||{}).value||MRUI.refl;mrPaint();return}
+  if(a==='tmove'){MRUI.move=!MRUI.move;MRUI.refl=($('#mrsheet [data-mrn=refl]')||{}).value||MRUI.refl;mrPaint();return}
+  if(a==='resume'||a==='choose'||a==='finish'){MRUI.refl=($('#mrsheet [data-mrn=refl]')||{}).value||'';mrFinishReset(a);return}
+  if(a==='plan'){MRUI.intent=($('#mrsheet [data-mrn=intent]')||{}).value||'';MRUI.plan=+b.dataset.n;mrPaint();return}
+  if(a==='fgo'){const it=(($('#mrsheet [data-mrn=intent]')||{}).value||'').trim();s.focus={id:uid(),start:mrNow(),intent:it,plan:MRUI.plan||0};s.nextDue=mrNow()+mrInterval()*60000;s.amb=0;mrSave();mrClose();capToast('Focus session started'+(it?': '+esc(it):'')+'.',null);return}
+  if(a==='tjournal'){MRUI.journal=!MRUI.journal;const keep=mrReadNote();mrPaint();Object.entries(keep).forEach(([k,v])=>{const el=$('#mrsheet [data-mrn='+k+']');if(el)el.value=v});return}
+  if(a==='fsave'){mrEndFocus(mrReadNote());return}}
+function mrChangeEv(){}
+function mrEndFocus(n){const s=mrState(),f=s.focus;if(!f){mrClose();return}const end=mrNow(),prog=(n.prog||'').trim(),unf=(n.unf||'').trim(),nxt=(n.nxt||'').trim();
+  const d=mrDoc(),rec={id:f.id,start:f.start,end,date:ymd(new Date(f.start)),intent:f.intent||'',plan:f.plan||0,prog,unf,next:nxt};d.sessions.push(rec);if(d.sessions.length>200)d.sessions=d.sessions.slice(-200);save(MRK);
+  if(unf||nxt)mrSaveResume({what:f.intent,stop:unf,next:nxt.split('\n')[0]});
+  if(MRUI.journal&&(prog||unf||nxt)){const dd=get('day-'+today(),dayDef(today()));ents(dd).push({id:uid(),title:'Focus: '+(f.intent||'session'),text:[prog&&'Done: '+prog,unf&&'Unfinished: '+unf,nxt&&'Next: '+nxt].filter(Boolean).join('\n'),cat:'journal',at:end});syncText(dd);save('day-'+today())}
+  s.focus=null;s.nextDue=0;mrSave();MRUI={view:''};$('#mrsheet').classList.add('hide');const y=scrollY;render();scrollTo(0,y);
+  if(nxt)capRun(nxt,{kind:'focus',key:MRK,id:rec.id,date:today(),text:nxt},'organize');else capToast('Session saved · '+mrDurTxt(end-f.start)+'.',null)}
+// restore an in-progress reset after reload / returning
+function mrRestore(){const s=mrState();if(!s.reset||MRUI.view)return;const end=s.reset.start+s.reset.dur*60000,now=mrNow();
+  if(now<end){MRUI={view:'run',cat:s.reset.cat};mrPaint();mrFast(true)}
+  else if(now-end<30*60000){s.reset.doneAt=s.reset.doneAt||end;mrSave();MRUI={view:'done',cat:s.reset.cat};mrPaint()}
+  else{MRUI={view:'',anchor:false};mrFinishResetSilent()}}
+function mrFinishResetSilent(){const s=mrState(),R=s.reset;if(!R)return;const mins=R.dur;mrLog({kind:'reset',act:R.act,cat:R.cat,planned:R.dur,actual:mins,src:R.src,full:true,late:true});s.reset=null;mrSave()}
+function mrNextTxt(){const s=mrState(),w=mrQuietWhy();if(w)return w==='paused'?'Paused until '+mrHM(s.pauseUntil):'Check-ins '+mrWhyTxt(w);
+  if(s.focus){const due=s.nextDue||mrNow()+mrInterval()*60000;return 'Next check-in about '+mrHM(due)}
+  return mrSet().ambient?'Check-in after about '+Math.max(1,Math.round((mrInterval()*60000-(s.amb||0))/60000))+' more min of active use':'Check-ins run during focus sessions'}
+// ---------- Home row, banner, page ----------
+function mrHomeRow(){const s=mrState(),f=s.focus,R=s.reset&&!s.reset.doneAt?s.reset:null;const sub=R?'Reset in progress · '+mrClock(R.start+R.dur*60000-mrNow())+' left':f?'Focusing'+(f.intent?': '+f.intent:'')+' · '+mrDurTxt(mrNow()-f.start):mrResumeLatest()?'Resume point saved · Return to what matters':'Return to what matters';
+  return `<button class="purow" data-go="mreset" aria-label="Mindful Reset: ${esc(sub)}"><span class="ai">${IC.reset}</span><span class="pt"><b>Mindful Reset</b><small>${esc(sub)}</small></span><span class="pgo">›</span></button>`}
+function mrBanner(){const s=mrState();if(S.tab==='mreset')return '';const R=s.reset&&!s.reset.doneAt?s.reset:null,f=s.focus;if(!R&&!f)return '';
+  return `<div class="mrbanner" role="status">${R?`<span>${IC.reset}<b>Reset</b> · <span data-mrclock="left">${mrClock(R.start+R.dur*60000-mrNow())}</span> left</span><button class="lnkg" data-mrb="open">Open</button>`:`<span>${IC.reset}<b>Focusing</b>${f.intent?' · '+esc(f.intent):''} · <span data-mrclock="focus">${mrDurTxt(mrNow()-f.start)}</span></span><button class="lnkg" data-mrb="reset">Reset</button><button class="lnkg" data-mrb="end">End</button>`}</div>`}
+function vMreset(){const s=mrState(),m=mrSet(),d=mrDoc(),f=s.focus,res=mrResumeLatest(),td=today();
+  const todays=d.log.filter(x=>x.kind==='reset'&&x.date===td),mins=todays.reduce((a,x)=>a+(x.actual||0),0);
+  const focusCard=f?`<div class="card mrfocus"><div class="chd"><h2>Focus session</h2><small>since ${mrHM(f.start)}</small></div><p class="mrintent">${esc(f.intent||'Open focus')}</p>
+      <p class="mrbig" data-mrclock="focus">${mrDurTxt(mrNow()-f.start)}</p>${f.plan?`<p class="calnote" style="margin:0">Planned ${f.plan} min${mrNow()-f.start>f.plan*60000?' · past your planned time — no pressure, just so you know':''}</p>`:''}
+      <div class="chips" style="margin-top:12px"><button class="btn pri" data-mrb="reset">Take a reset</button><button class="btn" data-mrb="end">End session</button></div><p class="calnote" data-mrclock="next">${esc(mrNextTxt())}</p></div>`
+    :`<div class="card"><div class="chd"><h2>Focus session</h2><small>Optional</small></div><p class="calnote" style="margin-top:0">Say what you intend to do. KL Journal keeps time and checks in gently while it’s open.</p><button class="btn pri" data-mrb="fstart">Start Focus Session</button></div>`;
+  const resetCard=`<div class="card"><div class="chd"><h2>Take a reset now</h2><small>${todays.length?todays.length+' today · '+mins+' min':'Any length counts'}</small></div>
+    <div class="puq mrnow" style="grid-template-columns:repeat(4,minmax(0,1fr))">${MRDUR.map(n=>`<button data-mrb="now" data-n="${n}">${n}<small style="display:block;font-size:11px;font-family:inherit;font-weight:500">min</small></button>`).join('')}</div></div>`;
+  const resCard=res?`<div class="card mrres"><div class="chd"><h2>Where you left off</h2><small>${esc(mrHM(res.at))}${res.date!==td?' · '+esc(fmtDate(res.date,{month:'short',day:'numeric'})):''}</small></div>
+      ${res.what?`<p><b>${esc(res.what)}</b></p>`:''}${res.stop?`<p class="calnote" style="margin:0">Stopped: ${esc(res.stop)}</p>`:''}${res.next?`<p class="calnote" style="margin:0">Next: ${esc(res.next)}</p>`:''}
+      <div class="chips" style="margin-top:10px"><button class="btn sm pri" data-mrb="resume" data-id="${esc(res.id)}">Resume</button>${res.next?`<button class="btn sm" data-mrb="capnext" data-id="${esc(res.id)}"><span class="orgbtn">${SPARK}Add next step</span></button>`:''}<button class="btn sm" data-mrb="dismiss" data-id="${esc(res.id)}">Clear</button></div></div>`:'';
+  const status=`<div class="card"><div class="chd"><h2>Check-ins</h2><small>${m.on?esc(mvKNameSafe())+' · every '+mrInterval()+' min':'Off'}</small></div><p data-mrclock="next">${esc(mrNextTxt())}</p>
+    <div class="chips">${s.pauseUntil&&mrNow()<s.pauseUntil?`<button class="chip" data-mrb="unpause">Resume reminders</button>`:[['60','Pause 1 hr'],['120','Pause 2 hr'],['day','Pause rest of today']].map(([k,l])=>`<button class="chip" data-mrb="pause" data-n="${k}">${l}</button>`).join('')}<button class="chip" data-mrb="prefs">Preferences</button></div>
+    <p class="calnote">Check-ins appear while KL Journal is open. <button class="lnkg" data-mrb="why">What about when it’s closed?</button></p>${S.mrwhy?mrWhyCard():''}</div>`;
+  const sess=d.sessions.slice().sort((a,b)=>b.start-a.start).slice(0,10),logT=d.log.filter(x=>x.kind==='reset').slice(-12).reverse();
+  const hist=`${sess.length?`<p class="lbl" style="margin:0 0 6px">Focus sessions</p>${sess.map(x=>`<div class="mrhist"><b>${esc(x.intent||'Focus session')}</b><small>${esc(fmtDate(x.date,{weekday:'short',month:'short',day:'numeric'}))} · ${mrDurTxt(x.end-x.start)}</small>${x.prog?`<span>Done: ${esc(x.prog)}</span>`:''}${x.unf?`<span>Unfinished: ${esc(x.unf)}</span>`:''}${x.next?`<span>Next: ${esc(x.next)}</span>`:''}</div>`).join('')}`:''}
+    ${logT.length?`<p class="lbl" style="margin:12px 0 6px">Resets</p>${logT.map(x=>`<div class="mrhist"><b>${esc((MRACT[x.act]||['Reset'])[0])}</b><small>${esc(fmtDate(x.date,{weekday:'short',month:'short',day:'numeric'}))} · ${x.actual} min</small></div>`).join('')}`:''}${!sess.length&&!logT.length?'<p class="empty">Your resets and focus sessions will show here. No streaks, no scores.</p>':''}`;
+  return focusCard+resetCard+resCard+status+rc('mr-hist',IC.list,'History','Recent resets and sessions',hist,false)}
+function mrWhyCard(){const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),hasN='Notification' in window,perm=hasN?Notification.permission:'unsupported';
+  return `<div class="mrwhy"><p><b>Works now</b> — check-ins, guided timers and focus sessions whenever KL Journal is on screen. If you leave and come back, timers resume exactly; missed check-ins are skipped, never stacked.</p>
+    <p><b>${ios?'On this iPhone/iPad':'On this device'}</b> — ${ios?'iOS pauses web apps in the background and when the screen locks, so KL Journal can’t schedule reminders by itself while it’s closed.':hasN?'If you allow notifications, a check-in can appear while this browser tab is open in the background. It stops when the browser or tab is closed.':'This browser doesn’t support notifications.'}</p>
+    ${hasN&&perm!=='granted'&&perm!=='denied'?`<button class="btn sm" data-mrb="notif">Allow notifications</button>`:hasN?`<p class="calnote">Notifications: ${perm==='granted'?'allowed':'blocked in your browser settings'}.</p>`:''}
+    <p><b>Reminders while closed (not built yet)</b> — would need Web Push: the home-screen app subscribes to push, and a small always-on server sends each reminder at the right time (it would know your reminder schedule, not your journal). Google Apps Script can’t do this reliably. Ask if you want it set up.</p></div>`}
+function mrBannerClick(b){const a=b.dataset.mrb,s=mrState();
+  if(a==='open'){mrRestore();return}
+  if(a==='reset'){MRUI={view:'note',cat:mrNextCat().id,after:'pick',src:'focus'};const c=MRCAT.find(x=>x.id===MRUI.cat);MRUI.act=c.act;MRUI.dur=c.min;mrPaint();return}
+  if(a==='end'){MRUI={view:'fend',journal:false};mrPaint();return}
+  if(a==='fstart'){MRUI={view:'fstart',plan:0};mrPaint();setTimeout(()=>{const i=$('#mrsheet [data-mrn=intent]');if(i)i.focus()},50);return}
+  if(a==='now'){const n=+b.dataset.n;MRUI={view:'note',cat:'',after:'pick',dur:n,act:n>=10?'walk':n>=5?'stretch':'breathe',src:'manual'};mrPaint();return}
+  if(a==='resume'){const r=mrDoc().resumes.find(x=>x.id===b.dataset.id);if(r){r.used=mrNow();save(MRK)}const y=scrollY;render();scrollTo(0,y);capToast('Picking up: '+esc(r&&(r.next||r.stop||r.what)||'where you left off'),null);return}
+  if(a==='dismiss'){const r=mrDoc().resumes.find(x=>x.id===b.dataset.id);if(r){r.used=mrNow();save(MRK)}const y=scrollY;render();scrollTo(0,y);return}
+  if(a==='capnext'){const r=mrDoc().resumes.find(x=>x.id===b.dataset.id);if(r&&r.next)capRun(r.next,{kind:'reset',key:MRK,id:r.id,date:today(),text:r.next},'organize');return}
+  if(a==='pause'){const n=b.dataset.n;s.pauseUntil=n==='day'?new Date(new Date().setHours(23,59,59,0)).getTime():mrNow()+(+n)*60000;s.nextDue=0;s.amb=0;mrSave();const y=scrollY;render();scrollTo(0,y);return}
+  if(a==='unpause'){s.pauseUntil=0;s.nextDue=0;mrSave();const y=scrollY;render();scrollTo(0,y);return}
+  if(a==='prefs'){S.tab='setup';S.rc=S.rc||{};S.rc['mo-mreset']=true;render();const el=$('#rc-mo-mreset');if(el)el.scrollIntoView({block:'start'});return}
+  if(a==='why'){S.mrwhy=!S.mrwhy;const y=scrollY;render();scrollTo(0,y);return}
+  if(a==='notif'){try{Notification.requestPermission().then(()=>{const y=scrollY;render();scrollTo(0,y)})}catch(e){}return}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mrb]');if(!b)return;e.preventDefault();e.stopPropagation();mrBannerClick(b)},true);
+// ---------- preferences in More ----------
+function mrPrefsCard(){const m=mrSet(),canVib=!!navigator.vibrate;
+  const rows=MRKINDS.map(([k,l])=>`<div class="mrday"><button class="chip" data-mrp="day" data-k="${k}" aria-pressed="${m.days[k].on}">${m.days[k].on?'✓ ':''}${l}</button><select data-mrp="int" data-k="${k}" aria-label="${l} interval" ${m.days[k].on?'':'disabled'}>${MRINT.map(n=>`<option value="${n}" ${m.days[k].int===n?'selected':''}>Every ${n} min</option>`).join('')}</select></div>`).join('');
+  const body=`<div class="chips"><button class="chip" data-mrp="on" aria-pressed="${m.on}">${m.on?'✓ Check-ins on':'Check-ins off'}</button><button class="chip" data-mrp="ambient" aria-pressed="${!!m.ambient}">${m.ambient?'✓ ':''}Also while I’m actively using KL Journal</button></div>
+    <p class="calnote">Check-ins always run during focus sessions. The second option counts only time you’re actually tapping and typing in the app, never time it just sits open.</p>
+    <span class="lbl" style="display:block;margin-top:10px">By kind of day</span><div class="mrdays">${rows}</div><p class="calnote">Day type follows your schedule (the same as the Movement hub).</p>
+    <div class="mvgoals" style="margin-top:10px"><label><span class="lbl">Active from</span><input type="time" data-mrp="a0" value="${m.active[0]}"></label><label><span class="lbl">Active until</span><input type="time" data-mrp="a1" value="${m.active[1]}"></label>
+      <label><span class="lbl">Quiet from (optional)</span><input type="time" data-mrp="q0" value="${m.quiet[0]||''}"></label><label><span class="lbl">Quiet until</span><input type="time" data-mrp="q1" value="${m.quiet[1]||''}"></label></div>
+    <span class="lbl" style="display:block;margin-top:12px">Check-in topics (they take turns)</span><div class="chips">${MRCAT.map(c=>`<button class="chip" data-mrp="cat" data-k="${c.id}" aria-pressed="${m.cats.includes(c.id)}">${m.cats.includes(c.id)?'✓ ':''}${esc(c.name)}</button>`).join('')}</div>
+    <span class="lbl" style="display:block;margin-top:12px">Sound</span><div class="chips">${[['none','Silent'],['chime','Soft chime']].concat(canVib?[['vibrate','Vibrate']]:[]).map(([k,l])=>`<button class="chip" data-mrp="sound" data-k="${k}" aria-pressed="${m.sound===k}">${l}</button>`).join('')}</div>
+    <div class="chips" style="margin-top:10px"><button class="chip" data-mrp="anchor" aria-pressed="${!!m.anchor}">${m.anchor?'✓ ':''}Offer to count resets toward the Reset anchor</button></div>
+    <p class="calnote">Reminders appear while KL Journal is open. iPhone and iPad pause web apps in the background, so they can’t remind you while it’s closed. Open Mindful Reset › “What about when it’s closed?” for details.</p>`;
+  return rc('mo-mreset',IC.reset,'Mindful Reset',m.on?'Every '+mrInterval()+' min · '+(m.ambient?'sessions + active use':'during focus sessions'):'Off',body,false)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mrp]');if(!b||b.tagName==='SELECT'||b.tagName==='INPUT')return;const m=mrSet(),a=b.dataset.mrp,k=b.dataset.k;
+  if(a==='on')m.on=!m.on;else if(a==='ambient'){m.ambient=!m.ambient;const s=mrState();s.amb=0;s.ambAt=mrNow();mrSave()}else if(a==='day')m.days[k].on=!m.days[k].on;else if(a==='cat'){m.cats=m.cats.includes(k)?m.cats.filter(x=>x!==k):m.cats.concat(k)}else if(a==='sound')m.sound=k;else if(a==='anchor')m.anchor=!m.anchor;else return;
+  save('settings');const y=scrollY;render();scrollTo(0,y)},true);
+document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.mrp)return;const m=mrSet(),a=t.dataset.mrp;
+  if(a==='int'){m.days[t.dataset.k].int=+t.value;const s=mrState();if(s.focus)s.nextDue=Math.min(s.nextDue||Infinity,mrNow()+(+t.value)*60000);mrSave()}
+  else if(a==='a0'||a==='a1'){if(t.value)m.active[a==='a0'?0:1]=t.value}else if(a==='q0'||a==='q1')m.quiet[a==='q0'?0:1]=t.value||'';else return;save('settings')},true);
+// resume anything in progress once the app has started
+setTimeout(()=>{try{if(READY){mrRestore();mrTick()}}catch(e){}},1500);
+// ================= /Mindful Reset =================
 // ================= Smart Capture: From Thought to Action =================
 // Everything here runs on this device. Notes are never sent anywhere.
 const SPARK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>';
@@ -1482,9 +1748,9 @@ function capSheet(){const sh=$('#capsheet');if(!CAPS){sh.classList.add('hide');r
     ${kept.length?`<details class="capkept"><summary>${kept.length} sentence${kept.length>1?'s':''} left in your note</summary>${kept.map(k=>`<p>“${esc(k.s)}” <small>· ${esc(k.why)}</small></p>`).join('')}</details>`:''}
     <div class="chips" style="margin-top:12px"><button class="btn pri" data-cs="add" ${n?'':'disabled'}>${n?`Add ${n} item${n>1?'s':''}`:'Nothing selected'}</button><button class="btn" data-cs="close">${items.length?'Cancel':'Close'}</button></div></div>`;
   sh.classList.remove('hide');sh.querySelectorAll('textarea.awrap').forEach(asz);vcHydrate(sh)}
-function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump',image:'Photo'}[src.kind]||'Note';
+function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump',image:'Photo',focus:'Focus session',reset:'Reset note'}[src.kind]||'Note';
   return `<button class="lnkg" data-gosrc="${esc(JSON.stringify(src))}" style="font-size:13px">${src.kind==='image'?vcThumb(src.id,'vmini'):SPARK.replace('<svg','<svg style="width:13px;height:13px;vertical-align:-2px"')} From ${lbl} · ${esc(fmtDate(src.date||today(),{month:'short',day:'numeric'}))}</button>`}
-function capGoSrc(src){if(src.kind==='image'){vcView(src.id);return}if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
+function capGoSrc(src){if(src.kind==='image'){vcView(src.id);return}if(src.kind==='focus'||src.kind==='reset'){S.tab='mreset';S.rc=S.rc||{};S.rc['mr-hist']=true;render();scrollTo(0,0);return}if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
   else if(src.kind==='session'){S.tab='sessions';S.sess=src.date;S.rc=S.rc||{};S.rc['se-new']=true}
   else if(src.kind==='note'){S.tab='spiritual';S.date=src.date;const x=cache[src.key];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};S.rc=S.rc||{};S.rc['sp-notes']=true}}
   else{if(inbox().some(x=>x.id===src.id)){S.tab='home'}else{capToast('Original note: “'+esc(src.text||'')+'”',null);return}}
@@ -1532,7 +1798,7 @@ function vHome(){
 `;
   return `${perspCard()}
   <div class="card"><div class="chd"><h2>My Daily Anchors</h2><small>${aN} of 4</small></div>
-    <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}${k==='movement'&&mvTickSub()?`<span class="pus">${esc(mvTickSub())}</span>`:''}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div>${mvHomeRow()}</div>
+    <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}${k==='movement'&&mvTickSub()?`<span class="pus">${esc(mvTickSub())}</span>`:''}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div>${mvHomeRow()}${mrHomeRow()}</div>
   <div class="card"><div class="chd"><h2>Today’s Top 3</h2><button class="lnkg" data-go="today">Plan today</button></div>${top3Home(d)}</div>
   <button class="gbtn" data-go="journal" data-new="1">${IC.pen}Write a Quick Entry</button>
   ${inboxCard()}
@@ -2187,7 +2453,7 @@ function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTime
 // Item-level merge so the same page edited on two devices keeps both sets of changes.
 const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
 const ikey=x=>x&&(x.id||('t:'+(x.t||'')));
-function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];return[]}
+function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];if(key==='mreset')return['log','sessions','resumes'];return[]}
 function mergeDoc(key,a,b){if(!a||a._del===true)return b;if(!b||b._del===true)return a;
   const lists=mergeLists(key);if(!lists.length)return (Number(a._u)||0)>=(Number(b._u)||0)?a:b;
   const [nw,ol]=(Number(a._u)||0)>=(Number(b._u)||0)?[a,b]:[b,a];
@@ -2520,6 +2786,7 @@ function vSetup(){
     <p class="calnote" style="margin-top:8px">${{review:'After you save a journal entry, study note or Inbox note, Smart Capture shows what it found (tasks, dates, session questions) and adds only what you check.',auto:'Clear, low-risk items (plain tasks and session questions) are added right away, with Undo. Anything with an unclear date, a calendar event or a “maybe” waits for your review.',manual:'Nothing happens on its own. Tap ✦ Organize on a note when you want it sorted.'}[capMode()]}</p>
     <p class="calnote">Your notes and photos are read on this device. Nothing is sent to any outside service unless you allow cloud reading below and ask for it on a specific photo. Your original note is never changed; anything Smart Capture adds links back to it.</p>`,false)}
   ${vcPhotosCard()}
+  ${mrPrefsCard()}
   ${rc('mo-quotes',IC.bookmark,'Saved Perspectives',savedQ().length?`${savedQ().length} saved`:'Quotes you save on Home',savedQList(),false)}
   ${rc('mo-data',IC.cloud,'Data &amp; Sync',bridgeOn()?'Google connected · backup and restore':'Backup, restore, and device storage',`${bridgeCard()}
   <div class="card">
@@ -2538,7 +2805,7 @@ function vSetup(){
 
 // ---------- render ----------
 function render(){
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===(S.tab==='brs'?'spiritual':S.tab==='move'?'home':S.tab)?'page':'false'));if(S.tab==='brs')requestAnimationFrame(()=>document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px'));
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===(S.tab==='brs'?'spiritual':S.tab==='move'||S.tab==='mreset'?'home':S.tab)?'page':'false'));if(S.tab==='brs')requestAnimationFrame(()=>document.documentElement.style.setProperty('--hh',$('header').offsetHeight+'px'));
   const pn=S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')!=='tasks');$('#prev').classList.toggle('hide',!pn);$('#next').classList.toggle('hide',!pn);
   if(heroFor()){$('#title').textContent='KL Journal';$('#sub').textContent=fmtDate((S.tab==='journal'||S.tab==='spiritual'||(S.tab==='today'&&(S.seg||'day')==='day'))?S.date:today(),{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
   else if(S.tab==='journal'){$('#title').textContent='Journal';$('#sub').textContent=fmtDate(S.date,{weekday:'long',month:'long',day:'numeric',year:'numeric'})+(S.date===today()?'':' · tap › to come back')}
@@ -2551,7 +2818,7 @@ function render(){
   if(S.tab!=='journal'){S.jopen=null;S.jnew=null}
   const HERO=heroFor();
   document.body.classList.toggle('has-hero',!!HERO);$('#herozone').innerHTML=HERO;heroHdr();
-  $('#main').innerHTML=({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,move:vMove,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
+  $('#main').innerHTML=mrBanner()+({home:vHome,brs:vBRS,today:vToday,journal:vJournal,spiritual:vSpiritual,entries:vEntries,plan:vPlan,logs:vLogs,move:vMove,mreset:vMreset,setup:vSetup,sessions:vSessions,help:vHelp})[S.tab]();
   document.querySelectorAll('details.more').forEach((x,i)=>{if(wasOpen[i]&&S._lastTab===S.tab+S.date)x.open=true});S._lastTab=S.tab+S.date;
   main.querySelectorAll('textarea.write').forEach(grow);main.querySelectorAll('textarea.awrap').forEach(asz);hydrateAudio();vcHydrate(main);if(S.tab==='setup')vcStoreLine();
   if(MCP&&S.tab==='home'){const td=today();const st=$('#hcalst');if(st&&CAL[td]&&CAL[td].at)st.textContent='updated '+new Date(CAL[td].at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});const need=!CAL[td]||CAL[td].state!=='ok'||Date.now()-CAL[td].at>120000;if(need)loadDay(td).then(()=>{if(S.tab==='home'&&!(document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName))){const y=scrollY;render();scrollTo(0,y)}});const ss=SESSEV;loadSessEv().then(()=>{if(S.tab==='home'&&SESSEV!==ss&&SESSEV&&SESSEV.state==='ok'){const y=scrollY;render();scrollTo(0,y)}})}
@@ -2764,7 +3031,7 @@ async function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 let pendingImp=null;
-function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
+function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture|mreset)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
   const imgs=j.images&&typeof j.images==='object'?j.images:null,ni=imgs?Object.keys(imgs).length:0;if(!keys.length)throw 0;pendingImp={d,keys,imgs};$('#impMsg').innerHTML=`<div class="note">Import ${keys.length} entries${ni?' and '+ni+' photo'+(ni>1?'s':''):''}? Entries with the same date are replaced. <div class="chips" style="margin-top:8px"><button class="btn sm pri" data-act="doimp">Import</button><button class="btn sm" data-act="noimp">Cancel</button></div></div>`}
   catch(e){$('#impMsg').innerHTML='<div class="note">That file isn’t an Anchors backup.</div>'}};r.readAsText(file)}
 async function doImport(){if(!pendingImp)return;const {d,keys,imgs}=pendingImp;pendingImp=null;$('#impMsg').innerHTML='<div class="note">Importing…</div>';
