@@ -1,10 +1,10 @@
 // AXIS service worker (cache names keep their original kl- prefix so nothing is lost): makes the app open offline.
-const CACHE = 'kl-journal-v52';
+const CACHE = 'kl-journal-v53';
 const OCR = 'kl-ocr-v1';   // text reader files (~7 MB): kept across app updates
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/favicon.png',
   './assets/hero-home.webp', './assets/hero-today.webp', './assets/hero-journal.webp',
-  './assets/hero-spiritual.webp', './assets/hero-sessions.webp', './assets/hero-more.webp'];
+  './assets/hero-spiritual.webp', './assets/hero-sessions.webp', './assets/hero-more.webp', './vendor/supabase.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
