@@ -4071,7 +4071,7 @@ let AXPAIR=null,AXCHG=null,AXNEWREC=null;
 function axCard(){if(window.claude)return rc('mo-account',IC.layers,'Account & family','Home-screen app only','<p class="calnote" style="margin:0">Family accounts work in the home-screen version of AXIS (kd2littlejohn.github.io/kl-journal). This Claude page keeps using its own private storage.</p>',false);
   const c=axCfg();let body,sub;
   if(!c){sub='Not connected';body=`<p class="calnote" style="margin-top:0">Family accounts run on your own Google Apps Script: everyone signs in with their own Google account, and private data is encrypted on each device. Follow SETUP-GOOGLE.md, then paste the two values here.</p>
-    <label class="mrf"><span class="lbl">Apps Script web app URL</span><input data-axc="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url"></label><label class="mrf"><span class="lbl">Google client ID</span><input data-axc="cid" placeholder="…apps.googleusercontent.com"></label>
+    <label class="mrf"><span class="lbl">Apps Script web app URL</span><input data-axc="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false"></label><label class="mrf"><span class="lbl">Google client ID <small class="muted">(optional: AXIS can get it from your script)</small></span><input data-axc="cid" placeholder="…apps.googleusercontent.com" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
     <button class="btn pri" data-axa="cfg">Connect family accounts</button><p class="calnote">Both values are public by design. Your bridge key, OpenAI key and other secrets stay in Apps Script.</p>`}
   else if(!AXACCT){sub='Not signed in';body=`<p class="calnote" style="margin-top:0">Sign in with Google. The journal already on this device stays as it is until its owner signs in and chooses to move it into their account.</p><button class="btn pri" data-axa="lock">Sign in with Google</button>`}
   else{const me=AXME||{},adm=me.admin,minor=me.minor;sub=esc(axName()||AXACCT.email)+(adm?' · administrator':'');
@@ -4100,9 +4100,14 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
   const arm=lbl=>{if(b.dataset.armed)return true;b.dataset.armed=1;const o=b.textContent;b.textContent=lbl;setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=o}},3500);return false};
   const redraw=()=>{render();scrollTo(0,y)};
   try{
-    if(a==='cfg'){const u=(document.querySelector('[data-axc=url]').value||'').trim(),cid=(document.querySelector('[data-axc=cid]').value||'').trim();
-      if(!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)){capToast('That doesn’t look like an Apps Script web app URL (it ends in /exec).',null);return}
-      if(!/^[\w-]+\.apps\.googleusercontent\.com$/.test(cid)){capToast('That doesn’t look like a Google client ID (it ends in .apps.googleusercontent.com).',null);return}
+    if(a==='cfg'){const raw=(document.querySelector('[data-axc=url]').value||''),rawc=(document.querySelector('[data-axc=cid]').value||'');
+      const um=raw.match(/https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/),u=um&&um[0];
+      if(!u){capToast('That doesn’t look like the Apps Script web app URL. Copy it from Deploy › Manage deployments; it starts with https://script.google.com/macros/s/ and ends in /exec.',null);return}
+      if(/GOCSPX/i.test(rawc)){capToast('That’s the client secret (it starts with GOCSPX). AXIS needs the client ID instead, the one ending in .apps.googleusercontent.com. Or leave the box empty.',null);return}
+      let cm=rawc.match(/[\w-]+\.apps\.googleusercontent\.com/),cid=cm&&cm[0];
+      // the server already knows its client ID (it's public), so it can fill this in
+      if(!cid){b.textContent='Checking…';try{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({op:'hello'})});const j=await r.json();cid=j&&j.clientId}catch(_){}b.textContent='Connect family accounts'}
+      if(!cid){capToast(rawc.trim()?'That doesn’t look like a Google client ID. It ends in .apps.googleusercontent.com (Cloud Console › Credentials › your Web client).':'Couldn’t get the client ID from your script. Add it as the GOOGLE_CLIENT_ID script property, redeploy as a new version, and try again.',null);return}
       localStorage.setItem('axis-google',JSON.stringify({url:u,clientId:cid}));redraw();capToast('Family accounts connected on this device.',null);return}
     if(a==='lock'){AXLOCKVIEW={v:'in',msg:'',busy:false};axLock('in');return}
     if(a==='sync'){b.textContent='Syncing…';await axPush();await axPull();await axBlobBackfill();redraw();return}
