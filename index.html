@@ -524,7 +524,7 @@ h1.brand{letter-spacing:0;margin-right:0;line-height:1}
 .jtpl{margin:6px 0 4px}.jtpl .chips{margin-top:4px}.hqbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hqbtns .gbtn{margin:0}  .mrbx{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rtbar{display:block;width:100%;height:5px;border-radius:4px;background:rgba(189,161,107,.15);overflow:hidden;margin-top:4px}.rtbar i{display:block;height:100%;background:var(--gold)}.hrt{display:block;width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer}.hcust{margin-top:8px}
 
 #axlock{position:fixed;inset:0;z-index:80;background:radial-gradient(circle at 50% 30%,#201f1a,#141411 70%);overflow:auto;display:grid;place-items:start center;padding:max(24px,env(safe-area-inset-top)) 18px 40px}
-.axbox{width:min(420px,100%);margin-top:4vh}.axbox h2{font-family:Cinzel,Lora,serif;color:var(--acc2);font-size:20px;margin:18px 0 10px}.axbox label{display:block;margin:10px 0}.axbox input:not([type=checkbox]){width:100%}
+.axbox{width:min(420px,100%);margin-top:4vh}.axrec{font:600 1.15rem/1.4 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:var(--gold,#BDA16B);background:#1b1a16;border:1px solid #3a352a;border-radius:12px;padding:12px 14px;text-align:center;word-break:break-all;user-select:all;margin:10px 0}.axg{display:flex;justify-content:center;min-height:44px;margin:14px 0 6px}.axpair,.axchg{margin-top:10px;padding:12px;border:1px solid #3a352a;border-radius:12px}.axchg .mrf{display:block;margin-bottom:8px}#axlock label{display:block;margin-top:10px}#axlock input:not([type=checkbox]){width:100%}.axbox h2{font-family:Cinzel,Lora,serif;color:var(--acc2);font-size:20px;margin:18px 0 10px}.axbox label{display:block;margin:10px 0}.axbox input:not([type=checkbox]){width:100%}
 .axlogo{display:flex;align-items:center;justify-content:center;gap:12px}.axlogo img{height:64px}.axlogo .axw{height:34px}.axtag{text-align:center;font-family:Lora,Georgia,serif;font-style:italic;color:var(--ink);opacity:.8;margin:6px 0 0}
 .axbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}.axmsg{color:#e8c98a;margin:8px 0 0}.axchk{display:flex!important;gap:8px;align-items:center}.axwho{margin:0 0 4px}
 .axme,.axmem{display:flex;align-items:center;gap:10px;margin:8px 0}.axme small,.axmem small{display:block;color:var(--mute);font-size:12.5px}.axmem>span:nth-child(2){flex:1;min-width:0}.axdot{width:14px;height:14px;border-radius:50%;flex:none}
@@ -3182,8 +3182,12 @@ const GC='Google Calendar';
 // ---------- Google bridge (home-screen app only): your own Apps Script for Calendar + Drive ----------
 const BKEY=nsk('kl-bridge');
 let BRIDGE=null;try{BRIDGE=JSON.parse(localStorage.getItem(BKEY)||'null')}catch(e){}
-const bridgeOn=()=>!window.claude&&BRIDGE&&BRIDGE.url&&BRIDGE.key;
+const axSess=()=>!window.claude&&!!(AXACCT&&AXACCT.s&&axCfg());
+const bridgeOn=()=>!window.claude&&(axSess()||!!(BRIDGE&&BRIDGE.url&&BRIDGE.key));
+// Calendar and Drive backup act on the owner's Google account, so only the owner gets them
+const bridgeOwner=()=>!window.claude&&(axSess()?!!AXACCT.owner:!!(BRIDGE&&BRIDGE.url&&BRIDGE.key));
 async function bcall(op,args,url,key){
+  if(!url&&axSess())try{return await axCall(op,args)}catch(e){throw {code:e.code==='signed_out'?'bridge_key':e.code==='owner_only'?'bridge_err':e.code==='bridge_offline'?'bridge_offline':'bridge_err',message:e.message||e.code}}
   let r;try{r=await fetch(url||BRIDGE.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({key:key||BRIDGE.key,op},args||{}))})}catch(e){throw {code:'bridge_offline'}}
   let j;try{j=await r.json()}catch(e){throw {code:'bridge_bad'}}
   if(j&&j.error)throw {code:j.error==='bad_key'?'bridge_key':'bridge_err',message:j.message||j.error};return j}
@@ -3200,7 +3204,8 @@ function bridgeMCP(){const mem=new Map();return {
   async invalidate(){mem.clear()}}}
 // Drive copy: push changed docs, pull and merge (newer _u wins)
 let DQ=new Set(),dTimer=null,DSYNC={at:0,state:'',err:''};
-const driveOn=()=>bridgeOn()&&BRIDGE.drive!==false;
+// the owner's existing plain Drive copy keeps running where it was already set up; it never starts on its own
+const driveOn=()=>bridgeOwner()&&!!BRIDGE&&BRIDGE.drive!==false;
 function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTimer=setTimeout(drivePush,2500)}
 // Item-level merge so the same page edited on two devices keeps both sets of changes.
 const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
@@ -3235,12 +3240,12 @@ async function drivePull(){if(!driveOn())return;
     if(ch){lsSave();const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}
     DSYNC={at:Date.now(),state:'ok'};if(DQ.size){clearTimeout(dTimer);dTimer=setTimeout(drivePush,1500)}else if(!dirty.size)setStatus('Saved · backed up to Drive')}
   catch(e){DSYNC={at:DSYNC.at,state:'err',err:e.code};setStatus('Saved on this device · couldn’t reach Drive',false)}}
-function bridgeCard(){if(window.claude)return '';const b=BRIDGE||{};const on=bridgeOn();
+function bridgeCard(){if(window.claude)return '';if(axSess()&&!AXACCT.owner)return '';const b=BRIDGE||{};const on=bridgeOwner();
   return `<div class="card"><h2>Google connection</h2>
-    <p class="muted" style="margin-top:0">${on?`Connected${b.email?' as <b>'+esc(b.email)+'</b>':''}. Your Google Calendar shows up here, and ${b.drive!==false?'your data is backed up to Google Drive (folder “KL Journal”, kept so existing backups stay put).':'Drive backup is off.'}`:'Connect your own Google bridge to bring back calendar features and back up your journal to Google Drive. See How to use → Google connection for the setup.'}</p>
+    <p class="muted" style="margin-top:0">${on?`Connected${axSess()?' through your AXIS account':b.email?' as <b>'+esc(b.email)+'</b>':''}. Your Google Calendar shows up here, and ${b.drive!==false?'your data is backed up to Google Drive (folder “KL Journal”, kept so existing backups stay put).':'Drive backup is off.'}`:'Connect your own Google bridge to bring back calendar features and back up your journal to Google Drive. See How to use → Google connection for the setup.'}</p>
     ${on?`<p class="calnote" id="dsync">${DSYNC.at?'Last Drive backup '+esc(new Date(DSYNC.at).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):''}${DSYNC.state==='err'?' · couldn’t reach Drive just now':''}</p>
       <div class="chips"><button class="chip" data-act="bdrive" aria-pressed="${b.drive!==false}">Back up to Google Drive</button></div>
-      <div class="chips" style="margin-top:8px"><button class="btn sm" data-act="bsync">Sync now</button><button class="btn sm" data-act="boff">Disconnect</button></div>`
+      <div class="chips" style="margin-top:8px"><button class="btn sm" data-act="bsync">Sync now</button>${axSess()?'':'<button class="btn sm" data-act="boff">Disconnect</button>'}</div>`
     :`<label style="display:block"><span class="lbl">Web app URL</span><input id="b-url" inputmode="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(b.url||'')}"></label>
       <label style="display:block;margin-top:10px"><span class="lbl">Secret key</span><input id="b-key" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(b.key||'')}"></label>
       <div class="chips" style="margin-top:10px"><button class="btn pri" data-act="bconnect">Connect</button></div><p class="calnote" id="b-msg"></p>`}</div>`}
@@ -3252,7 +3257,7 @@ async function bridgeConnect(){const url=($('#b-url').value||'').trim(),key=($('
   catch(e){m.textContent=e.code==='bridge_key'?'The key doesn’t match the one in your script.':e.code==='bridge_offline'?'Couldn’t reach that URL. Check it, and that the deployment’s access is set to “Anyone.”':'The bridge answered with an error. Run “setup” once in Apps Script, then try again.'}}
 
 let CALSAT=0,MCP=null,CALS=null,CALSERR=null,CAL={},SESSEV=null;
-async function mcpInit(){if(!window.claude){if(bridgeOn()){MCP=bridgeMCP();const y=scrollY;render();scrollTo(0,y);loadShifts()}return}try{MCP=await claude.use('mcp')}catch(e){MCP=null}if(MCP){const y=scrollY;render();scrollTo(0,y);loadShifts()}}
+async function mcpInit(){if(!window.claude){if(bridgeOwner()){MCP=bridgeMCP();const y=scrollY;render();scrollTo(0,y);loadShifts()}return}try{MCP=await claude.use('mcp')}catch(e){MCP=null}if(MCP){const y=scrollY;render();scrollTo(0,y);loadShifts()}}
 function calErrText(e){const c=e&&e.code;
   if(c==='bridge_key')return['Your Google bridge key doesn’t match. Check More → Google connection.',false];
   if(c==='bridge_offline')return['Couldn’t reach your Google bridge. Check your connection.',true];
@@ -3642,7 +3647,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.topdrop!=null){const d=get('day-'+S.date,dayDef(S.date)),p=planOf(d),x=p.top[Number(b.dataset.topdrop)];p.skip=p.skip||[];if(x.tid)p.skip.push(x.tid);x.tid='';x.t='';x.done=false;autoTop(d,S.date,1);save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='bconnect'){bridgeConnect();return}
   if(b.dataset.act==='bsync'){b.textContent='Syncing…';drivePull().then(()=>drivePush()).then(()=>{const y=scrollY;render();scrollTo(0,y)});return}
-  if(b.dataset.act==='bdrive'){BRIDGE.drive=BRIDGE.drive===false;localStorage.setItem(BKEY,JSON.stringify(BRIDGE));if(BRIDGE.drive)drivePull();const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.act==='bdrive'){BRIDGE=BRIDGE||{};BRIDGE.drive=BRIDGE.drive===false;localStorage.setItem(BKEY,JSON.stringify(BRIDGE));if(BRIDGE.drive)drivePull();const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='boff'){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to disconnect';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Disconnect'}},3000);return}localStorage.removeItem(BKEY);location.reload();return}
   if(b.dataset.act==='autotop'){const st=get('settings',setDef);st.autoTop=st.autoTop===false;save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='autopick'){const d=get('day-'+S.date,dayDef(S.date));autoTop(d,S.date,1);save('day-'+S.date);const y=scrollY;render();scrollTo(0,y);return}
@@ -3676,7 +3681,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.rf){S.tab=b.dataset.rf;if(S.tab==='journal')S.date=S.date||today();render();scrollTo(0,0);return}
   if(b.dataset.sumcloud!=null){const st=get('settings',setDef);st.sumCloud=!st.sumCloud;save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.hsec){const st=get('settings',setDef);st.home=st.home||{};const h=new Set(st.home.hide||[]),k=b.dataset.hsec;h.has(k)?h.delete(k):h.add(k);st.home.hide=[...h];save('settings');S.hcust=true;const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.act==='axname'){const v=((main.querySelector('[data-axn]')||{}).value||'').trim().slice(0,60);if(!v)return;const st=get('settings',setDef);st.name=v;save('settings');if(AXACCT&&AXSB){AXSB.from('profiles').update({display_name:v}).eq('id',AXACCT.uid).then(()=>{AXPROF=Object.assign(AXPROF||{},{display_name:v})});AXACCT.name=v;try{localStorage.setItem('axis-acct',JSON.stringify(AXACCT))}catch(_){}}render();return}
+  if(b.dataset.act==='axname'){const v=((main.querySelector('[data-axn]')||{}).value||'').trim().slice(0,60);if(!v)return;const st=get('settings',setDef);st.name=v;save('settings');if(AXACCT&&axOn()){axCall('profile',{name:v}).then(()=>{AXME=Object.assign(AXME||{},{name:v})}).catch(()=>{});AXACCT.name=v;axSetAcct(AXACCT)}render();return}
   if(b.dataset.axmod){const st=get('settings',setDef);st.modules=st.modules||{};st.modules[b.dataset.axmod]=!axModOn(b.dataset.axmod);save('settings');const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.act==='fabcap'){openCap();return}
   if(b.dataset.act==='axintel'){S.rc=S.rc||{};S.rc['mo-capture']=true;render();const el=$('#rc-mo-capture');if(el)el.scrollIntoView({block:'start'});return}
@@ -3859,115 +3864,174 @@ async function doImport(){if(!pendingImp)return;const {d,keys,imgs}=pendingImp;p
 // ---------- startup ----------
 function useLocal(msg){mode='local';Object.assign(cache,lsLoad());READY=true;setStatus(msg||(driveOn()?'Checking Google Drive…':'Saved on this device'));render();if(driveOn()){drivePull();setInterval(drivePull,300000)}}
 // ================= AXIS Accounts =================
-// Independent accounts on Supabase. Each person's journal, tasks, recordings and photos are private to them:
-// the database rules (supabase/schema.sql) refuse everyone else, family administrators included.
-// On this device each account gets its own copy of the data (see nsk()); the person who claims the
-// data that was here before accounts keeps the original storage, so nothing is copied or lost.
-// The project URL and "anon" key below are public by design; privacy is enforced by the database rules.
-const AXCFG_DEFAULT={url:'',anon:''};
-function axCfg(){try{const c=JSON.parse(localStorage.getItem('axis-cloud')||'null');if(c&&c.url&&c.anon)return c}catch(e){}return AXCFG_DEFAULT.url&&AXCFG_DEFAULT.anon?AXCFG_DEFAULT:null}
-let AXSB=null,AXPROF=null,AXHH=null,AXMEM=[],AXINV=[],AXSYNC={st:'off',at:0,err:'',pending:0};
-const AXERR={invalid_credentials:'That email and password don’t match.',email_not_confirmed:'Confirm your email first: open the link we sent, then sign in.',user_already_exists:'There’s already an account with that email. Sign in instead.',
-  weak_password:'Use a longer password (at least 8 characters).',not_configured:'Accounts aren’t set up on this device yet.',lib:'Couldn’t load the sign-in tools. Check your connection.',
-  minors_cannot_create:'Only an adult can create the family.',not_admin:'Only a family administrator can do that.',minor_cannot_be_admin:'Members under 18 can’t be administrators.',
-  last_admin:'The family needs at least one administrator.',invite_for_other_email:'This invite was sent to a different email address.',invite_used:'This invite has already been used.',
-  invite_expired:'This invite has expired. Ask for a new one.',invite_not_found:'That invite link isn’t valid.',over_email_send_rate_limit:'Too many emails just now. Wait a minute and try again.'};
-function axErrTxt(e){const m=String(e&&(e.code||e.message)||e||'');for(const k in AXERR)if(m.includes(k))return AXERR[k];if(/Invalid login/i.test(m))return AXERR.invalid_credentials;if(/Email not confirmed/i.test(m))return AXERR.email_not_confirmed;if(/already registered/i.test(m))return AXERR.user_already_exists;if(/fetch|network/i.test(m))return 'Can’t reach the server. Check your connection.';return 'Something went wrong ('+m.slice(0,80)+').'}
-function axLoadLib(){return window.supabase?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='vendor/supabase.js';s.onload=ok;s.onerror=()=>no(new Error('lib'));document.head.appendChild(s)})}
-async function axClient(){if(AXSB)return AXSB;const c=axCfg();if(!c)throw new Error('not_configured');await axLoadLib();
-  AXSB=window.supabase.createClient(c.url,c.anon,{auth:{storageKey:'axis-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  AXSB.auth.onAuthStateChange((ev,ses)=>{if(ev==='PASSWORD_RECOVERY')axLock('newpw');else if(ev==='SIGNED_IN'&&ses&&!AXACCT&&!AXLOCKVIEW.busy)axAfterSignIn(ses.user)});return AXSB}
+// Family accounts on your own Google Apps Script (no other backend):
+//  * Sign in with Google. The script verifies Google's token and gives this device its own AXIS session.
+//  * Everything private (journal, tasks, recordings, photos…) is encrypted HERE, on the device, with a key
+//    unlocked by the person's own AXIS passcode. The script and the Google account that owns it only ever
+//    hold scrambled data. A printable recovery code can reset a forgotten passcode.
+//  * Each account has its own copy of data on a shared device (see nsk()); the person who claims the data
+//    that was here before accounts keeps the original storage, so nothing is copied over or lost.
+// Both values below are public by design (the script URL and the Google client ID). They can also be set
+// from More › Account & family, or from a setup link an administrator shares.
+const AXCFG_DEFAULT={url:'',clientId:''};
+function axCfg(){try{const c=JSON.parse(localStorage.getItem('axis-google')||'null');if(c&&c.url&&c.clientId)return c}catch(e){}
+  if(AXCFG_DEFAULT.url&&AXCFG_DEFAULT.clientId)return AXCFG_DEFAULT;return null}
+let AXKEYS=null,AXME=null,AXFAM=null,AXDEVICES=null,AXSYNC={st:'off',at:0,err:'',pending:0},AXPEND=null;
+const AXERR={not_invited:'This Google account isn’t part of the family yet. Ask a family administrator to add it.',signed_out:'You’ve been signed out on this device. Sign in again.',
+  bad_signature:'Google sign-in couldn’t be verified. Try again.',bad_audience:'This AXIS isn’t set up for that Google sign-in. Check the setup.',token_expired:'That sign-in took too long. Try again.',
+  email_not_verified:'That Google account’s email isn’t verified.',not_configured:'Family accounts aren’t set up on the server yet.',code_expired:'That code has expired or was already used. Get a new one.',
+  too_many_tries:'Too many wrong codes. Wait 10 minutes and try again.',bad_nonce:'That sign-in didn’t come from this device. Try again here.',not_admin:'Only a family administrator can do that.',
+  minor_cannot_be_admin:'Members under 18 can’t be administrators.',last_admin:'The family needs at least one administrator.',owner_cannot_leave:'The owner of the AXIS backend can’t be removed.',
+  already_member:'That person is already in the family.',bad_email:'That doesn’t look like an email address.',owner_only:'Only the owner’s account can use that.',minor_ai_off:'A parent hasn’t turned on AI features for members under 18.',
+  bridge_offline:'Can’t reach AXIS’s server. Check your connection.',wrong_pass:'That passcode isn’t right.',wrong_rec:'That recovery code isn’t right.'};
+const axErrTxt=e=>{const m=String(e&&(e.code||e.message)||e||'');return AXERR[m]||(/fetch|network|offline/i.test(m)?AXERR.bridge_offline:'Something went wrong ('+m.slice(0,80)+').')};
 const axDevSave=()=>{try{localStorage.setItem('axis-device',JSON.stringify(AXDEV))}catch(e){}};
 const axSetAcct=a=>{try{a?localStorage.setItem('axis-acct',JSON.stringify(a)):localStorage.removeItem('axis-acct')}catch(e){}};
-function axReal(k,d){d=d||{};const n=v=>Array.isArray(v)&&v.length>0;if(/^day-/.test(k))return n(d.entries)||!!(d.text||'').trim()||!!(d.plan&&n(d.plan.blocks)&&d.plan.blocks.some(b=>b.done))||Object.values(d.anchors||{}).some(a=>a&&a.l);
-  if(k==='settings')return Object.keys(d).filter(x=>!['goals','notes','_u','home'].includes(x)).length>0||!!(d.notes||'').trim();if(/^session-/.test(k))return true;
-  return ['items','log','sessions','topics','questions','marks'].some(f=>n(d[f]))||Object.keys(d).filter(x=>x!=='_u').length>0&&!['items','log','sessions','topics','questions','marks'].some(f=>f in d)}
-// real content only — a fresh device creates a few empty starter records that shouldn't count
-function axLegacyHas(){try{const o=JSON.parse(localStorage.getItem('anchors-journal-v1')||'{}'),n=v=>Array.isArray(v)&&v.length>0;
-  return Object.keys(o).some(k=>{const d=o[k]||{};if(/^day-/.test(k))return n(d.entries)||!!(d.text||'').trim()||!!(d.plan&&n(d.plan.blocks)&&d.plan.blocks.some(b=>b.done));
-    if(/^session-/.test(k))return true;return ['items','log','sessions','topics','questions'].some(f=>n(d[f]))})}catch(e){return false}}
 const axOwner=()=>!!(AXACCT&&AXDEV.claimed===AXACCT.uid);
-const axOn=()=>!!(AXACCT&&AXSB&&AXSYNC.st!=='expired');
-function axName(){const st=get('settings',setDef);return (AXPROF&&AXPROF.display_name)||(AXACCT&&AXACCT.name)||st.name||''}
+const axOn=()=>!!(AXACCT&&AXACCT.s&&AXKEYS&&axCfg()&&AXSYNC.st!=='expired');
+function axName(){const st=get('settings',setDef);return (AXME&&AXME.name)||(AXACCT&&AXACCT.name)||st.name||''}
+async function axCall(op,args,sess){const c=axCfg();if(!c)throw {code:'not_configured'};let r;
+  try{r=await fetch(c.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({op},sess===false?{}:{s:(sess||AXACCT&&AXACCT.s)||undefined},args||{}))})}catch(e){throw {code:'bridge_offline'}}
+  let j;try{j=await r.json()}catch(e){throw {code:'bridge_bad'}}
+  if(j&&j.error){if(j.error==='signed_out'&&AXACCT&&sess===undefined)axExpired();throw {code:j.error,message:j.message||j.error}}return j}
 
-// ---------- the lock screen: sign in, create account, reset password, claim existing data ----------
+// ---------- on-device encryption (WebCrypto) ----------
+const AXITER=600000,ub=s=>new TextEncoder().encode(s),bu=b=>new TextDecoder().decode(b);
+const b64u=b=>{let s='';const a=new Uint8Array(b);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+const ub64u=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
+const axRand=n=>crypto.getRandomValues(new Uint8Array(n));
+async function axKek(secret,salt,it){const base=await crypto.subtle.importKey('raw',ub(secret.normalize('NFKC')),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:it||AXITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function axWrap(raw,secret){const s=axRand(16),i=axRand(12),k=await axKek(secret,s);return {s:b64u(s),i:b64u(i),w:b64u(await crypto.subtle.encrypt({name:'AES-GCM',iv:i},k,raw)),it:AXITER}}
+async function axUnwrap(w,secret){const k=await axKek(secret,ub64u(w.s),w.it);return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64u(w.i)},k,ub64u(w.w)))}
+async function axImport(raw){return {enc:await crypto.subtle.importKey('raw',raw.slice(0,32),'AES-GCM',false,['encrypt','decrypt']),
+  mac:await crypto.subtle.importKey('raw',raw.slice(32,64),{name:'HMAC',hash:'SHA-256'},false,['sign'])}}
+const AXRC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function axRecoveryCode(){const r=axRand(20);let s='';for(let i=0;i<20;i++){s+=AXRC[r[i]%32];if(i%4===3&&i<19)s+='-'}return s}
+const axNormRec=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/(.{4})(?=.)/g,'$1-');
+async function axEnc(obj){const i=axRand(12),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:i},AXKEYS.enc,ub(JSON.stringify(obj)));const o=new Uint8Array(12+ct.byteLength);o.set(i);o.set(new Uint8Array(ct),12);return 'v1.'+b64u(o)}
+async function axDec(s){const a=ub64u(String(s).slice(3));return JSON.parse(bu(await crypto.subtle.decrypt({name:'AES-GCM',iv:a.slice(0,12)},AXKEYS.enc,a.slice(12))))}
+async function axEncBytes(blob){const head=ub((blob.type||'application/octet-stream')+'\n'),body=new Uint8Array(await blob.arrayBuffer()),p=new Uint8Array(head.length+body.length);p.set(head);p.set(body,head.length);
+  const i=axRand(12),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:i},AXKEYS.enc,p);const o=new Uint8Array(12+ct.byteLength);o.set(i);o.set(new Uint8Array(ct),12);return 'v1.'+b64u(o)}
+async function axDecBytes(s){const a=ub64u(String(s).slice(3)),p=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:a.slice(0,12)},AXKEYS.enc,a.slice(12)));const n=p.indexOf(10);return new Blob([p.slice(n+1)],{type:bu(p.slice(0,n))})}
+async function axId(kind,k){return b64u(await crypto.subtle.sign('HMAC',AXKEYS.mac,ub(kind+':'+k))).slice(0,32)}   // the server never sees real document names
+// keys live on this device only (IndexedDB, not exportable), per account
+const axNsFor=(uid,k)=>AXDEV.claimed===uid?k:k+'::'+uid;
+function axKdbOpen(name){return new Promise((ok,no)=>{const r=indexedDB.open(name,1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+async function axKeysFor(uid){try{const db=await axKdbOpen(axNsFor(uid,'axis-keys'));return await new Promise(ok=>{const q=db.transaction('k').objectStore('k').get('keys');q.onsuccess=()=>{ok(q.result||null);db.close()};q.onerror=()=>{ok(null);db.close()}})}catch(e){return null}}
+async function axStoreKeysFor(uid,keys){const db=await axKdbOpen(axNsFor(uid,'axis-keys'));await new Promise((ok,no)=>{const t=db.transaction('k','readwrite');t.objectStore('k').put(keys,'keys');t.oncomplete=ok;t.onerror=()=>no(t.error)});db.close()}
+
+// ---------- Google sign-in ----------
+const axIOS=()=>/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function axLoadGis(){return window.google&&google.accounts&&google.accounts.id?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=ok;s.onerror=()=>no({code:'bridge_offline'});document.head.appendChild(s)})}
+async function axGoogleButton(el,hint){const c=axCfg();if(!c||!el)return;try{await axLoadGis()}catch(e){el.innerHTML='<p class="axmsg">Couldn’t load Google sign-in. Check your connection.</p>';return}
+  const nonce=b64u(axRand(18));try{localStorage.setItem('axis-nonce',nonce)}catch(_){}
+  google.accounts.id.initialize({client_id:c.clientId,nonce,ux_mode:axIOS()?'redirect':'popup',login_uri:c.url,login_hint:hint||undefined,auto_select:false,itp_support:true,
+    callback:r=>axSignedIn(axCall('auth_google',{credential:r.credential,nonce,label:axDeviceLabel()},false))});
+  el.innerHTML='';google.accounts.id.renderButton(el,{theme:'filled_black',size:'large',shape:'pill',text:'signin_with',width:280})}
+const axDeviceLabel=()=>{const u=navigator.userAgent;return (/iPad/.test(u)?'iPad':/iPhone/.test(u)?'iPhone':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows PC':'Device')+(matchMedia('(display-mode: standalone)').matches?' · Home Screen':'')};
+async function axSignedIn(p){AXLOCKVIEW.busy=true;AXLOCKVIEW.msg='';axLock();
+  try{const r=await p;AXPEND={s:r.s,me:r.me};
+    if(!AXDEV.claimed&&axLegacyHas()&&!(AXDEV.declined||[]).includes(r.me.sub)){const yes=await axAskClaim(r.me.email);if(yes)AXDEV.claimed=r.me.sub;else AXDEV.declined=(AXDEV.declined||[]).concat(r.me.sub);axDevSave()}
+    const kd=await axKeysFor(r.me.sub);
+    if(kd){AXKEYS=kd;await axFinish()}else if(r.me.keys){AXLOCKVIEW={v:'pass',msg:'',busy:false};axLock()}else{AXLOCKVIEW={v:'newpass',msg:'',busy:false};axLock()}}
+  catch(e){AXLOCKVIEW.busy=false;AXLOCKVIEW.v='in';AXLOCKVIEW.msg=axErrTxt(e);axLock()}}
+async function axFinish(){const me=AXPEND.me;
+  await axStoreKeysFor(me.sub,AXKEYS);
+  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>x.uid!==me.sub).concat({uid:me.sub,email:me.email,name:me.name||''});axDevSave();
+  axSetAcct({uid:me.sub,email:me.email,name:me.name||'',s:AXPEND.s,owner:!!me.owner});try{localStorage.removeItem('axis-nonce')}catch(_){}
+  history.replaceState(null,'',location.pathname+location.search.replace(/[?&]axsetup=[^&]*/,''));location.reload()}
+
+// ---------- the lock screen ----------
 let AXLOCKVIEW={v:'in',msg:'',busy:false};
-function axLock(v,msg){AXLOCKVIEW.v=v||AXLOCKVIEW.v||'in';if(msg!=null)AXLOCKVIEW.msg=msg;let el=document.getElementById('axlock');if(!el){el=document.createElement('div');el.id='axlock';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Sign in to AXIS');document.body.appendChild(el)}el.innerHTML=axLockHTML();const f=el.querySelector('input:not([type=checkbox])');if(f&&!el.contains(document.activeElement))setTimeout(()=>f.focus(),50)}
+function axLock(v,msg){if(v)AXLOCKVIEW.v=v;if(msg!=null)AXLOCKVIEW.msg=msg;let el=document.getElementById('axlock');if(!el){el=document.createElement('div');el.id='axlock';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Sign in to AXIS');document.body.appendChild(el)}
+  el.innerHTML=axLockHTML();const g=el.querySelector('#axgbtn');if(g)axGoogleButton(g,AXLOCKVIEW.hint);const f=el.querySelector('input:not([type=checkbox])');if(f&&!el.contains(document.activeElement))setTimeout(()=>f.focus(),50)}
 function axUnlock(){const el=document.getElementById('axlock');if(el)el.remove()}
-function axLockHTML(){const V=AXLOCKVIEW,accts=(AXDEV.accounts||[]),msg=V.msg?`<p class="axmsg" role="status">${esc(V.msg)}</p>`:'';
+function axLockHTML(){const V=AXLOCKVIEW,accts=AXDEV.accounts||[],msg=V.msg?`<p class="axmsg" role="status">${esc(V.msg)}</p>`:'',busy=V.busy?' disabled':'';
   const logo=`<div class="axlogo"><img alt="" src="${AXEMB}"><img alt="AXIS" src="${AXWORD}" class="axw"></div><p class="axtag">Life, centered.</p>`;
-  if(!axCfg())return `<div class="axbox">${logo}<p>Accounts aren’t connected on this device yet. Open AXIS where you set it up, or ask a family administrator.</p></div>`;
-  if(V.v==='claim')return `<div class="axbox">${logo}<h2>Is the journal on this device yours?</h2><p>This device has AXIS data from before accounts (journal, tasks, recordings, photos). Choose <b>Yes</b> only if you’re the person who has been using AXIS here. It will move into <b>${esc(V.email||'')}</b> and stay private to you.</p>
+  if(!axCfg())return `<div class="axbox">${logo}<p>Family accounts aren’t connected on this device yet. Open the setup link a family administrator sent you, or open AXIS where it was set up.</p></div>`;
+  if(V.v==='claim')return `<div class="axbox">${logo}<h2>Is the journal on this device yours?</h2><p>This device has AXIS data from before accounts (journal, tasks, recordings, photos). Choose <b>Yes</b> only if you’re the person who has been using AXIS here. It will be encrypted and moved into <b>${esc(V.email||'')}</b>, private to you.</p>
     <div class="axbtns"><button class="btn pri" data-ax="claim-yes">Yes, it’s mine</button><button class="btn" data-ax="claim-no">No, start fresh</button></div><p class="calnote">Choosing No leaves that data untouched on this device for its owner.</p></div>`;
-  if(V.v==='newpw')return `<div class="axbox">${logo}<h2>Set a new password</h2><label><span class="lbl">New password</span><input type="password" autocomplete="new-password" data-axf="pw" minlength="8"></label>${msg}<div class="axbtns"><button class="btn pri" data-ax="setpw" ${V.busy?'disabled':''}>Save password</button></div></div>`;
-  if(V.v==='up')return `<div class="axbox">${logo}<h2>Create your account</h2>
-    <label><span class="lbl">Your first name</span><input data-axf="name" autocomplete="given-name" maxlength="60"></label>
-    <label><span class="lbl">Email</span><input type="email" data-axf="email" autocomplete="email" inputmode="email"></label>
-    <label><span class="lbl">Password <small class="muted">(8+ characters)</small></span><input type="password" data-axf="pw" autocomplete="new-password" minlength="8"></label>
-    <label class="axchk"><input type="checkbox" data-axf="minor"> I’m under 18</label>${msg}
-    <div class="axbtns"><button class="btn pri" data-ax="signup" ${V.busy?'disabled':''}>${V.busy?'Creating…':'Create account'}</button><button class="lnkg" data-ax="v-in">I already have an account</button></div>
-    <p class="calnote">Your journal, recordings and reflections are private to you. Family administrators can’t read them.</p></div>`;
-  if(V.v==='forgot')return `<div class="axbox">${logo}<h2>Reset your password</h2><label><span class="lbl">Email</span><input type="email" data-axf="email" value="${esc(V.email||'')}" inputmode="email"></label>${msg}
-    <div class="axbtns"><button class="btn pri" data-ax="forgot" ${V.busy?'disabled':''}>Send reset link</button><button class="lnkg" data-ax="v-in">Back to sign in</button></div></div>`;
+  if(V.v==='newpass')return `<div class="axbox">${logo}<h2>Create your AXIS passcode</h2><p>Your journal, recordings and reflections are encrypted on your device with this passcode before they’re saved. Nobody else can read them: not family administrators, not the account that runs AXIS.</p>
+    <label><span class="lbl">Passcode <small class="muted">(at least 6 characters)</small></span><input type="password" data-axf="p1" autocomplete="new-password"></label>
+    <label><span class="lbl">Type it again</span><input type="password" data-axf="p2" autocomplete="new-password"></label>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="mkpass"${busy}>${V.busy?'Setting up…':'Continue'}</button></div><p class="calnote">You’ll enter it once on each new device. You’ll also get a recovery code in case you forget it.</p></div>`;
+  if(V.v==='showrec')return `<div class="axbox">${logo}<h2>Save your recovery code</h2><p>If you ever forget your passcode, this code is the only way back into your private data. Write it down or save it in your password manager. AXIS can’t show it again.</p>
+    <p class="axrec" aria-label="Recovery code">${esc(V.rec||'')}</p><div class="chips"><button class="btn sm" data-ax="copyrec">Copy</button><button class="btn sm" data-ax="printrec">Print</button></div>
+    <label class="axchk"><input type="checkbox" data-axf="saved"> I’ve saved my recovery code somewhere safe</label>${msg}<div class="axbtns"><button class="btn pri" data-ax="recdone"${busy}>Continue</button></div></div>`;
+  if(V.v==='pass')return `<div class="axbox">${logo}<h2>Enter your AXIS passcode</h2><p>This unlocks your private data on this device.</p><label><span class="lbl">Passcode</span><input type="password" data-axf="p1" autocomplete="current-password"></label>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="unlock"${busy}>${V.busy?'Unlocking…':'Unlock'}</button><button class="lnkg" data-ax="v-recover">Forgot passcode?</button></div></div>`;
+  if(V.v==='recover')return `<div class="axbox">${logo}<h2>Use your recovery code</h2><label><span class="lbl">Recovery code</span><input data-axf="rc" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></label>
+    <label><span class="lbl">New passcode</span><input type="password" data-axf="p1" autocomplete="new-password"></label><label><span class="lbl">Type it again</span><input type="password" data-axf="p2" autocomplete="new-password"></label>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="recover"${busy}>Reset passcode</button><button class="lnkg" data-ax="v-pass">Back</button></div><p class="calnote">You’ll get a new recovery code too.</p></div>`;
+  if(V.v==='code')return `<div class="axbox">${logo}<h2>Sign in with a code</h2><p>On a device where you’re signed in, open More › Account &amp; family › <b>Sign in another device</b>. Type the 6-digit code here.</p>
+    <label><span class="lbl">Code</span><input data-axf="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>${msg}<div class="axbtns"><button class="btn pri" data-ax="claimcode"${busy}>Sign in</button><button class="lnkg" data-ax="v-in">Back</button></div></div>`;
   return `<div class="axbox">${logo}<h2>${AXSYNC.st==='expired'?'Please sign in again':'Who’s using AXIS?'}</h2>
-    ${accts.length?`<div class="chips axwho">${accts.map(a=>`<button class="chip" data-ax="who" data-email="${esc(a.email)}" aria-pressed="${V.email===a.email}">${esc(a.name||a.email)}</button>`).join('')}</div>`:''}
-    <label><span class="lbl">Email</span><input type="email" data-axf="email" autocomplete="username" inputmode="email" value="${esc(V.email||'')}"></label>
-    <label><span class="lbl">Password</span><input type="password" data-axf="pw" autocomplete="current-password"></label>${msg}
-    <div class="axbtns"><button class="btn pri" data-ax="signin" ${V.busy?'disabled':''}>${V.busy?'Signing in…':'Sign in'}</button><button class="lnkg" data-ax="v-up">Create an account</button><button class="lnkg" data-ax="v-forgot">Forgot password?</button></div>
-    <p class="calnote">Passwords are never stored on this device.</p></div>`}
-const axVal=f=>{const el=document.querySelector(`#axlock [data-axf=${f}]`);return el?(el.type==='checkbox'?el.checked:el.value):''};
-document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#axlock [data-ax]');if(!b)return;e.preventDefault();const a=b.dataset.ax,V=AXLOCKVIEW;
-  if(a.startsWith('v-')){V.v=a.slice(2);V.msg='';V.email=axVal('email')||V.email;axLock();return}
-  if(a==='who'){V.email=b.dataset.email;axLock();const p=document.querySelector('#axlock [data-axf=pw]');p&&p.focus();return}
-  if(a==='claim-yes'||a==='claim-no'){const r=V.claimResolve;V.claimResolve=null;r&&r(a==='claim-yes');return}
-  if(V.busy)return;const FV={};document.querySelectorAll('#axlock [data-axf]').forEach(el=>FV[el.dataset.axf]=el.type==='checkbox'?el.checked:el.value);V.busy=true;V.msg='';axLock();const axF=f=>FV[f]==null?'':FV[f];
-  try{const sb=await axClient();
-    if(a==='signin'){V.email=axF('email').trim();const {data,error}=await sb.auth.signInWithPassword({email:V.email,password:axF('pw')});if(error)throw error;await axAfterSignIn(data.user);return}
-    if(a==='signup'){const name=axF('name').trim(),email=axF('email').trim(),pw=axF('pw');if(!name||!email){throw new Error('Add your name and email.')}if(pw.length<8)throw new Error('weak_password');
-      const {data,error}=await sb.auth.signUp({email,password:pw,options:{data:{name,minor:!!axF('minor')},emailRedirectTo:location.origin+location.pathname}});if(error)throw error;
-      if(data.session){await axAfterSignIn(data.user);return}V.v='in';V.email=email;V.msg='Check your email and open the confirmation link, then sign in here.'}
-    if(a==='forgot'){V.email=axF('email').trim();const {error}=await sb.auth.resetPasswordForEmail(V.email,{redirectTo:location.origin+location.pathname});if(error)throw error;V.msg='If that email has an account, a reset link is on its way.'}
-    if(a==='setpw'){const pw=axF('pw');if(pw.length<8)throw new Error('weak_password');const {data,error}=await sb.auth.updateUser({password:pw});if(error)throw error;history.replaceState(null,'',location.pathname+location.search);await axAfterSignIn(data.user);return}
-  }catch(err){V.msg=/^(Add your)/.test(err.message||'')?err.message:axErrTxt(err)}
-  V.busy=false;axLock()},true);
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('#axlock input')){const b=document.querySelector('#axlock .btn.pri');b&&b.click()}});
+    ${accts.length?`<div class="chips axwho">${accts.map(a=>`<button class="chip" data-ax="who" data-email="${esc(a.email)}" aria-pressed="${V.hint===a.email}">${esc(a.name||a.email)}</button>`).join('')}</div>`:''}
+    <div id="axgbtn" class="axg"></div>${V.busy?'<p class="calnote">Signing in…</p>':''}${msg}
+    <div class="axbtns"><button class="lnkg" data-ax="v-code">Have a code from another device?</button></div>
+    <p class="calnote">Sign in with your own Google account. On iPhone and iPad, Google may open a page and then bring you back; if you end up in Safari instead of the Home Screen app, use “Sign in another device” there to get a code.</p></div>`}
+const axVals=()=>{const FV={};document.querySelectorAll('#axlock [data-axf]').forEach(el=>FV[el.dataset.axf]=el.type==='checkbox'?el.checked:el.value);return FV};
 function axAskClaim(email){return new Promise(ok=>{AXLOCKVIEW={v:'claim',email,msg:'',busy:false,claimResolve:ok};axLock()})}
-async function axAfterSignIn(user){if(!user)return;AXLOCKVIEW.busy=true;let name='';
-  try{const {data}=await AXSB.from('profiles').select('display_name').eq('id',user.id).maybeSingle();name=(data&&data.display_name)||''}catch(e){}
-  if(!AXDEV.claimed&&axLegacyHas()&&!(AXDEV.declined||[]).includes(user.id)){const yes=await axAskClaim(user.email);if(yes)AXDEV.claimed=user.id;else AXDEV.declined=(AXDEV.declined||[]).concat(user.id)}
-  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>x.uid!==user.id).concat({uid:user.id,email:user.email,name});axDevSave();
-  axSetAcct({uid:user.id,email:user.email,name});location.reload()}
+const axPassOk=(a,b)=>!a||a.length<6?'Use at least 6 characters.':a!==b?'The two passcodes don’t match.':'';
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#axlock [data-ax]');if(!b)return;e.preventDefault();const a=b.dataset.ax,V=AXLOCKVIEW,FV=axVals();
+  if(a.startsWith('v-')){V.v=a.slice(2);V.msg='';axLock();return}
+  if(a==='who'){V.hint=b.dataset.email;axLock();return}
+  if(a==='claim-yes'||a==='claim-no'){const r=V.claimResolve;V.claimResolve=null;r&&r(a==='claim-yes');return}
+  if(a==='copyrec'){try{await navigator.clipboard.writeText(V.rec);b.textContent='Copied'}catch(_){}return}
+  if(a==='printrec'){const w=window.open('','_blank');if(w){w.document.write('<title>AXIS recovery code</title><p style="font:16px Georgia">AXIS recovery code for '+esc((AXPEND&&AXPEND.me.email)||'')+'</p><p style="font:28px monospace;letter-spacing:2px">'+esc(V.rec)+'</p><p style="font:14px Georgia">Keep this private. It resets your AXIS passcode.</p>');w.print()}return}
+  if(V.busy)return;
+  try{
+    if(a==='claimcode'){const code=String(FV.code||'').replace(/\D/g,'');if(code.length!==6){V.msg='Enter the 6-digit code.';axLock();return}await axSignedIn(axCall('pair_claim',{code,label:axDeviceLabel()},false));return}
+    if(a==='mkpass'){const bad=axPassOk(FV.p1,FV.p2);if(bad){V.msg=bad;axLock();return}V.busy=true;V.msg='';axLock();
+      const raw=axRand(64),rec=axRecoveryCode(),bundle={v:1,pass:await axWrap(raw,FV.p1),rec:await axWrap(raw,axNormRec(rec))};
+      await axCall('keys_put',{bundle:JSON.stringify(bundle)},AXPEND.s);AXKEYS=await axImport(raw);raw.fill(0);V.busy=false;V.v='showrec';V.rec=rec;V.msg='';axLock();return}
+    if(a==='recdone'){if(!FV.saved){V.msg='Please confirm you’ve saved it.';axLock();return}V.rec='';V.busy=true;axLock();await axFinish();return}
+    if(a==='unlock'){V.busy=true;V.msg='';axLock();const bundle=JSON.parse(AXPEND.me.keys);let raw;try{raw=await axUnwrap(bundle.pass,FV.p1)}catch(_){V.busy=false;V.msg=AXERR.wrong_pass;axLock();return}
+      AXKEYS=await axImport(raw);raw.fill(0);await axFinish();return}
+    if(a==='recover'){const bad=axPassOk(FV.p1,FV.p2);if(bad){V.msg=bad;axLock();return}V.busy=true;V.msg='';axLock();const bundle=JSON.parse(AXPEND.me.keys);let raw;
+      try{raw=await axUnwrap(bundle.rec,axNormRec(FV.rc))}catch(_){V.busy=false;V.msg=AXERR.wrong_rec;axLock();return}
+      const rec=axRecoveryCode();await axCall('keys_put',{bundle:JSON.stringify({v:1,pass:await axWrap(raw,FV.p1),rec:await axWrap(raw,axNormRec(rec))})},AXPEND.s);
+      AXKEYS=await axImport(raw);raw.fill(0);V.busy=false;V.v='showrec';V.rec=rec;axLock();return}
+  }catch(err){V.busy=false;V.msg=axErrTxt(err);axLock()}},true);
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('#axlock input')){const b=document.querySelector('#axlock .btn.pri');b&&b.click()}});
+// real content only — a fresh device creates a few empty starter records that shouldn't count
+function axReal(k,d){d=d||{};const n=v=>Array.isArray(v)&&v.length>0;if(d._del)return false;if(/^day-/.test(k))return n(d.entries)||!!(d.text||'').trim()||!!(d.plan&&n(d.plan.blocks)&&d.plan.blocks.some(b=>b.done))||Object.values(d.anchors||{}).some(a=>a&&a.l);
+  if(k==='settings'){const b=d.bible||{},ne=o=>!!o&&typeof o==='object'&&Object.keys(o).length>0;return !!(d.name||'').trim()||!!(d.notes||'').trim()||ne(d.goals)||ne(b.log)||ne(b.read)||(b.pos||0)>0||n((d.mv||{}).custom)}if(/^session-/.test(k))return true;
+  return ['items','log','sessions','topics','questions','marks'].some(f=>n(d[f]))||Object.keys(d).filter(x=>x!=='_u').length>0&&!['items','log','sessions','topics','questions','marks'].some(f=>f in d)}
+function axLegacyHas(){try{const o=JSON.parse(localStorage.getItem('anchors-journal-v1')||'{}');return Object.keys(o).some(k=>axReal(k,o[k]))}catch(e){return false}}
 
-// ---------- sync: private documents ----------
+// ---------- sync: encrypted documents ----------
 const AXQ=new Set();let AXT=null,AXPUSHING=null,AXPULLED=false;
-function axQueue(key){if(!AXACCT)return;AXQ.add(key);AXSYNC.pending=AXQ.size;clearTimeout(AXT);AXT=setTimeout(axPush,1200)}
+function axQueue(key){if(!AXACCT)return;AXQ.add(key);AXSYNC.pending=AXQ.size;clearTimeout(AXT);AXT=setTimeout(axPush,1500)}
 async function axPush(){if(!axOn()||!AXQ.size||!AXPULLED)return AXPUSHING;if(AXPUSHING)return AXPUSHING.then(()=>axPush());
-  const keys=[...AXQ];AXQ.clear();AXPUSHING=(async()=>{try{for(let i=0;i<keys.length;i+=40){const rows=keys.slice(i,i+40).map(k=>cache[k]?{owner:AXACCT.uid,key:k,data:cache[k],deleted:false}:{owner:AXACCT.uid,key:k,data:{_del:true,_u:Date.now()},deleted:true});
-      const {error}=await AXSB.from('docs').upsert(rows,{onConflict:'owner,key'});if(error)throw error}AXSYNC.st='ok';AXSYNC.at=Date.now();AXSYNC.err=''}
-    catch(e){keys.forEach(k=>AXQ.add(k));AXSYNC.st='error';AXSYNC.err=axErrTxt(e);if(/JWT|401|expired/i.test(String(e&&(e.message||e.code))))axExpired()}
+  const keys=[...AXQ];AXQ.clear();AXPUSHING=(async()=>{try{for(let i=0;i<keys.length;i+=25){const items=[];
+        for(const k of keys.slice(i,i+25))items.push({id:await axId('doc',k),data:await axEnc(cache[k]?{k,d:cache[k]}:{k,del:1,_u:Date.now()})});
+        await axCall('docs_put',{items})}AXSYNC.st='ok';AXSYNC.at=Date.now();AXSYNC.err=''}
+    catch(e){keys.forEach(k=>AXQ.add(k));if(AXSYNC.st!=='expired'){AXSYNC.st='error';AXSYNC.err=axErrTxt(e)}}
     finally{AXSYNC.pending=AXQ.size;AXPUSHING=null;axPaintStatus()}})();return AXPUSHING}
-async function axPull(){if(!axOn())return;const pk=nsk('axis-pull'),first=!localStorage.getItem(pk);let since=localStorage.getItem(pk)||'1970-01-01T00:00:00Z',changed=false,n=0;
-  try{for(;;){const {data,error}=await AXSB.from('docs').select('key,data,deleted,updated_at').gt('updated_at',since).order('updated_at',{ascending:true}).limit(500);if(error)throw error;
-      for(const r of data||[]){n++;since=r.updated_at;const loc=cache[r.key];
-        if(r.deleted){if(loc&&!dirty.has(r.key)&&(Number(loc._u)||0)<=(Number(r.data&&r.data._u)||0)){delete cache[r.key];changed=true}continue}
-        // first sync of this account on this device: the account's real data wins over empty starter records
-        const m=!loc||(first&&!axReal(r.key,loc))?JSON.parse(JSON.stringify(r.data)):mergeDoc(r.key,loc,r.data);
-        if(JSON.stringify(m)!==JSON.stringify(loc)){if(loc){Object.keys(loc).forEach(k=>delete loc[k]);Object.assign(loc,m)}else cache[r.key]=m;changed=true}
-        if(JSON.stringify(m)!==JSON.stringify(r.data))AXQ.add(r.key);else AXQ.delete(r.key)}
-      if(!data||data.length<500)break}
-    localStorage.setItem(pk,since);AXPULLED=true;AXSYNC.pending=AXQ.size;if(AXQ.size){clearTimeout(AXT);AXT=setTimeout(axPush,300)}AXSYNC.st=AXSYNC.st==='error'?'error':'ok';AXSYNC.at=Date.now();if(changed){lsSave();const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}}
-  catch(e){AXSYNC.st='error';AXSYNC.err=axErrTxt(e);if(/JWT|401|expired/i.test(String(e&&(e.message||e.code))))axExpired()}axPaintStatus();return n}
-function axExpired(){AXSYNC.st='expired';AXLOCKVIEW={v:'in',email:AXACCT&&AXACCT.email,msg:'Your session ended. Sign in to keep syncing. Your data is safe.',busy:false};axLock()}
+async function axPull(){if(!axOn())return;const pk=nsk('axis-pull'),first=!localStorage.getItem(pk);let since=Number(localStorage.getItem(pk)||0),changed=false,n=0;
+  try{for(;;){const r=await axCall('docs_since',{since,limit:200});
+      for(const it of r.items||[]){since=Math.max(since,it.updated);if(!it.data)continue;let o;try{o=await axDec(it.data)}catch(_){continue}n++;const key=o.k,loc=cache[key];
+        if(o.del){if(loc&&!dirty.has(key)&&(Number(loc._u)||0)<=(Number(o._u)||0)){delete cache[key];changed=true}continue}
+        const m=!loc||(first&&!axReal(key,loc))?o.d:mergeDoc(key,loc,o.d);
+        if(JSON.stringify(m)!==JSON.stringify(loc)){if(loc){Object.keys(loc).forEach(k=>delete loc[k]);Object.assign(loc,m)}else cache[key]=m;changed=true}
+        if(JSON.stringify(m)!==JSON.stringify(o.d))AXQ.add(key);else AXQ.delete(key)}
+      if(!r.more)break}
+    localStorage.setItem(pk,String(since));AXPULLED=true;AXSYNC.pending=AXQ.size;if(AXQ.size){clearTimeout(AXT);AXT=setTimeout(axPush,300)}if(AXSYNC.st!=='error')AXSYNC.st='ok';AXSYNC.at=Date.now();
+    if(changed){lsSave();const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}}
+  catch(e){if(AXSYNC.st!=='expired'){AXSYNC.st='error';AXSYNC.err=axErrTxt(e)}}axPaintStatus();return n}
+function axExpired(){if(AXSYNC.st==='expired')return;AXSYNC.st='expired';AXLOCKVIEW={v:'in',hint:AXACCT&&AXACCT.email,msg:'Your session ended. Sign in to keep syncing. Your data is safe on this device.',busy:false};axLock()}
 function axPaintStatus(){const el=document.getElementById('axsync');if(el)el.innerHTML=axSyncTxt()}
-function axSyncTxt(){const s=AXSYNC;if(s.st==='error')return '⚠ '+esc(s.err||'Sync problem')+(s.pending?' · '+s.pending+' waiting':'');if(s.st==='ok')return 'Synced'+(s.at?' '+new Date(s.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'')+(s.pending?' · '+s.pending+' waiting':'');return 'Connecting…'}
+function axSyncTxt(){const s=AXSYNC;if(s.st==='error')return '⚠ '+esc(s.err||'Sync problem')+(s.pending?' · '+s.pending+' waiting':'');if(s.st==='ok')return '🔒 Encrypted &amp; synced'+(s.at?' '+new Date(s.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'')+(s.pending?' · '+s.pending+' waiting':'');return 'Connecting…'}
 
-// ---------- sync: recordings and photos (private/<you>/...) ----------
+// ---------- sync: recordings and photos (encrypted on the device) ----------
 const AXBK=()=>nsk('axis-blobs');
 function axBlobDone(){try{return new Set(JSON.parse(localStorage.getItem(AXBK())||'[]'))}catch(e){return new Set()}}
 function axBlobMark(p,on){const s=axBlobDone();on?s.add(p):s.delete(p);try{localStorage.setItem(AXBK(),JSON.stringify([...s]))}catch(e){}}
-async function axBlobUp(path,blob){if(!axOn()||!blob)return;try{const {error}=await AXSB.storage.from('private').upload(AXACCT.uid+'/'+path,blob,{upsert:true,contentType:blob.type||'application/octet-stream'});if(error)throw error;axBlobMark(path,true)}catch(e){AXSYNC.err='Couldn’t back up a file: '+axErrTxt(e)}}
-async function axBlobDown(path){if(!axOn())return null;try{const {data,error}=await AXSB.storage.from('private').download(AXACCT.uid+'/'+path);if(error)return null;axBlobMark(path,true);return data}catch(e){return null}}
-async function axBlobDel(path){if(!axOn())return;try{await AXSB.storage.from('private').remove([AXACCT.uid+'/'+path]);axBlobMark(path,false)}catch(e){}}
+async function axBlobUp(path,blob){if(!axOn()||!blob)return;try{await axCall('blob_put',{id:await axId('blob',path),data:await axEncBytes(blob)});axBlobMark(path,true)}catch(e){AXSYNC.err='Couldn’t back up a file: '+axErrTxt(e)}}
+async function axBlobDown(path){if(!axOn())return null;try{const r=await axCall('blob_get',{id:await axId('blob',path)});if(!r.data)return null;axBlobMark(path,true);return await axDecBytes(r.data)}catch(e){return null}}
+async function axBlobDel(path){if(!axOn())return;try{await axCall('blob_del',{id:await axId('blob',path)});axBlobMark(path,false)}catch(e){}}
 (function(){const ip=IDB.put.bind(IDB),ig=IDB.get.bind(IDB),id=IDB.del.bind(IDB);
   IDB.put=async(k,b)=>{const r=await ip(k,b);axBlobUp('audio/'+k,b);return r};
   IDB.get=async k=>{let b=await ig(k);if(!b&&axOn()){b=await axBlobDown('audio/'+k);if(b)await ip(k,b)}return b};
@@ -3982,94 +4046,97 @@ async function axBlobBackfill(){if(!axOn())return 0;const done=axBlobDone();let 
   for(const st of ['full','thumb'])for(const [k,b] of await all(IMGDB,st))if(!done.has('images/'+st+'/'+k)){await axBlobUp('images/'+st+'/'+k,b);n++}
   return n}
 
-// ---------- start, family data ----------
-async function axStart(){if(!AXACCT){if(AXLOCKED)axLock('in');return}
-  try{await axClient();const {data}=await AXSB.auth.getSession();const ses=data&&data.session;
-    if(!ses||ses.user.id!==AXACCT.uid){axExpired();return}
-    AXSYNC.st='ok';await axLoadFamily();
+// ---------- start ----------
+async function axStart(){
+  const hc=(location.hash.match(/axcode=([a-f0-9]+)/)||[])[1],setup=new URLSearchParams(location.search).get('axsetup');
+  if(setup){try{const c=JSON.parse(atob(setup.replace(/-/g,'+').replace(/_/g,'/')));if(/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(c.url)&&/\.apps\.googleusercontent\.com$/.test(c.clientId)){localStorage.setItem('axis-google',JSON.stringify({url:c.url,clientId:c.clientId}));if(!AXACCT){AXLOCKVIEW={v:'in',msg:'AXIS is connected. Sign in with your Google account.',busy:false};axLock()}}}catch(e){}}
+  if(hc){history.replaceState(null,'',location.pathname+location.search);const nonce=localStorage.getItem('axis-nonce')||'';AXLOCKVIEW={v:'in',msg:'',busy:true};axLock();axSignedIn(axCall('auth_code',{code:hc,nonce,label:axDeviceLabel()},false));return}
+  if(!AXACCT){if(AXLOCKED)axLock('in');return}
+  try{AXKEYS=await axKeysFor(AXACCT.uid);if(!AXKEYS){AXLOCKVIEW={v:'in',hint:AXACCT.email,msg:'Sign in again to unlock your data on this device.',busy:false};AXSYNC.st='expired';axLock();return}
+    const r=await axCall('me');AXME=r.me;AXSYNC.st='ok';
+    if(AXME.name!==AXACCT.name||!!AXME.owner!==!!AXACCT.owner){AXACCT.name=AXME.name;AXACCT.owner=!!AXME.owner;axSetAcct(AXACCT)}
     const firstUp=axOwner()&&!(AXDEV.up||{})[AXACCT.uid];await axPull();
     if(firstUp)Object.keys(cache).forEach(k=>{if(axReal(k,cache[k]))AXQ.add(k)});
-    await axPush();if(firstUp&&AXSYNC.st==='ok'&&!AXQ.size){AXDEV.up=Object.assign(AXDEV.up||{},{[AXACCT.uid]:Date.now()});axDevSave();capToast('Your existing journal is now in your account.',null)}
-    axBlobBackfill();
-    const inv=new URLSearchParams(location.search).get('invite');if(inv)axAcceptInvite(inv);
+    await axPush();if(firstUp&&AXSYNC.st==='ok'&&!AXQ.size){AXDEV.up=Object.assign(AXDEV.up||{},{[AXACCT.uid]:Date.now()});axDevSave();capToast('Your existing journal is now encrypted in your account.',null)}
+    axBlobBackfill();axLoadFamily();
     setInterval(()=>{if(document.visibilityState==='visible'){axPull();axPush()}},60000);
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')axPull();else axPush()});
-  }catch(e){AXSYNC.st='error';AXSYNC.err=axErrTxt(e);axPaintStatus()}}
-async function axLoadFamily(){if(!axOn())return;try{
-  const p=await AXSB.from('profiles').select('id,display_name,color,is_minor').eq('id',AXACCT.uid).maybeSingle();AXPROF=p.data||null;
-  if(AXPROF&&AXPROF.display_name&&AXPROF.display_name!==AXACCT.name){AXACCT.name=AXPROF.display_name;axSetAcct(AXACCT);const a=(AXDEV.accounts||[]).find(x=>x.uid===AXACCT.uid);if(a){a.name=AXACCT.name;axDevSave()}}
-  const m=await AXSB.from('household_members').select('household_id,user_id,is_admin,role,color');const mine=(m.data||[]).filter(x=>x.user_id===AXACCT.uid)[0];
-  if(mine){const h=await AXSB.from('households').select('id,name,settings').eq('id',mine.household_id).maybeSingle();AXHH=h.data?Object.assign(h.data,{me:mine}):null;
-    const ids=(m.data||[]).filter(x=>x.household_id===mine.household_id);const pr=await AXSB.from('profiles').select('id,display_name,color,is_minor');const P={};(pr.data||[]).forEach(x=>P[x.id]=x);
-    AXMEM=ids.map(x=>Object.assign({},x,{name:(P[x.user_id]||{}).display_name||'Member',pcolor:(P[x.user_id]||{}).color,minor:(P[x.user_id]||{}).is_minor}));
-    if(mine.is_admin){const iv=await AXSB.from('invites').select('id,email,role,is_admin,token,expires_at,accepted_at').eq('household_id',mine.household_id);AXINV=(iv.data||[]).filter(x=>!x.accepted_at)}else AXINV=[]}
-  else{AXHH=null;AXMEM=[];AXINV=[];const iv=await AXSB.from('invites').select('id,household_id,role,token,expires_at,accepted_at');AXINV=(iv.data||[]).filter(x=>!x.accepted_at&&new Date(x.expires_at)>new Date())}
-  }catch(e){}if(S.tab==='setup'||S.tab==='home'){const y=scrollY;render();scrollTo(0,y)}}
-async function axRpc(fn,args){const {data,error}=await AXSB.rpc(fn,args);if(error)throw error;return data}
-async function axAcceptInvite(tok){try{await axRpc('accept_invite',{p_token:tok});history.replaceState(null,'',location.pathname);await axLoadFamily();capToast('You’ve joined '+((AXHH&&AXHH.name)||'the family')+'.',null)}catch(e){capToast(axErrTxt(e),null)}}
+  }catch(e){if(AXSYNC.st!=='expired'){AXSYNC.st='error';AXSYNC.err=axErrTxt(e)}axPaintStatus()}}
+async function axLoadFamily(){if(!axOn())return;try{AXFAM=await axCall('family');AXME=AXFAM.me||AXME}catch(e){}if(S.tab==='setup'||S.tab==='home'){const y=scrollY;render();scrollTo(0,y)}}
 
 // ---------- More › Account & family ----------
 const AXCOLORS=['#bda16b','#7fa7c9','#c98f7f','#8fbf8a','#b59ad1','#d1b35a','#6fb8b0','#d48aa8'];
-function axCard(){if(window.claude)return rc('mo-account',IC.layers,'Account & family','Home-screen app only','<p class="calnote" style="margin:0">Family accounts work in the home-screen version of AXIS (kd2littlejohn.github.io/kl-journal). This Claude page keeps using its own private storage.</p>',false);const c=axCfg();let body,sub;
-  if(!c){sub='Not connected';body=`<p class="calnote" style="margin-top:0">Accounts let each person in your family have their own private AXIS, plus a shared family space. They need a free Supabase project. The setup steps are in SETUP.md (in your AXIS package); then paste the two values here.</p>
-    <label class="mrf"><span class="lbl">Project URL</span><input data-axc="url" placeholder="https://xxxx.supabase.co" inputmode="url"></label><label class="mrf"><span class="lbl">Publishable key</span><input data-axc="anon" placeholder="sb_publishable_…"></label>
-    <button class="btn pri" data-axa="cfg">Connect accounts</button><p class="calnote">The publishable key is meant to be public; your data is protected by the database rules. Never paste a secret key (sb_secret_…) or the old service_role key anywhere in AXIS.</p>`}
-  else if(!AXACCT){sub='Not signed in';body=`<p class="calnote" style="margin-top:0">Sign in or create an account. The journal already on this device stays as it is until its owner signs in and chooses to move it into their account.</p><button class="btn pri" data-axa="lock">Sign in or create account</button>`}
-  else{const minor=AXPROF&&AXPROF.is_minor,adm=AXHH&&AXHH.me&&AXHH.me.is_admin;sub=esc(axName()||AXACCT.email)+(AXHH?' · '+esc(AXHH.name):'');
-    body=`<div class="axme"><span class="axdot" style="background:${esc((AXPROF&&AXPROF.color)||'#bda16b')}"></span><div><b>${esc(axName()||'Add your name')}</b><small>${esc(AXACCT.email)}${minor?' · under 18':''}${axOwner()?' · this device’s original journal':''}</small></div></div>
+const axSetupLink=()=>{const c=axCfg();return c?location.origin+location.pathname+'?axsetup='+btoa(JSON.stringify({url:c.url,clientId:c.clientId})).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''):''};
+let AXPAIR=null,AXCHG=null,AXNEWREC=null;
+function axCard(){if(window.claude)return rc('mo-account',IC.layers,'Account & family','Home-screen app only','<p class="calnote" style="margin:0">Family accounts work in the home-screen version of AXIS (kd2littlejohn.github.io/kl-journal). This Claude page keeps using its own private storage.</p>',false);
+  const c=axCfg();let body,sub;
+  if(!c){sub='Not connected';body=`<p class="calnote" style="margin-top:0">Family accounts run on your own Google Apps Script: everyone signs in with their own Google account, and private data is encrypted on each device. Follow SETUP-GOOGLE.md, then paste the two values here.</p>
+    <label class="mrf"><span class="lbl">Apps Script web app URL</span><input data-axc="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url"></label><label class="mrf"><span class="lbl">Google client ID</span><input data-axc="cid" placeholder="…apps.googleusercontent.com"></label>
+    <button class="btn pri" data-axa="cfg">Connect family accounts</button><p class="calnote">Both values are public by design. Your bridge key, OpenAI key and other secrets stay in Apps Script.</p>`}
+  else if(!AXACCT){sub='Not signed in';body=`<p class="calnote" style="margin-top:0">Sign in with Google. The journal already on this device stays as it is until its owner signs in and chooses to move it into their account.</p><button class="btn pri" data-axa="lock">Sign in with Google</button>`}
+  else{const me=AXME||{},adm=me.admin,minor=me.minor;sub=esc(axName()||AXACCT.email)+(adm?' · administrator':'');
+    body=`<div class="axme"><span class="axdot" style="background:${esc(me.color||'#bda16b')}"></span><div><b>${esc(axName()||'Add your name')}</b><small>${esc(AXACCT.email)}${minor?' · under 18':''}${me.owner?' · runs the AXIS backend':''}${axOwner()?' · this device’s original journal':''}</small></div></div>
     <p class="calnote" id="axsync">${axSyncTxt()}</p>
     <label class="mrf"><span class="lbl">Your name</span><input data-axp="name" value="${esc(axName())}" maxlength="60"></label>
-    <span class="lbl">Your color</span><div class="chips">${AXCOLORS.map(k=>`<button class="axsw" data-axa="color" data-k="${k}" style="background:${k}" aria-label="Color ${k}" aria-pressed="${((AXPROF&&AXPROF.color)||'#bda16b')===k}"></button>`).join('')}</div>
-    <div class="chips" style="margin-top:10px"><button class="btn sm" data-axa="sync">Sync now</button><button class="btn sm" data-axa="switch">Switch account</button><button class="btn sm" data-axa="out">Sign out</button><button class="btn sm" data-axa="outwipe">Sign out &amp; remove from this device</button></div>
-    <p class="calnote">Switching or signing out never shares your data. Use “remove from this device” on a shared iPad or computer; everything stays safe in your account.</p>
-    <h3 class="vh3">Family</h3>${axFamilyHTML(adm,minor)}`}
-  return rc('mo-account',IC.user||IC.layers,'Account & family',sub,body,false)}
-function axFamilyHTML(adm,minor){
-  if(!AXHH){const inv=AXINV.length?`<p>You have ${AXINV.length} family invite${AXINV.length>1?'s':''}.</p>${AXINV.map(i=>`<button class="btn sm pri" data-axa="join" data-k="${esc(i.token)}">Join family</button>`).join(' ')}`:'';
-    return inv+(minor?'<p class="calnote">Ask a parent to invite you to the family.</p>':`<p class="calnote" style="margin-top:0">Create your family’s shared space. You can invite your spouse as a second administrator and add your children. Each person’s private AXIS stays private.</p><div class="qadd" style="grid-template-columns:minmax(0,1fr) auto"><input data-axh="name" placeholder="Family name" maxlength="60"><button class="btn sm pri" data-axa="mkhh">Create family</button></div>`)}
-  const roleL={adult:'Adult',teen:'Teen',child:'Child'};
-  return `<p style="margin:0 0 6px"><b>${esc(AXHH.name)}</b> · ${AXMEM.length} member${AXMEM.length===1?'':'s'}${adm?' · you’re an administrator':''}</p>
-  ${AXMEM.map(m=>`<div class="axmem"><span class="axdot" style="background:${esc(m.color||m.pcolor||'#bda16b')}"></span><span><b>${esc(m.name)}</b><small>${roleL[m.role]||m.role}${m.is_admin?' · administrator':''}${m.user_id===AXACCT.uid?' · you':''}</small></span>
-    ${adm&&m.user_id!==AXACCT.uid?`<span class="chips">${m.role==='adult'&&!m.minor?`<button class="chip sm" data-axa="admin" data-k="${esc(m.user_id)}" aria-pressed="${m.is_admin}">${m.is_admin?'Admin':'Make admin'}</button>`:''}<button class="chip sm" data-axa="rm" data-k="${esc(m.user_id)}">Remove</button></span>`:''}</div>`).join('')}
-  ${adm?`<h3 class="vh3">Invite someone</h3><div class="axinv"><input type="email" data-axi="email" placeholder="Their email" inputmode="email"><select data-axi="role" aria-label="Role"><option value="adult">Adult</option><option value="teen">Teen (13–17)</option><option value="child">Child (under 13)</option></select><label class="axchk"><input type="checkbox" data-axi="admin"> Administrator</label><button class="btn sm pri" data-axa="invite">Create invite</button></div>
-    <p class="calnote">You’ll get a link to send them. They create an account with that email, confirm it, then open the link. Teens and children can’t be administrators and can only assign responsibilities to themselves.</p>
-    ${AXINV.map(i=>`<div class="axmem"><span class="axdot" style="background:transparent;border:1px dashed var(--mute)"></span><span><b>${esc(i.email)}</b><small>${roleL[i.role]}${i.is_admin?' · administrator':''} · invited</small></span><span class="chips"><button class="chip sm" data-axa="copyinv" data-k="${esc(i.token)}">Copy link</button><button class="chip sm" data-axa="cancelinv" data-k="${esc(i.id)}">Cancel</button></span></div>`).join('')}
-    <label class="axchk" style="margin-top:8px"><input type="checkbox" data-axa="minorai" ${AXHH.settings&&AXHH.settings.allow_minor_ai?'checked':''}> Allow cloud AI features (transcription, summaries) for members under 18</label>`:''}
-  ${!adm||AXMEM.filter(m=>m.is_admin).length>1?`<div class="chips" style="margin-top:8px"><button class="btn sm" data-axa="leave">Leave family</button></div>`:''}`}
-const axLink=t=>location.origin+location.pathname+'?invite='+t;
+    <span class="lbl">Your color</span><div class="chips">${AXCOLORS.map(k=>`<button class="axsw" data-axa="color" data-k="${k}" style="background:${k}" aria-label="Color ${k}" aria-pressed="${(me.color||'#bda16b')===k}"></button>`).join('')}</div>
+    <div class="chips" style="margin-top:10px"><button class="btn sm" data-axa="sync">Sync now</button><button class="btn sm" data-axa="pair">Sign in another device</button><button class="btn sm" data-axa="switch">Switch account</button><button class="btn sm" data-axa="out">Sign out</button><button class="btn sm" data-axa="outwipe">Sign out &amp; remove from this device</button></div>
+    ${AXPAIR?`<div class="axpair"><p>On the other device, choose <b>Have a code from another device?</b> and type:</p><p class="axrec">${esc(AXPAIR.code)}</p><small class="muted">Works once, for 5 minutes. You’ll still need your passcode there.</small></div>`:''}
+    <details class="vomore"${AXCHG||AXDEVICES?' open':''}><summary>Passcode &amp; devices</summary><div class="chips" style="margin:8px 0"><button class="btn sm" data-axa="chpass">Change passcode</button><button class="btn sm" data-axa="newrec">New recovery code</button><button class="btn sm" data-axa="devices">Signed-in devices</button></div>
+      ${AXCHG?`<div class="axchg"><label class="mrf"><span class="lbl">Current passcode</span><input type="password" data-axk="cur"></label>${AXCHG==='pass'?`<label class="mrf"><span class="lbl">New passcode</span><input type="password" data-axk="p1"></label><label class="mrf"><span class="lbl">Type it again</span><input type="password" data-axk="p2"></label>`:''}<button class="btn sm pri" data-axa="dochg">${AXCHG==='pass'?'Change passcode':'Make a new recovery code'}</button>${AXNEWREC?`<p class="axrec">${esc(AXNEWREC)}</p><small class="muted">Save this now; it replaces your old recovery code.</small>`:''}</div>`:''}
+      ${AXDEVICES?AXDEVICES.map(d=>`<div class="axmem"><span><b>${esc(d.label)}</b><small>${d.current?'this device · ':''}last used ${esc(new Date(d.last).toLocaleDateString())}</small></span>${d.current?'':`<button class="chip sm" data-axa="revoke" data-k="${esc(d.sid)}">Sign out</button>`}</div>`).join(''):''}</details>
+    <p class="calnote">🔒 Your private data is encrypted on this device before it’s saved. Use “remove from this device” on a shared iPad or computer; everything stays safe in your account.</p>
+    <h3 class="vh3">Family</h3>${axFamilyHTML(adm)}`}
+  return rc('mo-account',IC.layers,'Account & family',sub,body,false)}
+function axFamilyHTML(adm){const F=AXFAM;if(!F)return '<p class="calnote">Loading…</p>';const roleL={adult:'Adult',teen:'Teen',child:'Child'},me=F.me||{};
+  return `${F.members.map(m=>`<div class="axmem"><span class="axdot" style="background:${esc(m.color||'#bda16b')}"></span><span><b>${esc(m.name||m.email||'Member')}</b><small>${roleL[m.role]||m.role}${m.admin?' · administrator':''}${m.sub===me.sub?' · you':''}</small></span>
+    ${adm&&m.sub&&m.sub!==me.sub?`<span class="chips">${m.role==='adult'&&!m.minor?`<button class="chip sm" data-axa="admin" data-k="${esc(m.sub)}" aria-pressed="${!!m.admin}">${m.admin?'Admin':'Make admin'}</button>`:''}<button class="chip sm" data-axa="rm" data-k="${esc(m.sub)}">Remove</button></span>`:''}</div>`).join('')}
+  ${adm?`<h3 class="vh3">Add a family member</h3><div class="axinv"><input type="email" data-axi="email" placeholder="Their Google account email" inputmode="email"><select data-axi="role" aria-label="Role"><option value="adult">Adult</option><option value="teen">Teen (13–17)</option><option value="child">Child (under 13)</option></select><label class="axchk"><input type="checkbox" data-axi="admin"> Administrator</label><button class="btn sm pri" data-axa="invite">Add</button></div>
+    <p class="calnote">Then send them the setup link. They open it on their device and sign in with that Google account. Teens and children can’t be administrators; children under 13 with Family Link may need you to allow AXIS in Family Link.</p>
+    <div class="chips"><button class="btn sm" data-axa="copysetup">Copy setup link</button></div>
+    ${(F.invites||[]).map(i=>`<div class="axmem"><span class="axdot" style="background:transparent;border:1px dashed var(--mute)"></span><span><b>${esc(i.email)}</b><small>${roleL[i.role]||i.role}${i.admin?' · administrator':''} · waiting to sign in</small></span><button class="chip sm" data-axa="cancelinv" data-k="${esc(i.email)}">Cancel</button></div>`).join('')}
+    <label class="axchk" style="margin-top:8px"><input type="checkbox" data-axa="minorai" ${F.settings&&F.settings.allow_minor_ai?'checked':''}> Allow cloud AI features (transcription, summaries, photo reading) for members under 18</label>`:''}
+  ${me.owner&&F.legacy!==false?`<h3 class="vh3">Old connection key</h3><p class="calnote">Your old shared key still works so nothing broke during the move. Once every device you use is signed in with Google, turn it off.</p><button class="btn sm" data-axa="legacyoff">Turn off the old key</button>`:''}`}
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-axa]');if(!b||!document.getElementById('main').contains(b))return;if(b.type==='checkbox')return;e.preventDefault();const a=b.dataset.axa,y=scrollY;
-  const arm=(lbl)=>{if(b.dataset.armed)return true;b.dataset.armed=1;const o=b.textContent;b.textContent=lbl;setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=o}},3500);return false};
+  const arm=lbl=>{if(b.dataset.armed)return true;b.dataset.armed=1;const o=b.textContent;b.textContent=lbl;setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=o}},3500);return false};
+  const redraw=()=>{render();scrollTo(0,y)};
   try{
-    if(a==='cfg'){const u=(document.querySelector('[data-axc=url]').value||'').trim().replace(/\/+$/,''),k=(document.querySelector('[data-axc=anon]').value||'').trim();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(u)){capToast('That doesn’t look like a Supabase project URL.',null);return}
-      let secret=/^sb_secret_/.test(k);try{let pl=(k.split('.')[1]||'').replace(/-/g,'+').replace(/_/g,'/');while(pl.length%4)pl+='=';secret=secret||/service_role/.test(atob(pl))}catch(_){}
-      if(secret){capToast('That’s a secret key. Never put it in AXIS — copy the publishable key instead.',null);return}
-      if(!/^sb_publishable_/.test(k)&&k.split('.').length!==3){capToast('That doesn’t look like a publishable key (it starts with sb_publishable_).',null);return}
-      localStorage.setItem('axis-cloud',JSON.stringify({url:u,anon:k}));render();scrollTo(0,y);capToast('Accounts connected on this device.',null);return}
+    if(a==='cfg'){const u=(document.querySelector('[data-axc=url]').value||'').trim(),cid=(document.querySelector('[data-axc=cid]').value||'').trim();
+      if(!/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u)){capToast('That doesn’t look like an Apps Script web app URL (it ends in /exec).',null);return}
+      if(!/^[\w-]+\.apps\.googleusercontent\.com$/.test(cid)){capToast('That doesn’t look like a Google client ID (it ends in .apps.googleusercontent.com).',null);return}
+      localStorage.setItem('axis-google',JSON.stringify({url:u,clientId:cid}));redraw();capToast('Family accounts connected on this device.',null);return}
     if(a==='lock'){AXLOCKVIEW={v:'in',msg:'',busy:false};axLock('in');return}
-    if(a==='sync'){b.textContent='Syncing…';await axPush();await axPull();await axBlobBackfill();render();scrollTo(0,y);return}
+    if(a==='sync'){b.textContent='Syncing…';await axPush();await axPull();await axBlobBackfill();redraw();return}
+    if(a==='pair'){AXPAIR=await axCall('pair_create');redraw();setTimeout(()=>{AXPAIR=null;if(S.tab==='setup'){const y2=scrollY;render();scrollTo(0,y2)}},300000);return}
     if(a==='switch'||a==='out'||a==='outwipe'){flushAll();await axPush();
-      if(a==='outwipe'){if(AXQ.size||AXSYNC.st!=='ok'){capToast('Some changes haven’t reached your account yet. Connect to the internet and try again.',null);return}if(!arm('Tap again: remove my data from this device'))return;await axWipeLocal()}
-      try{await AXSB.auth.signOut()}catch(_){}axSetAcct(null);if(a!=='out')localStorage.setItem('axis-next',a);location.reload();return}
-    if(a==='color'){await AXSB.from('profiles').update({color:b.dataset.k}).eq('id',AXACCT.uid);AXPROF=Object.assign(AXPROF||{},{color:b.dataset.k});await axLoadFamily();return}
-    if(a==='mkhh'){const n=(document.querySelector('[data-axh=name]').value||'').trim();if(!n)return;await axRpc('create_household',{p_name:n});await axLoadFamily();capToast('Family created. Invite your spouse as a second administrator.',null);return}
-    if(a==='join'){await axAcceptInvite(b.dataset.k);return}
-    if(a==='invite'){const em=(document.querySelector('[data-axi=email]').value||'').trim(),role=document.querySelector('[data-axi=role]').value,ad=document.querySelector('[data-axi=admin]').checked;if(!/@/.test(em))return;
-      const t=await axRpc('invite_member',{p_hh:AXHH.id,p_email:em,p_role:role,p_admin:ad&&role==='adult'});await axLoadFamily();try{await navigator.clipboard.writeText(axLink(t))}catch(_){}capToast('Invite link copied. Send it to '+em+'.',null);return}
-    if(a==='copyinv'){try{await navigator.clipboard.writeText(axLink(b.dataset.k));b.textContent='Copied'}catch(_){prompt('Invite link',axLink(b.dataset.k))}return}
-    if(a==='cancelinv'){await AXSB.from('invites').delete().eq('id',b.dataset.k);await axLoadFamily();return}
-    if(a==='admin'){const m=AXMEM.find(x=>x.user_id===b.dataset.k);await axRpc('set_member',{p_hh:AXHH.id,p_user:m.user_id,p_admin:!m.is_admin,p_role:m.role});await axLoadFamily();return}
-    if(a==='rm'){if(!arm('Tap again to remove'))return;await axRpc('remove_member',{p_hh:AXHH.id,p_user:b.dataset.k});await axLoadFamily();return}
-    if(a==='leave'){if(!arm('Tap again to leave the family'))return;await axRpc('remove_member',{p_hh:AXHH.id,p_user:AXACCT.uid});await axLoadFamily();return}
+      if(a==='outwipe'){if(AXQ.size||AXSYNC.st!=='ok'){capToast('Some changes haven’t reached your account yet. Connect to the internet and try again.',null);return}if(!arm('Tap again: remove my data from this device'))return}
+      try{await axCall('signout')}catch(_){}if(a==='outwipe')await axWipeLocal();axSetAcct(null);location.reload();return}
+    if(a==='color'){await axCall('profile',{color:b.dataset.k});AXME=Object.assign(AXME||{},{color:b.dataset.k});await axLoadFamily();return}
+    if(a==='chpass'||a==='newrec'){const k=a==='chpass'?'pass':'rec';AXCHG=AXCHG===k?null:k;AXNEWREC=null;redraw();return}
+    if(a==='dochg'){const v=k=>(document.querySelector(`[data-axk=${k}]`)||{}).value||'';const me=(await axCall('me')).me,bundle=JSON.parse(me.keys);let raw;
+      try{raw=await axUnwrap(bundle.pass,v('cur'))}catch(_){capToast(AXERR.wrong_pass,null);return}
+      if(AXCHG==='pass'){const bad=axPassOk(v('p1'),v('p2'));if(bad){capToast(bad,null);return}bundle.pass=await axWrap(raw,v('p1'));await axCall('keys_put',{bundle:JSON.stringify(bundle)});AXCHG=null;capToast('Passcode changed. Your recovery code still works.',null)}
+      else{const rec=axRecoveryCode();bundle.rec=await axWrap(raw,axNormRec(rec));await axCall('keys_put',{bundle:JSON.stringify(bundle)});AXNEWREC=rec}raw.fill(0);redraw();return}
+    if(a==='devices'){AXDEVICES=(await axCall('sessions')).sessions;redraw();return}
+    if(a==='revoke'){await axCall('session_revoke',{sid:b.dataset.k});AXDEVICES=(await axCall('sessions')).sessions;redraw();return}
+    if(a==='invite'){const em=(document.querySelector('[data-axi=email]').value||'').trim(),role=document.querySelector('[data-axi=role]').value,ad=document.querySelector('[data-axi=admin]').checked;if(!/@/.test(em)){capToast(AXERR.bad_email,null);return}
+      await axCall('invite',{email:em,role,admin:ad&&role==='adult'});await axLoadFamily();try{await navigator.clipboard.writeText(axSetupLink())}catch(_){}capToast('Added. Setup link copied — send it to '+em+'.',null);return}
+    if(a==='copysetup'){try{await navigator.clipboard.writeText(axSetupLink());b.textContent='Copied'}catch(_){prompt('Setup link',axSetupLink())}return}
+    if(a==='cancelinv'){await axCall('invite_cancel',{email:b.dataset.k});await axLoadFamily();return}
+    if(a==='admin'){const m=AXFAM.members.find(x=>x.sub===b.dataset.k);await axCall('member_set',{sub:m.sub,admin:!m.admin,role:m.role});await axLoadFamily();return}
+    if(a==='rm'){if(!arm('Tap again to remove'))return;await axCall('member_remove',{sub:b.dataset.k});await axLoadFamily();return}
+    if(a==='legacyoff'){if(!arm('Tap again: turn off the old key'))return;await axCall('legacy_off');AXFAM.legacy=false;capToast('The old key is off. Every request now needs a Google sign-in.',null);redraw();return}
   }catch(err){capToast(axErrTxt(err),null)}},true);
 document.addEventListener('change',async e=>{const el=e.target;if(!el.dataset)return;
-  if(el.dataset.axp==='name'&&AXACCT){const v=el.value.trim().slice(0,60);if(!v)return;try{await AXSB.from('profiles').update({display_name:v}).eq('id',AXACCT.uid);AXPROF=Object.assign(AXPROF||{},{display_name:v});AXACCT.name=v;axSetAcct(AXACCT);const x=(AXDEV.accounts||[]).find(z=>z.uid===AXACCT.uid);if(x){x.name=v;axDevSave()}}catch(err){capToast(axErrTxt(err),null)}}
-  if(el.dataset.axa==='minorai'&&AXHH){try{const s2=Object.assign({},AXHH.settings||{},{allow_minor_ai:el.checked});const {error}=await AXSB.from('households').update({settings:s2}).eq('id',AXHH.id);if(error)throw error;AXHH.settings=s2}catch(err){el.checked=!el.checked;capToast(axErrTxt(err),null)}}},true);
+  if(el.dataset.axp==='name'&&AXACCT){const v=el.value.trim().slice(0,60);if(!v)return;try{await axCall('profile',{name:v});AXME=Object.assign(AXME||{},{name:v});AXACCT.name=v;axSetAcct(AXACCT);const x=(AXDEV.accounts||[]).find(z=>z.uid===AXACCT.uid);if(x){x.name=v;axDevSave()}}catch(err){capToast(axErrTxt(err),null)}}
+  if(el.dataset.axa==='minorai'&&AXFAM){try{const r=await axCall('family_settings',{allow_minor_ai:el.checked});AXFAM.settings=r.settings}catch(err){el.checked=!el.checked;capToast(axErrTxt(err),null)}}},true);
 async function axWipeLocal(){const keys=[LSKEY,nsk('kl-cap-draft'),nsk('kl-mr-state'),nsk('kl-mr-push'),nsk('kl-shiftdays'),nsk('kl-bridge'),nsk('axis-pull'),AXBK()];
-  keys.forEach(k=>{try{localStorage.removeItem(k)}catch(_){}});for(const n of [nsk('kl-journal-audio'),nsk('kl-journal-images')])try{(IDB.db&&n===nsk('kl-journal-audio')?(await IDB.db).close():0);(IMGDB.db&&n===nsk('kl-journal-images')?(await IMGDB.db).close():0);indexedDB.deleteDatabase(n)}catch(_){}
-  if(axOwner()){delete (AXDEV.up||{})[AXACCT.uid];axDevSave()}}
+  keys.forEach(k=>{try{localStorage.removeItem(k)}catch(_){}});
+  try{(await IDB.open()).close()}catch(_){}try{(await IMGDB.open()).close()}catch(_){}
+  for(const n of [nsk('kl-journal-audio'),nsk('kl-journal-images'),nsk('axis-keys')])try{indexedDB.deleteDatabase(n)}catch(_){}
+  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>x.uid!==AXACCT.uid);if(axOwner())delete (AXDEV.up||{})[AXACCT.uid];axDevSave()}
 // "What should AXIS call you?" — names come from each person, never from the code
 function axNameCard(){if(axName())return '';return `<div class="card axname"><h2 style="margin:0 0 6px">What should AXIS call you?</h2><div class="qadd" style="grid-template-columns:minmax(0,1fr) auto"><input data-axn placeholder="Your first name" maxlength="60" aria-label="Your first name"><button class="btn sm pri" data-act="axname">Save</button></div></div>`}
-// which parts of AXIS this person sees (More › Account & family)
+// which parts of AXIS this person sees
 const AXMODS=[['spiritual','Spiritual'],['move','Growth'],['sessions','Sessions'],['mreset','Focus']];
 function axModOn(k){const m=(get('settings',setDef).modules)||{};return m[k]!==false}
 function axModsHTML(){return `<div class="card"><div class="chd"><h2>Show in AXIS</h2></div><p class="calnote" style="margin-top:0">Turn off what you don’t use. Nothing is deleted; turn it back on anytime.</p><div class="chips">${AXMODS.map(([k,l])=>`<button class="chip sm" data-axmod="${k}" aria-pressed="${axModOn(k)}">${axModOn(k)?'✓ ':''}${l}</button>`).join('')}</div></div>`}
