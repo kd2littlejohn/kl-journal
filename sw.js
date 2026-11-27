@@ -1,5 +1,5 @@
 // KL Journal service worker: makes the app open offline.
-const CACHE = 'kl-journal-v49';
+const CACHE = 'kl-journal-v50';
 const OCR = 'kl-ocr-v1';   // text reader files (~7 MB): kept across app updates
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/favicon.png',
@@ -42,14 +42,42 @@ const MR_LINES = ['Return to what matters. Time for a quick check-in.', 'How are
   'Still on track, or chasing perfection? Take a moment.', 'You’ve been at it a while. A short reset can help.',
   'Is this still the best use of your time?', 'A quick pause for your body and mind.'];
 self.addEventListener('push', e => {
-  const body = MR_LINES[Math.floor(Math.random() * MR_LINES.length)];
-  e.waitUntil(self.registration.showNotification('Mindful Reset', { body, tag: 'kl-mreset', icon: './icons/icon-192.png', badge: './icons/icon-192.png', data: { url: './?mr=checkin' } }));
+  e.waitUntil((async () => {
+    // a timed task due now? (the app keeps this list on the device; the push itself carries nothing)
+    try {
+      const c = await caches.open('kl-remind'), r = await c.match('./kl-remind.json'), list = r ? await r.json() : [], now = Date.now();
+      const seenR = await c.match('./kl-remind-seen.json'), seen = seenR ? await seenR.json() : [];
+      const due = list.filter(x => Math.abs(x.at - now) <= 11 * 60000 && !seen.includes(x.id + ':' + x.at));
+      if (due.length) {
+        await c.put('./kl-remind-seen.json', new Response(JSON.stringify(seen.concat(due.map(x => x.id + ':' + x.at)).slice(-200))));
+        const x = due[0];
+        return self.registration.showNotification('Task reminder', { body: x.t + (due.length > 1 ? ' (+' + (due.length - 1) + ' more)' : ''), tag: 'kl-task-' + x.id, icon: './icons/icon-192.png', badge: './icons/icon-192.png', data: { url: './?tk=' + encodeURIComponent(x.id) } });
+      }
+    } catch (err) {}
+    const body = MR_LINES[Math.floor(Math.random() * MR_LINES.length)];
+    return self.registration.showNotification('Mindful Reset', { body, tag: 'kl-mreset', icon: './icons/icon-192.png', badge: './icons/icon-192.png', data: { url: './?mr=checkin' } });
+  })());
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-    for (const c of list) { if ('focus' in c) { c.postMessage({ type: 'mr-checkin' }); return c.focus(); } }
-    return self.clients.openWindow('./?mr=checkin');
+    const url = (e.notification.data && e.notification.data.url) || './?mr=checkin', tk = (url.match(/[?&]tk=([^&]+)/) || [])[1];
+    for (const c of list) { if ('focus' in c) { c.postMessage(tk ? { type: 'tk-open', id: decodeURIComponent(tk) } : { type: 'mr-checkin' }); return c.focus(); } }
+    return self.clients.openWindow(url);
   }));
+});
+
+// Share to KL Journal (Android / desktop Chrome): keep the shared files on the device, then open Quick Capture.
+self.addEventListener('fetch', e => {
+  const u = new URL(e.request.url);
+  if (e.request.method !== 'POST' || !/\/share-target$/.test(u.pathname)) return;
+  e.respondWith((async () => {
+    try {
+      const f = await e.request.formData(), c = await caches.open('kl-share'), files = f.getAll('media').filter(x => x && x.size);
+      for (let i = 0; i < files.length; i++) await c.put('./shared/f' + i, new Response(files[i], { headers: { 'content-type': files[i].type || 'application/octet-stream' } }));
+      await c.put('./shared/meta.json', new Response(JSON.stringify({ title: f.get('title') || '', text: f.get('text') || '', url: f.get('url') || '', files: files.map(x => ({ name: x.name, type: x.type, lm: x.lastModified })) })));
+    } catch (err) {}
+    return Response.redirect('./?share=1', 303);
+  })());
 });
 

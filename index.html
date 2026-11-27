@@ -157,6 +157,18 @@ a.stref{color:var(--gold);text-decoration:underline;text-decoration-color:rgba(2
 .stmref{font-family:Lora,Georgia,serif;font-size:30px;margin:6px 0}.stmref a.stref{text-decoration:none;color:var(--cream)}.stmq{font-family:Lora,Georgia,serif;font-style:italic;font-size:21px;line-height:1.45;margin:4px auto;max-width:28ch;color:var(--cream)}
 .stmmat{margin:0;text-align:left;font-size:15px;color:var(--mute);border-left:3px solid var(--gline2);padding:6px 12px;white-space:pre-wrap}.stmtime{font-family:Lora,Georgia,serif;font-size:56px;color:var(--gold);margin-top:8px}.stmdur{grid-template-columns:repeat(4,minmax(0,1fr))!important}.stmedin .hk{color:var(--gold);letter-spacing:.16em;text-transform:uppercase;font-size:13px;font-weight:600}
 .stmthought{text-align:left;display:grid;gap:4px;margin-top:6px}
+.tdchip{display:inline-flex;align-items:center;gap:5px;min-height:30px;padding:0 10px;border:1px solid var(--gline);border-radius:999px;background:rgba(212,175,97,.06);color:var(--cream);font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.tdchip svg{width:14px;height:14px;color:var(--gold)}.tdchip.none{color:var(--mute);border-style:dashed}.tdchip.over{border-color:rgba(224,87,75,.6);color:#f0a59c}.tdchip .rep{color:var(--gold);font-weight:700}
+.tkq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.tkq .chip{flex-direction:column;min-height:52px;padding:4px;line-height:1.2;text-align:center}.tkq small{display:block;font-size:11px;opacity:.75;font-weight:400}
+.tkscope{border:1px solid var(--gline);border-radius:12px;padding:8px 12px;margin:12px 0 0;display:grid;gap:6px}.tkscope label{display:flex;gap:8px;align-items:center;font-size:14px}.tkscope input{width:18px!important;height:18px;min-height:0;accent-color:#d4af61}
+.tkover .tkorow{display:grid;gap:6px;padding:9px 0;border-top:1px solid var(--line)}.tkover .tkorow:first-of-type{border-top:0}.tkorow b{display:block;font-weight:600}.tkorow small{color:#f0a59c;font-size:12px}.tkorow .chips{gap:6px}
+.qcgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}.qc{display:grid;justify-items:center;gap:4px;padding:10px 4px;border:1px solid var(--gline);border-radius:14px;background:rgba(212,175,97,.06);color:var(--cream);font:inherit;cursor:pointer;min-height:72px;text-align:center}
+.qc svg{width:24px;height:24px;color:var(--gold)}.qc b{font-size:12.5px;font-weight:600;line-height:1.2}.qc.on{background:rgba(224,87,75,.18);border-color:rgba(224,87,75,.6)}.qc:disabled{opacity:.4}.qcmore{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;margin-bottom:4px}.qcmore .lnkg{cursor:pointer}
+.vorec,.vocard{margin:8px 0;padding:12px;border:1px solid var(--gline);border-radius:14px;background:rgba(0,0,0,.2);display:grid;gap:8px}.vorechd{display:flex;align-items:center;gap:10px}.vorechd b{font-family:Lora,Georgia,serif;font-size:22px;color:var(--cream);min-width:56px}
+.vodot{width:12px;height:12px;border-radius:50%;background:#e0574b;animation:vop 1.2s infinite}.vodot.p{animation:none;background:var(--mute)}@keyframes vop{50%{opacity:.35}}.vomtr{flex:1;height:6px;border-radius:4px;background:rgba(212,175,97,.15);overflow:hidden}.vomtr i{display:block;height:100%;width:0;background:var(--gold);transition:width .1s}
+.vlive{margin:0;font-style:italic;color:var(--cream);max-height:120px;overflow:auto}.vohd b{display:block}.vohd small{color:var(--mute);font-size:12px}.vocard audio{width:100%;height:40px}.votx{width:100%}
+.vostat{font-size:13px;color:var(--mute);display:grid;gap:4px}.vostat.err{color:#f0a59c}.vostat .hbar{height:5px;border-radius:4px;background:rgba(212,175,97,.15);overflow:hidden}.vostat .hbar i{display:block;height:100%;background:var(--gold)}
+@media(max-width:360px){.qc b{font-size:11px}}
 .anch .tick .bx{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(245,236,216,.6);display:grid;place-items:center;font-size:12px;color:#1a1408;margin-top:auto}
 .anch .tick[aria-pressed=true]{border-color:var(--gline2);background:rgba(212,175,97,.08)}.anch .tick[aria-pressed=true] .bx{background:var(--gold);border-color:var(--gold)}
 .chd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}.chd small{color:var(--mute);font-size:13px;text-align:right;max-width:58%}
@@ -550,6 +562,9 @@ function save(key){
   clearTimeout(saveTimers[key]);
   saveTimers[key]=setTimeout(()=>flush(key),700);
 }
+// leaving the app: write pending changes now instead of waiting for the short save delay
+function flushAll(){try{[...dirty].forEach(k=>{clearTimeout(saveTimers[k]);flush(k)})}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushAll()});addEventListener('pagehide',flushAll);
 function flush(key){
   const data=JSON.parse(JSON.stringify(cache[key]||{}));data._u=Date.now();
   if(mode==='remote'){
@@ -1477,14 +1492,16 @@ function mrQuietAt(t){const m=mrSet(),s=mrState();if(!m.on)return true;if(s.paus
   if(!mrInWin(m.active[0],m.active[1],t))return true;if(m.quiet[0]&&m.quiet[1]&&mrInWin(m.quiet[0],m.quiet[1],t))return true;return false}
 const mrIntAt=t=>((mrSet().days[mrKindAt(t)]||{}).int||60)*60000;
 // upcoming check-in times for the next 7 days (times only — nothing about your journal)
-function mrPlan(){const p=mrPush(),s=mrState(),now=mrNow(),m=mrSet(),out=[];if(!m.on)return out;
+function mrPlan(){const p=mrPush(),s=mrState(),now=mrNow(),m=mrSet(),out=[];
+  try{tkReminders().forEach(r=>{if(r.at>now+30000)out.push(r.at)})}catch(e){}   // timed tasks remind even when check-ins are off
+  if(!m.on){out.sort((x,y)=>x-y);return out.slice(0,300)}
   if(s.focus){let t=s.nextDue&&s.nextDue>now?s.nextDue:now+mrIntAt(now);const end=s.focus.start+12*3600000;let g=0;while(t<end&&out.length<80&&g++<400){if(!mrQuietAt(t))out.push(t);t+=mrIntAt(t)}}
   if(p.always){for(let i=0;i<7;i++){const d=addDays(today(),i),a=m.active[0],b=m.active[1];let t=new Date(d+'T'+a).getTime();const end=b>a?new Date(d+'T'+b).getTime():new Date(addDays(d,1)+'T'+b).getTime();t+=mrIntAt(t);let g=0;
     while(t<end&&g++<100){if(t>now+60000&&!mrQuietAt(t))out.push(t);t+=mrIntAt(t)}}}
-  out.sort((x,y)=>x-y);const res=[];out.forEach(t=>{if(!res.length||t-res[res.length-1]>=10*60000)res.push(t)});return res.slice(0,300)}
+  out.sort((x,y)=>x-y);let tk=[];try{tk=tkReminders().map(r=>r.at)}catch(e){}const res=[];out.forEach(t=>{if(!res.length||t-res[res.length-1]>=10*60000||tk.includes(t))res.push(t)});return res.slice(0,300)}
 let MRPT=null;
 function mrPushBody(op,args){return JSON.stringify(Object.assign({key:BRIDGE.key,op},args))}
-function mrPushSync(seen){const p=mrPush();if(!p.on||!bridgeOn())return;const vis=seen==null?document.visibilityState==='visible':seen,times=mrPlan(),sig=JSON.stringify(times)+vis;
+function mrPushSync(seen){const p=mrPush();try{tkReminderCache()}catch(e){}if(!p.on||!bridgeOn())return;const vis=seen==null?document.visibilityState==='visible':seen,times=mrPlan(),sig=JSON.stringify(times)+vis;
   if(!vis){// leaving the app: send right away; a beacon survives the app being suspended
     let ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(BRIDGE.url,new Blob([mrPushBody('pushplan',{device:mrDev(),times,seen:false})],{type:'text/plain;charset=utf-8'}))}catch(e){}
     if(!ok)bcall('pushplan',{device:mrDev(),times,seen:false}).catch(()=>{});p.sig=sig;p.last=mrNow();mrPushSave(p);return}
@@ -1516,7 +1533,7 @@ function mrPushSection(){const p=mrPush(),can=mrPushCan();let body;
   if(window.claude)body='<p class="calnote">Available in the home-screen app (kd2littlejohn.github.io/kl-journal), not in this preview.</p>';
   else if(!can)body=`<p class="calnote">${mrIOS()&&!mrStandalone()?'Open KL Journal from its Home Screen icon to turn this on (iPhone or iPad with iOS 16.4 or later).':'This browser can’t receive push notifications.'}</p>`;
   else if(!bridgeOn())body='<p class="calnote">Needs your Google connection (More › Google connection).</p>';
-  else if(p.on)body=`<p class="calnote" style="margin-top:0">On for this device · during focus sessions${p.always?' and throughout your active hours':''}.${p.err?' Last update didn’t go through ('+esc(p.err)+'); it will retry.':p.last?' Updated '+esc(mrHM(p.last))+'.':''}</p>
+  else if(p.on)body=`<p class="calnote" style="margin-top:0">On for this device · during focus sessions${p.always?' and throughout your active hours':''}, plus tasks with a time.${p.err?' Last update didn’t go through ('+esc(p.err)+'); it will retry.':p.last?' Updated '+esc(mrHM(p.last))+'.':''}</p>
     <div class="chips"><button class="chip" data-mrpush="always" aria-pressed="${!!p.always}">${p.always?'✓ ':''}Also remind me throughout my active hours</button><button class="chip" data-mrpush="test">Send a test</button><button class="chip" data-mrpush="off">Turn off</button></div>`;
   else body=`<p class="calnote" style="margin-top:0">Check-ins arrive as notifications even when the app is closed or the phone is locked. Your Google Apps Script sends them; it only knows the times, never your journal.</p>
     <button class="btn pri" data-mrpush="on">Turn on reminders when the app is closed</button><p class="calnote">First time: update your Apps Script with the new Code.gs and run setupPush once (steps are at the top of the script).</p>`;
@@ -1529,6 +1546,242 @@ setTimeout(()=>{try{if(/[?&]mr=checkin\b/.test(location.search)){history.replace
 // resume anything in progress once the app has started
 setTimeout(()=>{try{if(READY){mrRestore();mrTick()}}catch(e){}},1500);
 // ================= /Mindful Reset =================
+// ================= Task Scheduling =================
+// Reschedule any task (date, time, repeat), reschedule overdue tasks from Home, real repeating tasks.
+// A repeating task keeps one id; finishing an occurrence logs it in t.hist and moves t.due to the next date.
+// t.rep = {f:'day'|'weekday'|'week'|'month', n:1, a:'YYYY-MM-DD'(anchor)}; t.otime = time for this occurrence only.
+const TKF={day:'Every day',weekday:'Every weekday',week:'Every week',month:'Every month'};
+const tkDays=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+function tkHits(t,d){const r=t.rep;if(!r||!r.a||d<r.a)return false;const n=Math.max(1,r.n||1),D=parse(d),A=parse(r.a);
+  if(r.f==='day')return tkDays(r.a,d)%n===0;
+  if(r.f==='weekday')return D.getDay()>0&&D.getDay()<6;
+  if(r.f==='week')return D.getDay()===A.getDay()&&Math.floor(tkDays(r.a,d)/7)%n===0;
+  if(r.f==='month'){const months=(D.getFullYear()-A.getFullYear())*12+D.getMonth()-A.getMonth();if(months%n)return false;const last=new Date(D.getFullYear(),D.getMonth()+1,0).getDate();return D.getDate()===Math.min(A.getDate(),last)}
+  return false}
+function tkNext(t,after){if(!t.rep)return '';let d=addDays(after,1);if(t.rep.a&&d<t.rep.a)d=t.rep.a;for(let i=0;i<800;i++){if(tkHits(t,d))return d;d=addDays(d,1)}return ''}
+function tkRepLabel(r){if(!r)return '';const A=r.a?parse(r.a):null,n=r.n||1;
+  if(r.f==='week')return (n>1?'Every '+n+' weeks':'Every week')+(A?' on '+A.toLocaleDateString(undefined,{weekday:'long'}):'');
+  if(r.f==='month')return (n>1?'Every '+n+' months':'Every month')+(A?' on the '+A.getDate()+({1:'st',2:'nd',3:'rd',21:'st',22:'nd',23:'rd',31:'st'}[A.getDate()]||'th'):'');
+  if(r.f==='day')return n>1?'Every '+n+' days':'Every day';return TKF[r.f]||''}
+// tasks that fall on a date, including future occurrences of repeating tasks (for calendars)
+function tkOn(d,incDone){return tasks().filter(t=>(incDone||!t.done)&&(t.due===d||(t.rep&&!t.done&&t.due&&d>t.due&&tkHits(t,d))))}
+const tkTime=t=>t.otime||t.time||'';
+const tkNextMon=()=>{let d=addDays(today(),1);while(parse(d).getDay()!==1)d=addDays(d,1);return d};
+function tkDateLabel(t){if(!t.due)return 'No date';const td=today(),d=t.due;let l=d===td?'Today':d===addDays(td,1)?'Tomorrow':d===addDays(td,-1)?'Yesterday':fmtDate(d,{weekday:'short',month:'short',day:'numeric',year:d.slice(0,4)===td.slice(0,4)?undefined:'numeric'});
+  const tm=tkTime(t);if(tm){const [h,m]=tm.split(':').map(Number);l+=' · '+new Date(2000,0,1,h,m).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}return l}
+function tkChip(t){const over=!t.done&&t.due&&t.due<today();return `<button class="tdchip${over?' over':''}${t.due?'':' none'}" data-tkdate="${esc(t.id)}" aria-label="Date: ${esc(tkDateLabel(t))}${t.rep?', '+esc(tkRepLabel(t.rep)):''}. Change">${IC.cal||''}<span>${esc(tkDateLabel(t))}</span>${t.rep?'<span class="rep" title="'+esc(tkRepLabel(t.rep))+'">↻</span>':''}</button>`}
+// finishing a repeating task rolls it forward and keeps the history
+function tkComplete(t){if(!t.rep)return false;const prev={due:t.due,time:t.time,otime:t.otime};const base=t.due&&t.due>today()?t.due:today();
+  t.hist=(t.hist||[]).concat({due:t.due||'',at:Date.now()});t.due=tkNext(t,base);delete t.otime;t.lastDone=today();t.done=false;save('tasks');
+  return {prev,next:t.due}}
+// Smart Capture "every Monday", "daily", "every other week"… → a real repeat
+function tkRecur(recur,d){if(!recur||!d)return null;const l=String(recur).toLowerCase();
+  if(/other week|every 2 weeks|biweekly|fortnight/.test(l))return {f:'week',n:2,a:d};if(/weekday/.test(l))return {f:'weekday',n:1,a:d};
+  if(/\b(daily|every ?day|each day|every (morning|night|evening|afternoon))\b/.test(l))return {f:'day',n:1,a:d};if(/month/.test(l))return {f:'month',n:1,a:d};
+  if(/week|mon|tue|wed|thu|fri|sat|sun/.test(l))return {f:'week',n:1,a:d};return null}
+// ---------- reschedule sheet ----------
+let TKS=null;
+function tkOpen(id){const t=findTask(id);if(!t)return;TKS={id,due:t.due||'',time:tkTime(t),rep:t.rep?Object.assign({},t.rep):null,scope:'this',orig:{due:t.due||'',time:tkTime(t),rep:JSON.stringify(t.rep||null)}};tkPaint()}
+function tkPaint(){let sh=$('#tksheet');if(!sh){sh=document.createElement('div');sh.id='tksheet';sh.className='sheet hide';document.body.appendChild(sh);sh.addEventListener('click',tkClick);sh.addEventListener('change',tkChange)}
+  if(!TKS){sh.classList.add('hide');return}const t=findTask(TKS.id);if(!t){TKS=null;return tkPaint()}const td=today(),d=TKS.due,wasRep=!!t.rep,changed=d!==TKS.orig.due||TKS.time!==TKS.orig.time;
+  const wd=d?parse(d).toLocaleDateString(undefined,{weekday:'long'}):'',dom=d?parse(d).getDate():'';
+  const opts=[['','Doesn’t repeat'],['day','Every day'],['weekday','Every weekday (Mon–Fri)'],['week',d?'Every week on '+wd:'Every week'],['week2',d?'Every 2 weeks on '+wd:'Every 2 weeks'],['month',d?'Every month on the '+dom+(({1:'st',2:'nd',3:'rd',21:'st',22:'nd',23:'rd',31:'st'})[dom]||'th'):'Every month']];
+  const cur=TKS.rep?(TKS.rep.f==='week'&&(TKS.rep.n||1)===2?'week2':TKS.rep.f):'';
+  const q=[['today','Today',td],['tomorrow','Tomorrow',addDays(td,1)],['nextweek','Next week',tkNextMon()],['none','No date','']];
+  sh.innerHTML=`<div class="card capcard tkcard" role="dialog" aria-modal="true" aria-label="Reschedule task"><div class="caphd"><span class="spk">${IC.cal||''}</span><div><h2>Schedule</h2><small>${esc(t.t.slice(0,90))}</small></div><button class="x" data-tks="close" aria-label="Close">×</button></div>
+    <div class="tkq">${q.map(([k,l,v])=>`<button class="chip" data-tks="q" data-v="${v}" aria-pressed="${d===v}">${l}${v?`<small>${esc(fmtDate(v,{weekday:'short',month:'short',day:'numeric'}))}</small>`:''}</button>`).join('')}</div>
+    <div class="mvgoals" style="margin-top:12px"><label><span class="lbl">Date</span><input type="date" data-tksf="due" value="${esc(d)}"></label><label><span class="lbl">Time (optional)</span><input type="time" data-tksf="time" value="${esc(TKS.time)}" ${d?'':'disabled'}></label></div>
+    ${TKS.time?'<button class="lnkg" data-tks="notime" style="margin-top:4px">Remove time</button>':''}
+    <label class="mrf" style="margin-top:12px"><span class="lbl">Repeat</span><select data-tksf="rep" ${d?'':'disabled'}>${opts.map(([v,l])=>`<option value="${v}" ${cur===v?'selected':''}>${esc(l)}</option>`).join('')}</select></label>
+    ${!d&&wasRep?'<p class="calnote">Without a date, this task will stop repeating.</p>':''}
+    ${wasRep&&changed&&d?`<fieldset class="tkscope"><legend class="lbl">This is a repeating task. Change…</legend><label><input type="radio" name="tkscope" value="this" ${TKS.scope==='this'?'checked':''}> Only this occurrence</label><label><input type="radio" name="tkscope" value="future" ${TKS.scope==='future'?'checked':''}> This and all future occurrences</label></fieldset>`:''}
+    ${t.hist&&t.hist.length?`<p class="calnote">Completed ${t.hist.length} time${t.hist.length>1?'s':''} · last ${esc(fmtDate(ymd(new Date(t.hist[t.hist.length-1].at)),{month:'short',day:'numeric'}))}</p>`:''}
+    <div class="mrbtns" style="margin-top:12px"><button class="btn pri" data-tks="save">Save</button><button class="btn" data-tks="close">Cancel</button></div></div>`;sh.classList.remove('hide')}
+function tkRepFrom(v,d){if(!v||!d)return null;return v==='week2'?{f:'week',n:2,a:d}:{f:v,n:1,a:d}}
+function tkApply(){const t=findTask(TKS.id);if(!t)return;const before=JSON.parse(JSON.stringify(t)),d=TKS.due,tm=d?TKS.time:'',repSel=($('#tksheet [data-tksf=rep]')||{}).value;
+  if(!d){t.due='';delete t.time;delete t.otime;delete t.rep}
+  else if(t.rep&&TKS.scope==='this'&&repSel===(t.rep.f==='week'&&(t.rep.n||1)===2?'week2':t.rep.f)){t.due=d;if(tm!==(t.time||''))t.otime=tm;else delete t.otime}
+  else{t.due=d;if(tm)t.time=tm;else delete t.time;delete t.otime;const nr=tkRepFrom(repSel,d);if(nr)t.rep=nr;else delete t.rep}
+  t.edited=Date.now();save('tasks');TKS=null;tkPaint();const y=scrollY;render();scrollTo(0,y);try{mrPushSync()}catch(e){}
+  capToast((t.due?'Moved to '+esc(tkDateLabel(t)):'Date removed')+(t.rep?' · '+esc(tkRepLabel(t.rep)):''),null);tkUndo(before)}
+function tkUndo(before){const tt=$('#captoast');if(!tt)return;const b=document.createElement('button');b.textContent='Undo';b.dataset.ct='u2';b.onclick=e=>{e.stopPropagation();const l=tasks(),i=l.findIndex(x=>x.id===before.id);if(i>=0){l[i]=before;save('tasks');const y=scrollY;render();scrollTo(0,y)}tt.className=''};tt.insertBefore(b,tt.querySelector('[data-ct=x]'))}
+function tkQuick(id,v){const t=findTask(id);if(!t)return;const before=JSON.parse(JSON.stringify(t));if(!v){t.due='';delete t.time;delete t.otime;delete t.rep}else{t.due=v;delete t.otime}t.edited=Date.now();save('tasks');const y=scrollY;render();scrollTo(0,y);try{mrPushSync()}catch(e){}capToast(v?'Moved to '+esc(tkDateLabel(t)):'Date removed',null);tkUndo(before)}
+function tkClick(e){if(e.target.id==='tksheet'){TKS=null;tkPaint();return}const b=e.target.closest('[data-tks]');if(!b)return;const a=b.dataset.tks,t=findTask(TKS.id);
+  if(a==='close'){TKS=null;tkPaint();return}
+  if(a==='q'){const v=b.dataset.v;if(t&&!t.rep&&TKS.time===(TKS.orig.time)){TKS=null;tkPaint();tkQuick(t.id,v);return}TKS.due=v;if(!v)TKS.time='';tkPaint();return}
+  if(a==='notime'){TKS.time='';tkPaint();return}
+  if(a==='save'){tkApply();return}}
+function tkChange(e){const el=e.target;if(el.name==='tkscope'){TKS.scope=el.value;return}const f=el.dataset.tksf;if(!f)return;if(f==='due'){TKS.due=el.value;if(!el.value)TKS.time=''}else if(f==='time')TKS.time=el.value;else if(f==='rep'){TKS.rep=tkRepFrom(el.value,TKS.due)}tkPaint()}
+// ---------- overdue on Home ----------
+function tkOverdueCard(){const td=today(),ov=tasks().filter(t=>!t.done&&t.due&&t.due<td).sort((a,b)=>a.due.localeCompare(b.due));if(!ov.length)return '';
+  return `<div class="card tkover"><div class="chd"><h2>Overdue</h2><small>${ov.length} task${ov.length>1?'s':''}</small></div>${ov.slice(0,5).map(t=>`<div class="tkorow"><div><b>${esc(t.t.slice(0,90))}</b><small>Was due ${esc(fmtDate(t.due,{weekday:'short',month:'short',day:'numeric'}))}${t.rep?' · ↻':''}</small></div>
+    <div class="chips"><button class="chip sm" data-tkq="${esc(t.id)}" data-v="${td}">Today</button><button class="chip sm" data-tkq="${esc(t.id)}" data-v="${addDays(td,1)}">Tomorrow</button><button class="chip sm" data-tkq="${esc(t.id)}" data-v="${tkNextMon()}">Next week</button><button class="chip sm" data-tkdate="${esc(t.id)}" aria-label="Pick a date">…</button></div></div>`).join('')}
+    ${ov.length>1?`<button class="lnkg" data-tkall="${td}">Move all ${ov.length} to today</button>`:''}${ov.length>5?` <button class="lnkg" data-go="tasks">See all</button>`:''}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tkdate],[data-tkq],[data-tkall]');if(!b||!document.getElementById('main').contains(b))return;e.preventDefault();e.stopPropagation();
+  if(b.dataset.tkdate){tkOpen(b.dataset.tkdate);return}if(b.dataset.tkq){tkQuick(b.dataset.tkq,b.dataset.v);return}
+  if(b.dataset.tkall){const td=b.dataset.tkall,ov=tasks().filter(t=>!t.done&&t.due&&t.due<td),snap=JSON.parse(JSON.stringify(tasks()));ov.forEach(t=>{t.due=td;delete t.otime;t.edited=Date.now()});save('tasks');const y=scrollY;render();scrollTo(0,y);try{mrPushSync()}catch(_){}
+    capToast(ov.length+' task'+(ov.length>1?'s':'')+' moved to today',null);const tt=$('#captoast');if(tt){const u=document.createElement('button');u.textContent='Undo';u.onclick=ev=>{ev.stopPropagation();const l=tasks();snap.forEach(s=>{const i=l.findIndex(x=>x.id===s.id);if(i>=0)l[i]=s});save('tasks');const y2=scrollY;render();scrollTo(0,y2);tt.className=''};tt.insertBefore(u,tt.querySelector('[data-ct=x]'))}}},true);
+// ---------- reminders for timed tasks ----------
+// upcoming timed tasks (next 7 days, including repeats) — used for in-app alerts and, if push is on, notifications
+function tkReminders(){const out=[],now=Date.now(),td=today();for(let i=0;i<7;i++){const d=addDays(td,i);tkOn(d).forEach(t=>{const tm=t.due===d?tkTime(t):(t.time||'');if(!tm)return;const at=new Date(d+'T'+tm).getTime();if(at>now-60000)out.push({id:t.id,at,t:t.t.slice(0,120)})})}return out.sort((a,b)=>a.at-b.at).slice(0,100)}
+async function tkReminderCache(){try{if(!('caches' in window))return;const c=await caches.open('kl-remind');await c.put('./kl-remind.json',new Response(JSON.stringify(tkReminders()),{headers:{'content-type':'application/json'}}))}catch(e){}}
+const TKSEEN=new Set();
+setInterval(()=>{try{if(!READY||document.visibilityState!=='visible')return;const now=Date.now();tkReminders().forEach(r=>{if(r.at<=now&&now-r.at<5*60000&&!TKSEEN.has(r.id+r.at)){TKSEEN.add(r.id+r.at);capToast('⏰ '+esc(r.t),null);try{mrChime()}catch(_){}}})}catch(e){}},30000);
+setTimeout(()=>{try{const m=location.search.match(/[?&]tk=([\w-]+)/);if(m&&findTask(m[1])){history.replaceState(null,'',location.pathname+location.hash);S.tab='today';S.seg='tasks';S.tkopen=m[1];render()}}catch(e){}},1600);
+// ================= /Task Scheduling =================
+// ================= Voice Capture =================
+// Record or import audio (Voice Memos .m4a, .mp3, .wav…), keep the original, transcribe, and let Smart Capture sort it.
+// Audio stays on this device (IndexedDB). Live transcription uses the device's own speech recognition where offered.
+// Cloud transcription is optional and goes through your Apps Script; the service key never reaches this app.
+const VOK='voice';
+function voDoc(){const d=get(VOK,{items:[]});d.items=d.items||[];return d}
+const voItem=id=>voDoc().items.find(x=>x.id===id);
+const voSet=()=>{const st=get('settings',setDef);st.voice=Object.assign({cloud:false,auto:true},st.voice||{});return st.voice};
+const voCloudOn=()=>!!voSet().cloud&&bridgeOn();
+const voSR=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
+const voCanRec=()=>!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)&&!window.claude;
+const VOEXT={'audio/mp4':'m4a','audio/x-m4a':'m4a','audio/m4a':'m4a','audio/aac':'aac','audio/mpeg':'mp3','audio/mp3':'mp3','audio/wav':'wav','audio/x-wav':'wav','audio/wave':'wav','audio/webm':'webm','audio/ogg':'ogg','audio/flac':'flac','video/mp4':'mp4','audio/x-caf':'caf'};
+const VOCLOUD=['m4a','mp3','mp4','mpeg','mpga','wav','webm','ogg','flac'];   // formats the service accepts as-is
+function voExt(name,type){const m=String(name||'').toLowerCase().match(/\.(\w{2,4})$/);return m?m[1]:(VOEXT[String(type||'').split(';')[0]]||'m4a')}
+const voDur=s=>{s=Math.round(s||0);return Math.floor(s/60)+':'+pad(s%60)};
+async function voHash(blob){try{const buf=await blob.arrayBuffer(),h=await crypto.subtle.digest('SHA-256',buf);return [...new Uint8Array(h)].slice(0,12).map(b=>b.toString(16).padStart(2,'0')).join('')}catch(e){return 'x'+blob.size+'-'+(blob.lastModified||0)}}
+function voMeta(blob){return new Promise(ok=>{try{const u=URL.createObjectURL(blob),a=new Audio();a.preload='metadata';const done=d=>{URL.revokeObjectURL(u);ok(isFinite(d)?d:0)};a.onloadedmetadata=()=>{if(a.duration===Infinity){a.currentTime=1e7;a.ontimeupdate=()=>{a.ontimeupdate=null;done(a.duration)}}else done(a.duration)};a.onerror=()=>done(0);a.src=u;setTimeout(()=>done(0),6000)}catch(e){ok(0)}})}
+// save a recording or imported file (dedupes identical files)
+async function voSave(blob,o){if(!blob||!blob.size)throw new Error('empty');const h=await voHash(blob),dup=voDoc().items.find(x=>x.h===h);if(dup)return {item:dup,dup:true};
+  const id='v'+uid();try{await IDB.put('vo-'+id,blob)}catch(e){throw new Error(e&&e.name==='QuotaExceededError'?'quota':'store')}
+  const dur=o.dur||await voMeta(blob),rec=o.recorded?ymd(new Date(o.recorded)):today();
+  const it={id,h,at:Date.now(),date:rec,name:String(o.name||'Voice note').slice(0,80),dur:Math.round(dur||0),mime:blob.type||'',ext:voExt(o.name,blob.type),bytes:blob.size,src:o.src||'import',status:o.text?'done':'none',text:o.text||'',by:o.text?'live':'',parts:[]};
+  voDoc().items.push(it);save(VOK);try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}return {item:it,dup:false}}
+async function voBlob(id){try{return await IDB.get('vo-'+id)}catch(e){return null}}
+async function voDelete(id){try{await IDB.del('vo-'+id)}catch(e){}const d=voDoc(),i=d.items.findIndex(x=>x.id===id);if(i>=0){tomb(d,id);d.items.splice(i,1);save(VOK)}}
+// ---------- transcription (cloud, through your Apps Script) ----------
+const VOJOBS={};
+function voB64(blob){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]||'');r.onerror=()=>no(r.error);r.readAsDataURL(blob)})}
+function voWav(f32,rate){const n=f32.length,b=new ArrayBuffer(44+n*2),v=new DataView(b),W=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};W(0,'RIFF');v.setUint32(4,36+n*2,true);W(8,'WAVE');W(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);W(36,'data');v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){const s=Math.max(-1,Math.min(1,f32[i]));v.setInt16(44+i*2,s<0?s*0x8000:s*0x7FFF,true)}return new Blob([b],{type:'audio/wav'})}
+// large or unusual files: decode on the device, 16 kHz mono, 2-minute WAV parts (smaller requests, retry per part)
+async function voParts(it,blob){if(blob.size<=8*1024*1024&&VOCLOUD.includes(it.ext))return [{i:0,blob,name:'audio.'+it.ext,mime:blob.type||'audio/'+(it.ext==='m4a'?'mp4':it.ext)}];
+  if(it.dur>45*60)throw new Error('too_long');const C=window.AudioContext||window.webkitAudioContext;if(!C)throw new Error('no_decode');
+  const ctx=new C(),ab=await blob.arrayBuffer(),buf=await new Promise((ok,no)=>{const p=ctx.decodeAudioData(ab,ok,no);if(p&&p.catch)p.catch(no)});try{ctx.close()}catch(e){}
+  const rate=16000,len=Math.ceil(buf.duration*rate),off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,len,rate),src=off.createBufferSource();src.buffer=buf;src.connect(off.destination);src.start();const mono=(await off.startRendering()).getChannelData(0);
+  const step=120*rate,out=[];for(let s=0,i=0;s<mono.length;s+=step,i++)out.push({i,blob:voWav(mono.subarray(s,Math.min(mono.length,s+step)),rate),name:'part'+(i+1)+'.wav',mime:'audio/wav'});return out}
+async function voTranscribe(id,onlyFailed){const it=voItem(id);if(!it||VOJOBS[id])return;if(!voCloudOn()){it.err='cloud_off';save(VOK);voRefresh(id);return}
+  const blob=await voBlob(id);if(!blob){it.status='error';it.err='missing';save(VOK);voRefresh(id);return}
+  VOJOBS[id]={done:0,total:0};it.status='working';it.err='';save(VOK);voRefresh(id);
+  try{const parts=await voParts(it,blob);if(!onlyFailed||!it.parts||it.parts.length!==parts.length)it.parts=parts.map(p=>({i:p.i,status:'wait',text:''}));VOJOBS[id].total=parts.length;
+    for(const p of parts){const st=it.parts[p.i];if(st.status==='done'){VOJOBS[id].done++;continue}st.status='working';voRefresh(id);
+      try{const prev=p.i?(it.parts[p.i-1].text||'').slice(-200):'';const r=await bcall('transcribe',{name:p.name,mime:p.mime,data:await voB64(p.blob),prompt:prev});st.text=String(r&&r.text||'').trim();st.status='done'}
+      catch(e){st.status='error';st.err=(e&&(e.message||e.code))||'error'}
+      VOJOBS[id].done++;save(VOK);voRefresh(id)}
+    const bad=it.parts.filter(p=>p.status!=='done');const txt=it.parts.map(p=>p.text).filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    if(txt&&(!it.text||it.by!=='manual'))it.text=txt,it.by='cloud';it.status=bad.length?'error':'done';it.err=bad.length?(bad[0].err||'part_failed'):'';}
+  catch(e){it.status='error';it.err=(e&&(e.message||e.code))||'error'}
+  delete VOJOBS[id];save(VOK);voRefresh(id)}
+const VOERR={cloud_off:'Cloud transcription is off. Turn it on in More › Voice Capture, or type the transcript yourself.',no_transcribe_key:'Add your transcription key to the Apps Script first (steps are in Code.gs).',unknown_op:'Update your Apps Script with the new Code.gs first.',
+  too_long:'This recording is over 45 minutes, too long to prepare on this device. Split it in Voice Memos and import the parts.',no_decode:'This device can’t prepare that audio for transcription.',missing:'The audio for this note isn’t on this device.',bridge_offline:'Couldn’t reach your Google connection. Check your internet and retry.',too_big:'That part was too large to send. Retry; it will be split into smaller parts.',part_failed:'Part of the recording didn’t transcribe. Retry to finish the rest.'};
+const voErrTxt=c=>VOERR[c]||(/stt_http_401/.test(c||'')?'The transcription key was rejected. Check it in Apps Script.':/stt_http_429/.test(c||'')?'The transcription service is busy or out of credit. Try again later.':'Transcription didn’t finish ('+(c||'error')+'). Retry when you’re ready.');
+// ---------- spoken text → sentences Smart Capture can read ----------
+function voPrep(t){let s=String(t||'').replace(/\b(um+|uh+|erm|you know,?)\b\s*/gi,'').replace(/\s{2,}/g,' ').trim();const words=s.split(/\s+/).length,stops=(s.match(/[.!?](\s|$)/g)||[]).length;
+  if(words>18&&words/Math.max(1,stops)>22)s=s.replace(/\s+(?=(?:and then|also|plus|another thing|oh and|next|i need to|i have to|i've got to|i gotta|remind me to|don't forget to|make sure (?:to|i)|i should|i want to|i'd like to|we need to|tomorrow|tonight|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday))\b)/gi,'. ');
+  return s.replace(/\.\s*\./g,'.').replace(/(^|[.!?]\s+)([a-z])/g,(m,a,b)=>a+b.toUpperCase())}
+function voAmbig(text,items,base){const low=String(text).toLowerCase(),m=low.match(/\bnext (monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/);if(!m)return;
+  const wd=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'].indexOf(m[1]);let near=addDays(base,1);while(parse(near).getDay()!==wd)near=addDays(near,1);const far=addDays(near,7);
+  items.forEach(it=>{if(!new RegExp('next '+m[1],'i').test(it.src||''))return;it.notes.unshift('“Next '+cap1(m[1])+'”: '+fmtDate(near,{month:'short',day:'numeric'})+' or '+fmtDate(far,{month:'short',day:'numeric'})+'? Check the date');it.conf='medium';if(!it.date)it.date=near})}
+function voOrganize(id,extra){const it=voItem(id);if(!it)return;const text=[(it.text||'').trim(),(extra||'').trim()].filter(Boolean).join('\n');if(!text){capToast('There’s no transcript yet. Transcribe it or type what was said.',null);return}
+  const ctx={kind:'voice',key:'voice',id:it.h||it.id,date:it.date||today(),text:text.slice(0,200),voice:id};const r=capAnalyze(voPrep(text),ctx);voAmbig(text,r.items,it.date||today());
+  if(it.date&&it.date!==today())r.items.forEach(x=>{if(!x.notes.some(n=>/recorded/.test(n)))x.notes.push('Dates read from when this was recorded ('+fmtDate(it.date,{month:'short',day:'numeric'})+')')});
+  CAPS={items:r.items,kept:r.kept,ctx,note:text,voice:id};capSheet();CAPS&&(CAPS.voice=id)}
+// ---------- the voice note card (capture sheet, viewer, More) ----------
+function voCard(it,ctxKind){const job=VOJOBS[it.id],st=it.status,pct=job&&job.total?Math.round(job.done/job.total*100):0;
+  const stat=st==='working'?`<div class="vostat"><span>Transcribing${job&&job.total>1?' · part '+Math.min(job.done+1,job.total)+' of '+job.total:''}…</span><div class="hbar"><i style="width:${Math.max(4,pct)}%"></i></div></div>`
+    :st==='error'?`<div class="vostat err">${esc(voErrTxt(it.err))}</div>`:it.err==='cloud_off'?`<div class="vostat">${esc(voErrTxt('cloud_off'))}</div>`:'';
+  const by=it.by==='live'?'Live transcript (device speech recognition)':it.by==='cloud'?'Transcribed in the cloud':it.by==='manual'?'Typed or edited by you':'';
+  return `<div class="vocard" data-voc="${esc(it.id)}"><div class="vohd"><b>${esc(it.name)}</b><small>${esc(fmtDate(it.date,{month:'short',day:'numeric'}))}${it.dur?' · '+voDur(it.dur):''}${it.src==='import'?' · imported':it.src==='share'?' · shared':''}</small></div>
+    <audio controls preload="metadata" data-vo-audio="${esc(it.id)}"></audio>${stat}
+    <label class="mrf"><span class="lbl">Transcript${by?' · '+by:''}</span><textarea class="awrap votx" rows="3" data-vo-text="${esc(it.id)}" placeholder="${st==='working'?'Working on it…':'No transcript yet. Transcribe it, or type or paste what was said (Voice Memos can show a transcript you can copy).'}">${esc(it.text||'')}</textarea></label>
+    <div class="chips">${(it.text||'').trim()?`<button class="btn sm pri" data-vo="org" data-id="${esc(it.id)}"><span class="orgbtn">${SPARK}Organize</span></button>`:''}
+      ${st!=='working'?`<button class="btn sm" data-vo="tr" data-id="${esc(it.id)}">${st==='error'?'Retry':(it.text||'').trim()?'Transcribe again':'Transcribe'}</button>`:''}
+      ${ctxKind!=='cap'?`<button class="btn sm" data-vo="del" data-id="${esc(it.id)}">Delete</button>`:''}</div></div>`}
+function voRefresh(id){document.querySelectorAll(`[data-voc="${id}"]`).forEach(el=>{const it=voItem(id);if(!it){el.remove();return}const ta=el.querySelector('textarea'),focused=ta&&document.activeElement===ta;if(focused)return;
+  const k=el.closest('#cap')?'cap':'x',tmp=document.createElement('div');tmp.innerHTML=voCard(it,k);const n=tmp.firstChild,au=el.querySelector('audio'),nau=n.querySelector('audio');if(au&&nau&&au.src){nau.replaceWith(au)}el.replaceWith(n);voHydrate(n)})}
+async function voHydrate(root){for(const a of (root||document).querySelectorAll('audio[data-vo-audio]')){if(a.src)continue;const b=await voBlob(a.dataset.voAudio);if(b)a.src=URL.createObjectURL(b);else a.replaceWith(Object.assign(document.createElement('p'),{className:'calnote',textContent:'This recording is stored on another device.'}))}}
+// ---------- recording in the capture sheet ----------
+let VOREC=null;
+function voRecPanel(){const R=VOREC;if(!R)return '';return `<div class="vorec"><div class="vorechd"><span class="vodot ${R.paused?'p':''}"></span><b data-vorec-time>${voDur((R.acc+(R.paused?0:Date.now()-R.t0))/1000)}</b><span class="vomtr"><i data-vorec-lvl></i></span></div>
+  ${R.sr?`<p class="calnote vlive" data-vorec-live>${esc(R.live||'Listening…')}</p>`:'<p class="calnote">Recording. You can transcribe it after you stop.</p>'}
+  <div class="chips">${R.mr&&R.mr.pause?`<button class="btn" data-vo="pause">${R.paused?'Resume':'Pause'}</button>`:''}<button class="btn pri" data-vo="stop">Stop</button><button class="btn" data-vo="cancel">Discard</button></div></div>`}
+async function voRecStart(){if(VOREC)return;if(!voCanRec()){capMsg('This device can’t record here. Use Import audio with a Voice Memo instead.');return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){capMsg('Microphone access was blocked. Allow it in Settings › KL Journal (or your browser), or use Import audio.');return}
+  const mt=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t));const mr=new MediaRecorder(stream,mt?{mimeType:mt}:undefined),chunks=[];
+  mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};const R=VOREC={mr,stream,chunks,t0:Date.now(),acc:0,paused:false,live:'',fin:'',sr:null,mt};
+  try{const C=window.AudioContext||window.webkitAudioContext;R.ac=new C();const an=R.ac.createAnalyser();an.fftSize=512;R.ac.createMediaStreamSource(stream).connect(an);R.an=an}catch(e){}
+  const SR=voSR();if(SR){try{const r=new SR();r.lang=navigator.language||'en-US';r.continuous=true;r.interimResults=true;r.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const x=e.results[i];if(x.isFinal)R.fin+=(R.fin?' ':'')+x[0].transcript.trim();else interim+=x[0].transcript}R.live=(R.fin+' '+interim).trim();const el=$('#cap [data-vorec-live]');if(el)el.textContent=R.live||'Listening…'};
+    r.onend=()=>{if(VOREC===R&&!R.paused&&!R.stopping){try{r.start()}catch(e){}}};r.onerror=()=>{};r.start();R.sr=r}catch(e){R.sr=null}}
+  mr.start(1000);voPaintCap();R.tick=setInterval(()=>{const tm=$('#cap [data-vorec-time]');if(tm)tm.textContent=voDur((R.acc+(R.paused?0:Date.now()-R.t0))/1000);if(R.an){const a=new Uint8Array(R.an.fftSize);R.an.getByteTimeDomainData(a);let pk=0;for(const v of a)pk=Math.max(pk,Math.abs(v-128));const l=$('#cap [data-vorec-lvl]');if(l)l.style.width=Math.min(100,Math.round(pk/128*180))+'%'}},120)}
+function voRecStop(save){const R=VOREC;if(!R)return;R.stopping=true;clearInterval(R.tick);try{R.sr&&R.sr.stop()}catch(e){}const dur=(R.acc+(R.paused?0:Date.now()-R.t0))/1000;
+  R.mr.onstop=async()=>{R.stream.getTracks().forEach(t=>t.stop());try{R.ac&&R.ac.close()}catch(e){}VOREC=null;if(!save){voPaintCap();capMsg('Recording discarded.');return}
+    const type=R.mr.mimeType||R.mt||'audio/mp4',blob=new Blob(R.chunks,{type}),nm='Voice note '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'.'+(/webm/.test(type)?'webm':'m4a');
+    try{const {item}=await voSave(blob,{name:nm,src:'record',dur,text:(R.fin||R.live||'').trim(),recorded:Date.now()});VOQ=item.id;voPaintCap();
+      if(!(item.text||'').trim()&&voCloudOn()&&voSet().auto)voTranscribe(item.id);capMsg(item.text?'Saved with a live transcript. Check it, then tap ✦ Organize.':voCloudOn()?'Saved. Transcribing…':'Saved. Type what was said, or turn on cloud transcription in More.')}
+    catch(e){capMsg(e.message==='quota'?'Storage is full. Delete old voice notes in More › Voice Capture.':'Couldn’t save the recording.');voPaintCap()}};
+  try{R.mr.stop()}catch(e){R.mr.onstop()}}
+function voRecPause(){const R=VOREC;if(!R||!R.mr.pause)return;if(R.paused){R.mr.resume();R.t0=Date.now();R.paused=false;try{R.sr&&R.sr.start()}catch(e){}}else{R.mr.pause();R.acc+=Date.now()-R.t0;R.paused=true;try{R.sr&&R.sr.stop()}catch(e){}}voPaintCap()}
+let VOQ='';   // the voice note shown in the capture sheet
+function capMsg(t){const m=$('#cap-m');if(m)m.textContent=t||''}
+function voPaintCap(){const box=$('#cap-voice');if(!box)return;box.innerHTML=VOREC?voRecPanel():VOQ&&voItem(VOQ)?voCard(voItem(VOQ),'cap'):'';voHydrate(box)}
+async function voImport(files,src){files=[...(files||[])];if(!files.length)return;const f=files[0];if(!(/^(audio|video)\//.test(f.type||'')||/\.(m4a|mp3|wav|aac|caf|ogg|oga|flac|webm|mp4|aiff?)$/i.test(f.name||''))){capMsg('That isn’t an audio file. Voice Memos (.m4a), MP3 and WAV work.');return}
+  if(f.size>200*1024*1024){capMsg('That file is over 200 MB. Trim or split it first.');return}capMsg('Importing '+(f.name||'audio')+'…');
+  try{const {item,dup}=await voSave(f,{name:f.name||'Imported audio',src:src||'import',recorded:f.lastModified});VOQ=item.id;voPaintCap();
+    if(dup){capMsg('You imported this recording on '+fmtDate(ymd(new Date(item.at)),{month:'short',day:'numeric'})+'. Here it is.');return}
+    if(voCloudOn()&&voSet().auto){capMsg('Imported. Transcribing…');voTranscribe(item.id)}else capMsg(voCloudOn()?'Imported. Tap Transcribe when you’re ready.':'Imported. Paste or type the transcript, or turn on cloud transcription in More › Voice Capture.')}
+  catch(e){capMsg(e.message==='quota'?'Storage is full. Delete old voice notes in More › Voice Capture.':'Couldn’t import that file.')}}
+// quick capture: four ways in
+function qcGrid(){return `<div class="qcgrid" role="group" aria-label="Capture">
+  <button class="qc" data-qc="type"><span>${IC.pen||''}</span><b>Type</b></button>
+  <button class="qc ${VOREC?'on':''}" data-qc="rec" ${voCanRec()?'':'disabled'}><span>${VCIC.mic}</span><b>${VOREC?'Recording…':'Record'}</b></button>
+  <label class="qc"><input type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.caf,.ogg,.flac,.webm,.mp4" data-voimp hidden><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></span><b>Import audio</b></label>
+  <label class="qc"><input type="file" accept="image/*" multiple data-vfile="library" hidden><span>${VCIC.lib}</span><b>Photo</b></label></div>
+  <div class="qcmore">${navigator.clipboard&&navigator.clipboard.read?`<button class="lnkg" data-vc="paste">Paste an image</button>`:''}<label class="lnkg"><input type="file" accept="image/*" capture="environment" data-vfile="camera" hidden>Camera</label>${voSR()?'<button class="lnkg" data-vc="dictate">Dictate into the note</button>':''}</div>`}
+// ---------- viewer (from a linked task or More) ----------
+function voView(id){let sh=$('#voview');if(!sh){sh=document.createElement('div');sh.id='voview';sh.className='sheet hide';document.body.appendChild(sh);sh.addEventListener('click',e=>{if(e.target.id==='voview'){sh.classList.add('hide');return}const b=e.target.closest('[data-vv2]');if(b){sh.classList.add('hide')}})}
+  const it=voItem(id),recs=capReg().filter(r=>r.src&&r.src.kind==='voice'&&(r.src.voice===id||r.src.id===(it&&(it.h||it.id))));
+  sh.innerHTML=`<div class="card capcard" role="dialog" aria-modal="true" aria-label="Voice note"><div class="caphd"><span class="spk">${VCIC.mic}</span><div><h2>Voice note</h2><small>${it?esc(fmtDate(it.date,{weekday:'short',month:'short',day:'numeric',year:'numeric'})):''}</small></div><button class="x" data-vv2="x" aria-label="Close">×</button></div>
+    ${it?voCard(it,'view'):'<p class="calnote">This voice note was deleted. What was made from it is still here.</p>'}
+    ${recs.length?`<p class="lbl" style="margin:10px 0 4px">Made from this recording</p><ul class="vrecs">${recs.map(r=>`<li>${esc(r.title)} <small class="muted">· ${esc(CAPDEST[r.dest]||r.dest)}</small></li>`).join('')}</ul>`:''}</div>`;sh.classList.remove('hide');voHydrate(sh)}
+// ---------- More › Voice Capture ----------
+function voPrefsCard(){const v=voSet(),items=voDoc().items.slice().sort((a,b)=>b.at-a.at),mb=items.reduce((s,x)=>s+(x.bytes||0),0)/1048576;
+  const body=`<p class="calnote" style="margin-top:0">Record from the + button, or import Voice Memos and other audio. Recordings are kept on this device with their transcripts; transcripts sync and are in backups, audio stays on the device that has it.</p>
+    <p class="calnote">${voSR()?'Live transcription while recording uses this device’s speech recognition (on iPhone, Apple’s dictation, which may use Apple’s servers depending on your Siri settings).':'This browser has no live transcription; recordings can still be transcribed afterwards.'}</p>
+    <h3 class="vh3">Cloud transcription <small>· optional, off by default</small></h3>
+    <p class="calnote">Needed for imported audio and for better accuracy. Audio goes from this device to your own Google Apps Script, which sends it to OpenAI’s transcription service with a key stored only in the script. Nothing is sent until you turn this on.</p>
+    <div class="chips"><button class="chip" data-vop="cloud" aria-pressed="${!!v.cloud}">${v.cloud?'✓ ':''}Allow cloud transcription</button>${v.cloud?`<button class="chip" data-vop="auto" aria-pressed="${!!v.auto}">${v.auto?'✓ ':''}Transcribe automatically</button>`:''}</div>
+    <p class="calnote">${!bridgeOn()?'Needs your Google connection (More › Google connection).':v.cloud?'First time: update your Apps Script with the new Code.gs and add OPENAI_API_KEY (steps at the top of the script).':''}</p>
+    <h3 class="vh3">Voice notes <small>· ${items.length} · about ${mb.toFixed(1)} MB</small></h3>
+    ${items.length?items.slice(0,15).map(x=>`<button class="mvact" data-vview2="${esc(x.id)}"><span class="ai">${VCIC.mic}</span><span class="pt"><b>${esc(x.name)}</b><small>${esc(fmtDate(x.date,{month:'short',day:'numeric'}))}${x.dur?' · '+voDur(x.dur):''} · ${x.status==='done'||x.text?'transcript':x.status==='error'?'needs retry':x.status==='working'?'transcribing':'no transcript'}</small></span><span class="pgo">›</span></button>`).join(''):'<p class="empty">No voice notes yet.</p>'}
+    <p class="calnote">On iPhone, to bring in a Voice Memo: open it in Voice Memos › ••• › Save to Files, then + › Import audio. Some browsers can also share audio straight to KL Journal.</p>`;
+  return rc('mo-voice',VCIC.mic,'Voice Capture',`${items.length} note${items.length===1?'':'s'} · ${v.cloud?'cloud transcription on':'on this device'}`,body,false)}
+// ---------- events ----------
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-vo],[data-qc],[data-vop],[data-vview2]');if(!b)return;
+  if(b.dataset.vview2){e.preventDefault();voView(b.dataset.vview2);return}
+  if(b.dataset.vop){e.preventDefault();const v=voSet();if(b.dataset.vop==='cloud')v.cloud=!v.cloud;else v.auto=!v.auto;save('settings');const y=scrollY;render();scrollTo(0,y);return}
+  if(b.dataset.qc){e.preventDefault();const k=b.dataset.qc;if(k==='type'){const t=$('#cap-t');if(t)t.focus();return}if(k==='rec'){if(VOREC)voRecStop(true);else voRecStart();return}return}
+  e.preventDefault();e.stopPropagation();const a=b.dataset.vo,id=b.dataset.id;
+  if(a==='stop'){voRecStop(true);return}if(a==='cancel'){voRecStop(false);return}if(a==='pause'){voRecPause();return}
+  if(a==='tr'){const it=voItem(id);if(it){it.parts=[];voTranscribe(id,false)}return}
+  if(a==='org'){const ta=document.querySelector(`[data-vo-text="${id}"]`),it=voItem(id);if(ta&&it&&ta.value!==it.text){it.text=ta.value;it.by='manual';save(VOK)}voOrganize(id);return}
+  if(a==='del'){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Delete'}},3000);return}voDelete(id).then(()=>{const v=$('#voview');if(v)v.classList.add('hide');const y=scrollY;render();scrollTo(0,y);capToast('Voice note deleted. Anything made from it is still here.',null)})}},true);
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.voText){const it=voItem(t.dataset.voText);if(it){it.text=t.value;it.by='manual';save(VOK);const bar=t.closest('.vocard');if(bar&&!bar.querySelector('[data-vo=org]')&&t.value.trim())voRefreshSoon(it.id)}}
+  if(t.id==='cap-t'){try{localStorage.setItem('kl-cap-draft',t.value)}catch(_){}}},true);
+let VORS=null;function voRefreshSoon(id){clearTimeout(VORS);VORS=setTimeout(()=>{const ta=document.querySelector(`[data-vo-text="${id}"]`);if(ta)ta.blur();voRefresh(id);const n=document.querySelector(`[data-vo-text="${id}"]`);if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}},1200)}
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.voimp!=null){voImport(t.files,'import');t.value=''}},true);
+// shared from another app (Android / desktop Chrome; iPhone doesn't offer this to web apps)
+async function voShared(){try{const c=await caches.open('kl-share'),r=await c.match('./shared/meta.json');if(!r)return;const meta=await r.json();await c.delete('./shared/meta.json');openCap();
+  const t=$('#cap-t');if(t&&(meta.text||meta.title))t.value=[meta.title,meta.text,meta.url].filter(Boolean).join('\n');
+  for(let i=0;i<(meta.files||[]).length;i++){const fr=await c.match('./shared/f'+i);if(!fr)continue;const b=await fr.blob(),f=new File([b],meta.files[i].name||'shared',{type:meta.files[i].type||b.type,lastModified:meta.files[i].lm||Date.now()});await c.delete('./shared/f'+i);
+    if(/^image\//.test(f.type))vcAddFiles([f],'share','cap');else voImport([f],'share')}}catch(e){}}
+setTimeout(()=>{try{if(/[?&]share=1\b/.test(location.search)){history.replaceState(null,'',location.pathname+location.hash);voShared()}}catch(e){}},1600);
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='tk-open'&&findTask(e.data.id)){S.tab='today';S.seg='tasks';S.tkopen=e.data.id;render()}});
+// ================= /Voice Capture =================
 // ================= Personal Study =================
 // Read. Research. Meditate. Apply.
 // Topics, guided study sessions, focused meditation, a growing research library and an open-questions tracker.
@@ -1913,7 +2166,7 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
     else if(it.cat==='spiritual'&&it.date&&/\b(read|study|prep|field service|ministry|family worship|meeting|bible|research|pray)\b/i.test(low))it.dest='spir';
     else if((it.cat==='movement'||it.cat==='reset')&&it.date)it.dest='plan';
     else{it.dest='task';if(it.imp&&it.date===today())it.dest='top3'}
-    if(it.recur){it.notes.push('Repeats ('+it.recur+'): added for the next one');it.conf='medium';if(!it.date){const wdm=it.recur.match(new RegExp(WDRE));it.date=wdm?nextWd(base,wdIdx(wdm[0]),true):addDays(base,1)}}};
+    if(it.recur){it.notes.push('Repeats ('+it.recur+'): added as a repeating task');it.conf='medium';if(!it.date){const wdm=it.recur.match(new RegExp(WDRE));it.date=wdm?nextWd(base,wdIdx(wdm[0]),true):addDays(base,1)}}};
   const classify=s=>{const low=s.toLowerCase(),isQ=/\?\s*$/.test(s);
     {const mv=mvDetect(s,base);if(mv)return mv}
     if(NEG_RE.test(s)&&!/don'?t forget/i.test(s))return {skip:'not needed'};
@@ -1978,8 +2231,8 @@ function capAnalyze(text,ctx){const base=ctx.date||today(),out=[],kept=[];
 
 // ---------- applying ----------
 function capApply(items,ctx){const by=new Map();items.forEach(it=>{const k=it.img||'';if(!by.has(k))by.set(k,[]);by.get(k).push(it)});let out=[];by.forEach((list,k)=>{out=out.concat(capApply1(list,k?Object.assign({},ctx,{kind:'image',key:'',id:k,img:k}):ctx))});return out}
-function capApply1(items,ctx){const created=[],td=today(),srcRef={kind:ctx.kind,key:ctx.key||'',id:ctx.id||'',date:ctx.date||td,text:ctx.kind==='inbox'?(ctx.text||'').slice(0,400):''};
-  const addTask=(it,due)=>{const t={id:uid(),t:it.title,due:due||'',done:false,created:Date.now(),imp:!!it.imp,cat:it.cat,src:srcRef};if(it.group&&it.group!=='General')t.group=it.group;if(it.kind==='proposed')t.proposed=true;tasks().push(t);save('tasks');created.push({type:'task',id:t.id});return t};
+function capApply1(items,ctx){const created=[],td=today(),srcRef=Object.assign({kind:ctx.kind,key:ctx.key||'',id:ctx.id||'',date:ctx.date||td,text:ctx.kind==='inbox'?(ctx.text||'').slice(0,400):''},ctx.voice?{voice:ctx.voice}:{});
+  const addTask=(it,due)=>{const t={id:uid(),t:it.title,due:due||'',done:false,created:Date.now(),imp:!!it.imp,cat:it.cat,src:srcRef};if(it.time&&due)t.time=it.time;if(it.recur&&due){const r=tkRecur(it.recur,due);if(r)t.rep=r}if(it.group&&it.group!=='General')t.group=it.group;if(it.kind==='proposed')t.proposed=true;tasks().push(t);save('tasks');created.push({type:'task',id:t.id});return t};
   items.filter(x=>x.sel&&x.dest!=='skip'&&x.title.trim()).forEach(it=>{
     if(it.dest==='task')addTask(it,it.date);
     else if(it.dest==='top3'){const t=addTask(it,it.date||td);const dd=it.date||td,day=get('day-'+dd,dayDef(dd)),p=planOf(day),slot=p.top.find(x=>!x.tid&&!(x.t||'').trim());if(slot){slot.tid=t.id;slot.done=false;save('day-'+dd)}}
@@ -2034,16 +2287,16 @@ function capSheet(){const sh=$('#capsheet');if(!CAPS){sh.classList.add('hide');r
   const needsDate=d=>['task','top3','plan','spir','cal','update','move'].includes(d);
   sh.innerHTML=`<div class="card capcard" role="dialog" aria-modal="true" aria-labelledby="caph2"><div class="caphd"><span class="spk">${SPARK}</span><div><h2 id="caph2">Smart Capture</h2><small>From Thought to Action</small></div><button class="x" data-cs="close" aria-label="Close">×</button></div>
     ${CAPS.imgs&&CAPS.imgs.length?vcSheetImgs(CAPS):''}
-    ${items.length?`<p class="calnote" style="margin:0 0 6px">Check what to add. Tap any part to change it. ${CAPS.imgs&&CAPS.imgs.length?(CAPS.imgs.length>1?'Your photos are':'Your photo is')+' kept as '+(CAPS.imgs.length>1?'they are':'it is'):'Your note stays exactly as you wrote it'}.</p>`:CAPS.imgs&&CAPS.imgs.length?'<p class="calnote">Nothing to add from this. The photo stays in your library; edit the text above and tap Re-sort if something was misread.</p>':'<p class="calnote">Nothing to organize here. It reads as a reflection, so it stays in your note as written.</p>'}
+    ${items.length?`<p class="calnote" style="margin:0 0 6px">Check what to add. Tap any part to change it. ${CAPS.imgs&&CAPS.imgs.length?(CAPS.imgs.length>1?'Your photos are':'Your photo is')+' kept as '+(CAPS.imgs.length>1?'they are':'it is'):CAPS.voice?'Your recording and transcript are kept as they are':'Your note stays exactly as you wrote it'}.</p>`:CAPS.imgs&&CAPS.imgs.length?'<p class="calnote">Nothing to add from this. The photo stays in your library; edit the text above and tap Re-sort if something was misread.</p>':'<p class="calnote">Nothing to organize here. It reads as a reflection, so it stays in your note as written.</p>'}
     <div class="capitems">${capOrder(items).map(({it,i,head})=>`${head?`<div class="capgrp">${esc(head)}</div>`:''}<div class="capit ${it.sel?'':'off'}"><div class="cr1"><button class="cb" data-cs="sel" data-i="${i}" aria-label="${it.sel?'Don’t add':'Add'}"><span>${it.sel?'✓':''}</span></button><textarea rows="1" class="awrap capt" data-ci="${i}" data-cf="title" aria-label="Title">${esc(it.title)}</textarea><button class="capstar ${it.imp?'on':''}" data-cs="imp" data-i="${i}" aria-label="Priority">★</button></div>
       <div class="cr2"><label><span>To</span><select data-ci="${i}" data-cf="dest">${destOpts(it)}</select></label>${it.dest==='question'||it.dest==='journal'||it.dest==='idea'||it.dest==='skip'?'':`<label><span>Type</span><select data-ci="${i}" data-cf="cat">${Object.entries(CAPCAT).map(([k,l])=>`<option value="${k}" ${it.cat===k?'selected':''}>${l}</option>`).join('')}</select></label>`}${needsDate(it.dest)?`<label><span>Date</span><input type="date" data-ci="${i}" data-cf="date" value="${esc(it.date||'')}"></label>`:''}${it.dest==='cal'||it.dest==='plan'?`<label><span>Time</span><input type="time" data-ci="${i}" data-cf="time" value="${esc(it.time||'')}"></label>`:''}</div>
       <div class="capnote"><span class="capkind">${esc(CAPKIND[it.kind]||'Task')}</span>${it.notes.length?' '+it.notes.map(esc).join(' · '):''}</div><div class="capsrc">“${esc(it.src.length>140?it.src.slice(0,137)+'…':it.src)}”</div></div>`).join('')}</div>
     ${kept.length?`<details class="capkept"><summary>${kept.length} sentence${kept.length>1?'s':''} left in your note</summary>${kept.map(k=>`<p>“${esc(k.s)}” <small>· ${esc(k.why)}</small></p>`).join('')}</details>`:''}
     <div class="chips" style="margin-top:12px"><button class="btn pri" data-cs="add" ${n?'':'disabled'}>${n?`Add ${n} item${n>1?'s':''}`:'Nothing selected'}</button><button class="btn" data-cs="close">${items.length?'Cancel':'Close'}</button></div></div>`;
   sh.classList.remove('hide');sh.querySelectorAll('textarea.awrap').forEach(asz);vcHydrate(sh)}
-function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump',image:'Photo',focus:'Focus session',reset:'Reset note'}[src.kind]||'Note';
+function capSrcLink(src){if(!src||!src.kind)return '';const lbl={journal:'Journal entry',session:'Session notes',note:'Study note',inbox:'Inbox note',dump:'Brain dump',image:'Photo',focus:'Focus session',reset:'Reset note',voice:'Voice note'}[src.kind]||'Note';
   return `<button class="lnkg" data-gosrc="${esc(JSON.stringify(src))}" style="font-size:13px">${src.kind==='image'?vcThumb(src.id,'vmini'):SPARK.replace('<svg','<svg style="width:13px;height:13px;vertical-align:-2px"')} From ${lbl} · ${esc(fmtDate(src.date||today(),{month:'short',day:'numeric'}))}</button>`}
-function capGoSrc(src){if(src.kind==='image'){vcView(src.id);return}if(src.kind==='focus'||src.kind==='reset'){S.tab='mreset';S.rc=S.rc||{};S.rc['mr-hist']=true;render();scrollTo(0,0);return}if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
+function capGoSrc(src){if(src.kind==='image'){vcView(src.id);return}if(src.kind==='voice'){voView(src.voice||src.id);return}if(src.kind==='focus'||src.kind==='reset'){S.tab='mreset';S.rc=S.rc||{};S.rc['mr-hist']=true;render();scrollTo(0,0);return}if(src.kind==='journal'){S.tab='journal';S.date=src.date;S.jopen=src.id;S.jnew=null}
   else if(src.kind==='session'){S.tab='sessions';S.sess=src.date;S.rc=S.rc||{};S.rc['se-new']=true}
   else if(src.kind==='note'){S.tab='spiritual';S.date=src.date;const x=cache[src.key];if(x){S.nform={id:x.id,type:x.type,ref:x.ref,date:x.date,text:x.text};S.rc=S.rc||{};S.rc['sp-notes']=true}}
   else{if(inbox().some(x=>x.id===src.id)){S.tab='home'}else{capToast('Original note: “'+esc(src.text||'')+'”',null);return}}
@@ -2092,6 +2345,7 @@ function vHome(){
   return `${perspCard()}
   <div class="card"><div class="chd"><h2>My Daily Anchors</h2><small>${aN} of 4</small></div>
     <div class="anch" role="group" aria-label="Daily anchors">${ANCH.map(([k,nm])=>`<button class="tick" data-tick="${k}" aria-pressed="${lvl(d,k)>0}"><span class="ai">${AIC[k]}</span>${nm}${k==='movement'&&mvTickSub()?`<span class="pus">${esc(mvTickSub())}</span>`:''}<span class="bx">${lvl(d,k)>0?'✓':''}</span></button>`).join('')}</div>${stRow()}${mvHomeRow()}${mrHomeRow()}</div>
+  ${tkOverdueCard()}
   <div class="card"><div class="chd"><h2>Today’s Top 3</h2><button class="lnkg" data-go="today">Plan today</button></div>${top3Home(d)}</div>
   <button class="gbtn" data-go="journal" data-new="1">${IC.pen}Write a Quick Entry</button>
   ${inboxCard()}
@@ -2469,7 +2723,7 @@ const fmtTm=tm=>{if(!tm)return '';const [h,m]=tm.split(':').map(Number);return n
 function tasks(){const t=get('tasks',{items:[]});t.items=t.items||[];return t.items}
 const findTask=id=>tasks().find(t=>t.id===id);
 function taskRow(t,why){const open=S.tkopen===t.id,id=esc(t.id);
-  return `<div class="task ${t.done?'done':''} ${!t.done&&t.due&&t.due<today()?'over':''}"><button class="cb" data-tktog="${id}" aria-label="${t.done?'Mark not done':'Mark done'}"><span>${t.done?'✓':''}</span></button><div class="tk"><textarea rows="1" class="awrap tt" data-tkt="${id}" aria-label="Task">${esc(t.t)}</textarea><div class="tsub">${t.imp?'<span class="star" title="Important">★</span>':''}${why&&!t.done?`<span class="why">${esc(why)}</span>`:''}${t.quick&&!t.done?'<span class="why q">Quick</span>':''}${t.group&&!t.done?`<span class="why q">${esc(t.group)}${t.proposed?' · proposed':''}</span>`:''}<input type="date" class="td" data-tkd="${id}" value="${esc(t.due||'')}" aria-label="Due date"></div>${t.next&&!open&&!t.done?`<span class="tnext">Next: ${esc(t.next)}</span>`:''}</div><button class="x" data-tkopen="${id}" aria-label="${open?'Close details':'Details'}" aria-expanded="${open}">${open?'–':'⋯'}</button></div>
+  return `<div class="task ${t.done?'done':''} ${!t.done&&t.due&&t.due<today()?'over':''}"><button class="cb" data-tktog="${id}" aria-label="${t.done?'Mark not done':'Mark done'}"><span>${t.done?'✓':''}</span></button><div class="tk"><textarea rows="1" class="awrap tt" data-tkt="${id}" aria-label="Task">${esc(t.t)}</textarea><div class="tsub">${t.imp?'<span class="star" title="Important">★</span>':''}${why&&!t.done?`<span class="why">${esc(why)}</span>`:''}${t.quick&&!t.done?'<span class="why q">Quick</span>':''}${t.group&&!t.done?`<span class="why q">${esc(t.group)}${t.proposed?' · proposed':''}</span>`:''}${tkChip(t)}</div>${t.next&&!open&&!t.done?`<span class="tnext">Next: ${esc(t.next)}</span>`:''}</div><button class="x" data-tkopen="${id}" aria-label="${open?'Close details':'Details'}" aria-expanded="${open}">${open?'–':'⋯'}</button></div>
   ${open?`<div class="tkdet"><label><span class="lbl">Next step</span><textarea rows="1" class="awrap" data-tkf="next" data-id="${id}" placeholder="The first physical step, e.g. open the laptop">${esc(t.next||'')}</textarea></label><label><span class="lbl">Done when</span><textarea rows="1" class="awrap" data-tkf="doneWhen" data-id="${id}" placeholder="When to stop, e.g. one page drafted">${esc(t.doneWhen||'')}</textarea></label><div class="chips"><button class="chip sm" data-tkflag="imp" data-id="${id}" aria-pressed="${!!t.imp}" style="padding:0 12px">★ Important</button><button class="chip sm" data-tkflag="quick" data-id="${id}" aria-pressed="${!!t.quick}" style="padding:0 12px">Quick · under 10 min</button><button class="btn sm" data-tkdel="${id}">Delete</button></div>${t.src?`<div>${capSrcLink(t.src)}</div>`:''}</div>`:''}`}
 // ----- prioritizer: ranks open tasks so the journal can choose for you
 const dDiff=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
@@ -2495,12 +2749,12 @@ function startCard(d){if(S.date!==today())return '';const h=startHere(d);if(!h)r
 // ----- inbox: quick capture from anywhere, sort later
 function inbox(){const b=get('inbox',{items:[]});b.items=b.items||[];return b.items}
 function inboxCard(){const it=inbox();if(!it.length)return '';
-  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}${vcStrip(x.img)}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
-function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Jot it down</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind, or add a photo or screenshot." aria-label="Inbox item"></textarea>${vcBar('cap')}<div id="cap-imgs" class="vqrow"></div><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="org"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');vcPaintQ();const t=$('#cap-t');grow(t);t.focus()}
-function closeCap(){if(VCQ.length){VCQ.forEach(id=>vcDelete(id));VCQ=[]}$('#cap').classList.add('hide');if(S.tab==='home'||(S.tab==='today'&&(S.seg||'day')==='day')){const y=scrollY;render();scrollTo(0,y)}}
+  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}${vcStrip(x.img)}${x.voice?` <button class="lnkg" data-vview2="${esc(x.voice)}">▶ Voice note</button>`:''}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
+function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Jot it down</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind, or add a photo or screenshot." aria-label="Inbox item"></textarea>${qcGrid()}<div id="cap-voice"></div><div id="cap-imgs" class="vqrow"></div><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="org"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');vcPaintQ();voPaintCap();const t=$('#cap-t');if(!t.value){try{t.value=localStorage.getItem('kl-cap-draft')||''}catch(e){}}grow(t);t.focus()}
+function closeCap(){if(VOREC)voRecStop(true);VOQ='';if(VCQ.length){VCQ.forEach(id=>vcDelete(id));VCQ=[]}$('#cap').classList.add('hide');if(S.tab==='home'||(S.tab==='today'&&(S.seg||'day')==='day')){const y=scrollY;render();scrollTo(0,y)}}
 
 function addTask(text,due){text=(text||'').trim();if(!text)return false;tasks().push({id:uid(),t:text,due:due||'',done:false,created:Date.now()});save('tasks');return true}
-function setTaskDone(t,on){t.done=on;t.doneOn=on?today():'';t.doneAt=on?Date.now():0;save('tasks')}
+function setTaskDone(t,on){if(on&&t.rep&&!t.done){const r=tkComplete(t);if(r){setTimeout(()=>{capToast('Done ✓ · next: '+esc(tkDateLabel(t)),null);const tt=$('#captoast');if(tt){const u=document.createElement('button');u.textContent='Undo';u.onclick=e=>{e.stopPropagation();t.hist.pop();t.due=r.prev.due;if(r.prev.otime)t.otime=r.prev.otime;save('tasks');const y=scrollY;render();scrollTo(0,y);tt.className=''};tt.insertBefore(u,tt.querySelector('[data-ct=x]'))}},0);try{mrPushSync()}catch(e){}return}}t.done=on;t.doneOn=on?today():'';t.doneAt=on?Date.now():0;save('tasks')}
 const isHol=id=>/#holiday@|#contacts@|#weeknum@|addressbook#/.test(id||'');
 const hhmm=s=>{const d=new Date(s);return pad(d.getHours())+':'+pad(d.getMinutes())};
 const flexTimes=()=>!get('settings',setDef).exactTimes;
@@ -2647,7 +2901,7 @@ function vPlanWeek(){
   const start=ds[0],end=addDays(ds[ds.length-1],1);
   setTimeout(()=>loadRange(start,end),0);
   const rows=ds.map(d=>{
-    const day=cache['day-'+d],p=day&&day.plan,top=p&&p.top&&p.top.find(x=>x.t),ev=rangeEvents(start,end,d),dueN=tasks().filter(t=>!t.done&&t.due===d).length,cl=cycleLabel(d);
+    const day=cache['day-'+d],p=day&&day.plan,top=p&&p.top&&p.top.find(x=>x.t),ev=rangeEvents(start,end,d),dueN=tkOn(d).length,cl=cycleLabel(d);
     const wty=dayType(d),wdc=dayCol(wty);return `<button class="wkrow ${d===today()?'now':''}" data-goday="${d}" style="border-left-color:${wdc}"><div class="wd"><b>${esc(fmtDate(d,{weekday:'short'}))}</b><span>${esc(fmtDate(d,{month:'short',day:'numeric'}))}</span></div><div>
       <div class="wtags"><span class="badge" style="background:${rgba(wdc,.22)};color:${wdc};border-color:${rgba(wdc,.5)}">${esc(TYNAME[wty]||wty)}${cl?' · '+esc(cl):''}</span><span class="mini" aria-label="Anchors">${ANCH.map(([k])=>`<i class="${lvl(day,k)>0?'on':''}"></i>`).join('')}</span>${(()=>{const r=dayRows(d,ev);return r.total?`<span class="calnote">${r.n}/${r.total} done</span>`:''})()}${dueN?`<span class="calnote">· ${dueN} task${dueN>1?'s':''}</span>`:''}</div>
       ${top?`<div class="wl"><small>Top:</small> ${esc(top.t)}</div>`:''}
@@ -2663,9 +2917,9 @@ function vMonth(){
   let n=Math.ceil((first.getDay()+last.getDate())/7)*7;const ds=[...Array(n)].map((_,i)=>addDays(gs,i));
   const start=ds[0],end=addDays(ds[ds.length-1],1);setTimeout(()=>loadRange(start,end),0);
   const sel=S.mday&&S.mday>=start&&S.mday<end?S.mday:(today().slice(0,7)===m?today():m+'-01');
-  const cells=ds.map(d=>{const ev=rangeEvents(start,end,d),day=cache['day-'+d],has=day&&((day.text||'').trim()||ANCH.some(([k])=>lvl(day,k)>0)),tk=tasks().some(t=>!t.done&&t.due===d);
+  const cells=ds.map(d=>{const ev=rangeEvents(start,end,d),day=cache['day-'+d],has=day&&((day.text||'').trim()||ANCH.some(([k])=>lvl(day,k)>0)),tk=tkOn(d).length>0;
     const ty=dayType(d),dc=dayCol(ty);return `<button class="mday ${d.slice(0,7)!==m?'out':''} ${d===today()?'now':''} ${d===sel?'sel':''}" data-mday="${d}" style="${d===sel?'':`background:${rgba(dc,.2)};`}${d===today()||d===sel?'':`border-color:${rgba(dc,.45)}`}" aria-label="${esc(fmtDate(d,{weekday:'long',month:'long',day:'numeric'}))} · ${esc(TYNAME[ty]||'')} day"><span class="dt" style="background:${dc}"></span><span class="n">${parse(d).getDate()}</span><span class="mdots">${ev.length?`<i></i>${ev.length>1?ev.length:''}`:''}${has?'<i class="e"></i>':''}${tk?'<i class="k"></i>':''}</span></button>`}).join('');
-  const ev=rangeEvents(start,end,sel),day=cache['day-'+sel],due=tasks().filter(t=>t.due===sel);
+  const ev=rangeEvents(start,end,sel),day=cache['day-'+sel],due=tkOn(sel,true);
   return `<div class="card">${rangeNote(start,end)}
     <div class="mgrid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<div class="h">${x}</div>`).join('')}${cells}</div>
     ${dayLegend([...new Set(ds.filter(x=>x.slice(0,7)===m).map(dayType))].sort((a,b)=>'SBLWO'.indexOf(a)-'SBLWO'.indexOf(b)))}
@@ -2746,7 +3000,7 @@ function driveQueue(k){if(!driveOn())return;DQ.add(k);clearTimeout(dTimer);dTime
 // Item-level merge so the same page edited on two devices keeps both sets of changes.
 const tomb=(doc,id)=>{if(!doc||!id)return;doc._gone=doc._gone||{};doc._gone[id]=Date.now()};
 const ikey=x=>x&&(x.id||('t:'+(x.t||'')));
-function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];if(key==='mreset')return['log','sessions','resumes'];if(key==='study')return['topics','sessions','questions','items'];return[]}
+function mergeLists(key){if(/^day-/.test(key))return['entries'];if(key==='tasks'||key==='inbox'||key==='sessq'||key==='quotes')return['items'];if(key==='pushups'||key==='movement')return['items','marks'];if(key==='images')return['items'];if(key==='mreset')return['log','sessions','resumes'];if(key==='study')return['topics','sessions','questions','items'];if(key==='voice')return['items'];return[]}
 function mergeDoc(key,a,b){if(!a||a._del===true)return b;if(!b||b._del===true)return a;
   const lists=mergeLists(key);if(!lists.length)return (Number(a._u)||0)>=(Number(b._u)||0)?a:b;
   const [nw,ol]=(Number(a._u)||0)>=(Number(b._u)||0)?[a,b]:[b,a];
@@ -3080,6 +3334,7 @@ function vSetup(){
     <p class="calnote">Your notes and photos are read on this device. Nothing is sent to any outside service unless you allow cloud reading below and ask for it on a specific photo. Your original note is never changed; anything Smart Capture adds links back to it.</p>`,false)}
   ${vcPhotosCard()}
   ${mrPrefsCard()}
+  ${voPrefsCard()}
   ${rc('mo-quotes',IC.bookmark,'Saved Perspectives',savedQ().length?`${savedQ().length} saved`:'Quotes you save on Home',savedQList(),false)}
   ${rc('mo-data',IC.cloud,'Data &amp; Sync',bridgeOn()?'Google connected · backup and restore':'Backup, restore, and device storage',`${bridgeCard()}
   <div class="card">
@@ -3144,7 +3399,7 @@ main.addEventListener('click',e=>{
   if(b.dataset.tkopen){S.tkopen=S.tkopen===b.dataset.tkopen?null:b.dataset.tkopen;const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.tkflag){const t=findTask(b.dataset.id);if(t){t[b.dataset.tkflag]=!t[b.dataset.tkflag];save('tasks')}const y=scrollY;render();scrollTo(0,y);return}
   if(b.dataset.tsort){S.tsort=b.dataset.tsort;const y=scrollY;render();scrollTo(0,y);return}
-  if(b.dataset.inb==='org'){const x=inbox().find(y=>y.id===b.dataset.id);if(x&&x.img&&x.img.length){vcOrganize(/^(\d+ photos|Photo)$/.test(x.t)?'':x.t,x.img,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t});return}if(x)capRun(x.t,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t},'organize');return}
+  if(b.dataset.inb==='org'){const x=inbox().find(y=>y.id===b.dataset.id);if(x&&x.voice&&voItem(x.voice)){voOrganize(x.voice);return}if(x&&x.img&&x.img.length){vcOrganize(/^(\d+ photos|Photo)$/.test(x.t)?'':x.t,x.img,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t});return}if(x)capRun(x.t,{kind:'inbox',key:'inbox',id:x.id,date:today(),text:x.t},'organize');return}
   if(b.dataset.inb){const l=inbox(),i=l.findIndex(x=>x.id===b.dataset.id);if(i<0)return;const x=l[i],k=b.dataset.inb,td=today();
     if(k==='today')addTask(x.t,td);else if(k==='task')addTask(x.t,'');
     else if(k==='journal'){const d=get('day-'+td,dayDef(td));ents(d).push(Object.assign({id:uid(),title:'',text:x.t,cat:'',at:Date.now()},x.img?{img:x.img}:{}));syncText(d);save('day-'+td)}
@@ -3312,7 +3567,8 @@ $('#capsheet').addEventListener('click',e=>{if(e.target.id==='capsheet'){CAPS=nu
 $('#capsheet').addEventListener('input',e=>{const t=e.target;if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];if(t.dataset.cf==='title'){it.title=t.value;asz(t)}});
 $('#capsheet').addEventListener('change',e=>{const t=e.target;if(CAPS&&t.dataset.vcsKeep!=null){CAPS.keep=t.checked;return}if(!CAPS||t.dataset.ci==null)return;const it=CAPS.items[Number(t.dataset.ci)];it[t.dataset.cf]=t.value;if(t.dataset.cf==='dest'){it.sel=t.value!=='skip';if(['task','top3','plan','spir','cal'].includes(t.value)&&!it.date&&t.value!=='task')it.date=today()}capSheet()});
 $('#cap').addEventListener('click',e=>{if(e.target.id==='cap'){closeCap();return}const b=e.target.closest('[data-cap]');if(!b)return;
-  if(b.dataset.cap==='add'||b.dataset.cap==='org'){const t=$('#cap-t'),v=t.value.trim(),pics=VCQ.slice();if(!v&&!pics.length){t.focus();return}const nid=uid();inbox().push(Object.assign({id:nid,t:v||(pics.length>1?pics.length+' photos':'Photo'),at:Date.now()},pics.length?{img:pics}:{}));save('inbox');VCQ=[];vcPaintQ();
+  if(b.dataset.cap==='add'||b.dataset.cap==='org'){const t=$('#cap-t'),v=t.value.trim(),pics=VCQ.slice(),vq=VOQ&&voItem(VOQ)?VOQ:'';if(!v&&!pics.length&&!vq){t.focus();return}if(VOREC){capMsg('Stop the recording first.');return}const nid=uid();inbox().push(Object.assign({id:nid,t:v||(vq?(voItem(vq).text||'').trim().slice(0,300)||'Voice note':'')||(pics.length>1?pics.length+' photos':'Photo'),at:Date.now()},pics.length?{img:pics}:{},vq?{voice:vq}:{}));save('inbox');VCQ=[];vcPaintQ();try{localStorage.removeItem('kl-cap-draft')}catch(e){}
+    if(vq){VOQ='';voPaintCap();if(b.dataset.cap==='org'){t.value='';grow(t);voOrganize(vq,v)}else{t.value='';grow(t);$('#cap-m').textContent='Saved to your Inbox with the recording.';const y=scrollY;render();scrollTo(0,y)}return}
     if(pics.length){if(b.dataset.cap==='org')vcOrganize(v,pics,{kind:'inbox',key:'inbox',id:nid,date:today(),text:v});else{t.value='';grow(t);$('#cap-m').textContent='Saved to your Inbox with '+pics.length+' photo'+(pics.length>1?'s':'')+'. Organize it whenever you like.';const y=scrollY;render();scrollTo(0,y)}return}
     capRun(v,{kind:'inbox',key:'inbox',id:nid,date:today(),text:v},b.dataset.cap==='org'?'organize':'save');t.value='';grow(t);$('#cap-m').textContent='Added. Jot another, or tap Done. ('+inbox().length+' in your inbox)';t.focus()}
   else closeCap()});
@@ -3330,7 +3586,7 @@ async function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 let pendingImp=null;
-function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture|mreset|study)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
+function readImport(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);const d=j.data||j;const keys=Object.keys(d).filter(k=>/^(day|week|progress|session)-\d{4}-\d{2}-\d{2}$|^(settings|sessq|tasks|pushups|movement|images|quotes|inbox|capture|mreset|study|voice)$|^note-[a-z0-9]+$/.test(k)&&d[k]&&typeof d[k]==='object');
   const imgs=j.images&&typeof j.images==='object'?j.images:null,ni=imgs?Object.keys(imgs).length:0;if(!keys.length)throw 0;pendingImp={d,keys,imgs};$('#impMsg').innerHTML=`<div class="note">Import ${keys.length} entries${ni?' and '+ni+' photo'+(ni>1?'s':''):''}? Entries with the same date are replaced. <div class="chips" style="margin-top:8px"><button class="btn sm pri" data-act="doimp">Import</button><button class="btn sm" data-act="noimp">Cancel</button></div></div>`}
   catch(e){$('#impMsg').innerHTML='<div class="note">That file isn’t an Anchors backup.</div>'}};r.readAsText(file)}
 async function doImport(){if(!pendingImp)return;const {d,keys,imgs}=pendingImp;pendingImp=null;$('#impMsg').innerHTML='<div class="note">Importing…</div>';
