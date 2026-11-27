@@ -1,5 +1,5 @@
-// KL Journal service worker: makes the app open offline.
-const CACHE = 'kl-journal-v50';
+// AXIS service worker (cache names keep their original kl- prefix so nothing is lost): makes the app open offline.
+const CACHE = 'kl-journal-v51';
 const OCR = 'kl-ocr-v1';   // text reader files (~7 MB): kept across app updates
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/favicon.png',
@@ -67,7 +67,7 @@ self.addEventListener('notificationclick', e => {
   }));
 });
 
-// Share to KL Journal (Android / desktop Chrome): keep the shared files on the device, then open Quick Capture.
+// Share to AXIS (Android / desktop Chrome): keep the shared files on the device, then open Quick Capture.
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'POST' || !/\/share-target$/.test(u.pathname)) return;
