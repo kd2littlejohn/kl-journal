@@ -3972,6 +3972,39 @@ async function axFinish(){const me=AXPEND.me;
   axSetAcct({uid:me.sub,email:me.email,name:me.name||'',s:AXPEND.s,owner:!!me.owner});try{localStorage.removeItem('axis-nonce')}catch(_){}
   history.replaceState(null,'',location.pathname+location.search.replace(/[?&]axsetup=[^&]*/,''));location.reload()}
 
+// ---------- Find my journal: every copy of the journal saved on this device (read-only until you choose) ----------
+function axJournalCopies(){const out=[],me=AXACCT&&AXACCT.uid,accts=AXDEV.accounts||[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!/^anchors-journal-v1(::.+)?$/.test(k))continue;let o={};try{o=JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){}
+    const days=Object.keys(o).filter(x=>/^day-\d{4}-\d{2}-\d{2}$/.test(x)&&axReal(x,o[x])).sort(),items=Object.keys(o).filter(x=>axReal(x,o[x])).length,tag=k.split('::')[1]||'';
+    const who=u=>{const a=accts.find(x=>x.uid===u);return a?(a.name||a.email):'another account'};
+    const c={k,tag,days:days.length,first:days[0]?days[0].slice(4):'',last:days.length?days[days.length-1].slice(4):'',items,size:(localStorage.getItem(k)||'').length};
+    if(!tag){c.label='Journal from before accounts';c.note=!AXDEV.claimed?'not attached to an account yet':AXDEV.claimed===me?'attached to you':'attached to '+who(AXDEV.claimed);
+      c.canAttach=!!me&&AXDEV.claimed!==me&&(!AXDEV.claimed||!accts.some(a=>a.uid===AXDEV.claimed))}
+    else if(tag==='locked'){c.label='Blank page shown while signed out';c.note='holds nothing of yours'}
+    else{c.label=tag===me?'Your account’s separate copy':'Copy for '+who(tag);c.note=tag===me?'what you see now':''}
+    out.push(c)}
+  return out.sort((a,b)=>b.items-a.items)}
+function axFindHTML(signedIn){const L=axJournalCopies(),fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'}):'';
+  if(!L.length)return '<p class="calnote">No journal data is saved in this app on this device. Check your Google Drive “KL Journal” folder for the backup copy.</p>';
+  return L.map(c=>`<div class="axmem"><span><b>${esc(c.label)}</b><small>${c.days?`${c.days} journal day${c.days===1?'':'s'}${c.first?` · ${esc(fmt(c.first))} – ${esc(fmt(c.last))}`:''}`:'no journal days'} · ${c.items} item${c.items===1?'':'s'}${c.note?' · '+esc(c.note):''}</small></span>
+    ${c.canAttach?(signedIn?`<button class="chip sm" data-axfind="attach">Make this mine</button>`:''):''}</div>`).join('')+
+    (L.some(c=>c.canAttach)&&!signedIn?'<p class="calnote">Sign in, then open More › Account &amp; family › Find my journal to attach it to your account.</p>':'')}
+// attach the original journal to the signed-in account: nothing is deleted, anything made in the separate copy is merged in
+async function axAttachOriginal(){const me=AXACCT&&AXACCT.uid;if(!me||AXDEV.claimed===me)return;
+  if(AXDEV.claimed&&(AXDEV.accounts||[]).some(a=>a.uid===AXDEV.claimed))throw {code:'not_yours'};
+  try{flushAll()}catch(_){}
+  const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}};
+  const orig=read('anchors-journal-v1'),mine=read('anchors-journal-v1::'+me);
+  localStorage.setItem('anchors-journal-v1.before-attach',JSON.stringify(orig));   // safety copy
+  for(const k of Object.keys(mine))orig[k]=orig[k]?mergeDoc(k,orig[k],mine[k]):mine[k];
+  localStorage.setItem('anchors-journal-v1',JSON.stringify(orig));
+  const keys=await axKeysFor(me);AXDEV.claimed=me;if(keys)await axStoreKeysFor(me,keys);
+  const pm=localStorage.getItem('axis-pull::'+me);if(pm)localStorage.setItem('axis-pull',pm);
+  if(AXDEV.up)delete AXDEV.up[me];axDevSave();location.reload()}
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-axfind]');if(!b)return;e.preventDefault();
+  if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to attach';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Make this mine'}},4000);return}
+  b.textContent='Attaching…';try{await axAttachOriginal()}catch(err){capToast(err&&err.code==='not_yours'?'That journal belongs to another account on this device.':axErrTxt(err),null)}},true);
+
 // ---------- the lock screen ----------
 let AXLOCKVIEW={v:'in',msg:'',busy:false};
 function axLock(v,msg){if(v)AXLOCKVIEW.v=v;if(msg!=null)AXLOCKVIEW.msg=msg;let el=document.getElementById('axlock');if(!el){el=document.createElement('div');el.id='axlock';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Sign in to AXIS');document.body.appendChild(el)}
@@ -3998,16 +4031,17 @@ function axLockHTML(){const V=AXLOCKVIEW,accts=AXDEV.accounts||[],msg=V.msg?`<p 
   if(V.v==='showrec')return `<div class="axbox">${logo}<h2>Save your recovery code</h2><p>If you ever forget your passcode, this code is the only way back into your private data. Write it down or save it in your password manager. AXIS can’t show it again.</p>
     <p class="axrec" aria-label="Recovery code">${esc(V.rec||'')}</p><div class="chips"><button class="btn sm" data-ax="copyrec">Copy</button><button class="btn sm" data-ax="printrec">Print</button></div>
     <label class="axchk"><input type="checkbox" data-axf="saved"> I’ve saved my recovery code somewhere safe</label>${msg}<div class="axbtns"><button class="btn pri" data-ax="recdone"${busy}>Continue</button></div></div>`;
-  if(V.v==='pass')return `<div class="axbox">${logo}<h2>Enter your AXIS passcode</h2><p>This unlocks your private data on this device.</p><label><span class="lbl">Passcode</span><input type="password" data-axf="p1" autocomplete="current-password"></label>${msg}
+  if(V.v==='pass')return `<div class="axbox">${logo}<h2>Enter your AXIS passcode</h2><p>This unlocks your private data on this device.${V.fidOk&&!(B.pk&&B.pk.length)?` <b>Enter it one last time</b> and AXIS will switch you to ${bio}.`:''}</p><label><span class="lbl">Passcode</span><input type="password" data-axf="p1" autocomplete="current-password"></label>${msg}
     <div class="axbtns"><button class="btn pri" data-ax="unlock"${busy}>${V.busy?'Unlocking…':'Unlock'}</button>${B.pk&&B.pk.length?`<button class="lnkg" data-ax="v-fid">Use ${bio}</button>`:''}<button class="lnkg" data-ax="v-recover">Forgot passcode?</button></div></div>`;
   if(V.v==='recover')return `<div class="axbox">${logo}<h2>Use your recovery code</h2><label><span class="lbl">Recovery code</span><input data-axf="rc" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></label>${msg}
     <div class="axbtns"><button class="btn pri" data-ax="recover"${busy}>Continue</button>${B.pk&&B.pk.length?`<button class="lnkg" data-ax="v-fid">Back</button>`:B.pass?'<button class="lnkg" data-ax="v-pass">Back</button>':''}</div><p class="calnote">Next you’ll set up ${bio} or a new passcode, and get a new recovery code.</p></div>`;
+  if(V.v==='find')return `<div class="axbox">${logo}<h2>Find my journal</h2><p>Every copy of the AXIS journal saved in this app on this device. Nothing here is deleted.</p>${axFindHTML(false)}<div class="axbtns"><button class="lnkg" data-ax="v-in">Back</button></div></div>`;
   if(V.v==='code')return `<div class="axbox">${logo}<h2>Sign in with a code</h2><p>On a device where you’re signed in, open More › Account &amp; family › <b>Sign in another device</b>. Type the 6-digit code here.</p>
     <label><span class="lbl">Code</span><input data-axf="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>${msg}<div class="axbtns"><button class="btn pri" data-ax="claimcode"${busy}>Sign in</button><button class="lnkg" data-ax="v-in">Back</button></div></div>`;
   return `<div class="axbox">${logo}<h2>${AXSYNC.st==='expired'?'Please sign in again':'Who’s using AXIS?'}</h2>
     ${accts.length?`<div class="chips axwho">${accts.map(a=>`<button class="chip" data-ax="who" data-email="${esc(a.email)}" aria-pressed="${V.hint===a.email}">${esc(a.name||a.email)}</button>`).join('')}</div>`:''}
     <div id="axgbtn" class="axg"></div>${V.busy?'<p class="calnote">Signing in…</p>':''}${msg}
-    <div class="axbtns"><button class="lnkg" data-ax="v-code">Have a code from another device?</button></div>
+    <div class="axbtns"><button class="lnkg" data-ax="v-code">Have a code from another device?</button><button class="lnkg" data-ax="v-find">Find my journal</button></div>
     <p class="calnote">Sign in with your own Google account. On iPhone and iPad, Google may open a page and then bring you back; if you end up in Safari instead of the Home Screen app, use “Sign in another device” there to get a code.</p></div>`}
 const axVals=()=>{const FV={};document.querySelectorAll('#axlock [data-axf]').forEach(el=>FV[el.dataset.axf]=el.type==='checkbox'?el.checked:el.value);return FV};
 function axAskClaim(email){return new Promise(ok=>{AXLOCKVIEW={v:'claim',email,msg:'',busy:false,claimResolve:ok};axLock()})}
@@ -4140,6 +4174,7 @@ function axCard(){if(window.claude)return rc('mo-account',IC.layers,'Account & f
       ${AXCHG?`<div class="axchg"><label class="mrf"><span class="lbl">${hasFid?'Leave empty to confirm with '+bio+', or type your passcode or recovery code':'Your current passcode or recovery code'}</span><input type="password" data-axk="cur" autocomplete="current-password"></label>${AXCHG==='pass'?`<label class="mrf"><span class="lbl">New passcode</span><input type="password" data-axk="p1" autocomplete="new-password"></label><label class="mrf"><span class="lbl">Type it again</span><input type="password" data-axk="p2" autocomplete="new-password"></label>`:''}<button class="btn sm pri" data-axa="dochg">${doLbl[AXCHG]}</button>${AXNEWREC?`<p class="axrec">${esc(AXNEWREC)}</p><small class="muted">Save this now; it replaces your old recovery code.</small>`:''}</div>`:''}`})()}
       ${AXDEVICES?AXDEVICES.map(d=>`<div class="axmem"><span><b>${esc(d.label)}</b><small>${d.current?'this device · ':''}last used ${esc(new Date(d.last).toLocaleDateString())}</small></span>${d.current?'':`<button class="chip sm" data-axa="revoke" data-k="${esc(d.sid)}">Sign out</button>`}</div>`).join(''):''}</details>
     <p class="calnote">🔒 Your private data is encrypted on this device before it’s saved. Use “remove from this device” on a shared iPad or computer; everything stays safe in your account.</p>
+    <details class="vomore"${axJournalCopies().some(c=>c.canAttach)?' open':''}><summary>Find my journal</summary><p class="calnote">Every copy of the journal saved in this app on this device. Nothing here is deleted.</p>${axFindHTML(true)}</details>
     <h3 class="vh3">Family</h3>${axFamilyHTML(adm)}`}
   return rc('mo-account',IC.layers,'Account & family',sub,body,false)}
 function axFamilyHTML(adm){const F=AXFAM;if(!F)return '<p class="calnote">Loading…</p>';const roleL={adult:'Adult',teen:'Teen',child:'Child'},me=F.me||{};
