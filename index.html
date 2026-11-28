@@ -3883,8 +3883,9 @@ const AXERR={not_invited:'This Google account isn’t part of the family yet. As
   too_many_tries:'Too many wrong codes. Wait 10 minutes and try again.',bad_nonce:'That sign-in didn’t come from this device. Try again here.',not_admin:'Only a family administrator can do that.',
   minor_cannot_be_admin:'Members under 18 can’t be administrators.',last_admin:'The family needs at least one administrator.',owner_cannot_leave:'The owner of the AXIS backend can’t be removed.',
   already_member:'That person is already in the family.',bad_email:'That doesn’t look like an email address.',owner_only:'Only the owner’s account can use that.',minor_ai_off:'A parent hasn’t turned on AI features for members under 18.',
-  bridge_offline:'Can’t reach AXIS’s server. Check your connection.',wrong_pass:'That passcode isn’t right.',wrong_rec:'That recovery code isn’t right.'};
-const axErrTxt=e=>{const m=String(e&&(e.code||e.message)||e||'');return AXERR[m]||(/fetch|network|offline/i.test(m)?AXERR.bridge_offline:'Something went wrong ('+m.slice(0,80)+').')};
+  bridge_offline:'Can’t reach AXIS’s server. Check your connection.',wrong_pass:'That passcode isn’t right.',wrong_rec:'That recovery code isn’t right.',wrong_any:'That isn’t your passcode or recovery code.',
+  fid_cancel:'Face ID was cancelled or didn’t finish. Try again.',fid_unavailable:'This device can’t use Face ID or Touch ID for AXIS. Use a passcode instead.',fid_exists:'Face ID is already set up for AXIS on this device.',fid_failed:'That passkey isn’t one AXIS knows for your account. Try again or use your recovery code.'};
+const axErrTxt=e=>{if(e&&e.name==='NotAllowedError')return AXERR.fid_cancel;if(e&&e.name==='InvalidStateError')return AXERR.fid_exists;if(e&&(e.name==='NotSupportedError'||e.name==='SecurityError'))return AXERR.fid_unavailable;const m=String(e&&(e.code||e.message)||e||'');return AXERR[m]||(/fetch|network|offline/i.test(m)?AXERR.bridge_offline:'Something went wrong ('+m.slice(0,80)+').')};
 const axDevSave=()=>{try{localStorage.setItem('axis-device',JSON.stringify(AXDEV))}catch(e){}};
 const axSetAcct=a=>{try{a?localStorage.setItem('axis-acct',JSON.stringify(a)):localStorage.removeItem('axis-acct')}catch(e){}};
 const axOwner=()=>!!(AXACCT&&AXDEV.claimed===AXACCT.uid);
@@ -3915,6 +3916,32 @@ async function axEncBytes(blob){const head=ub((blob.type||'application/octet-str
   const i=axRand(12),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:i},AXKEYS.enc,p);const o=new Uint8Array(12+ct.byteLength);o.set(i);o.set(new Uint8Array(ct),12);return 'v1.'+b64u(o)}
 async function axDecBytes(s){const a=ub64u(String(s).slice(3)),p=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:a.slice(0,12)},AXKEYS.enc,a.slice(12)));const n=p.indexOf(10);return new Blob([p.slice(n+1)],{type:bu(p.slice(0,n))})}
 async function axId(kind,k){return b64u(await crypto.subtle.sign('HMAC',AXKEYS.mac,ub(kind+':'+k))).slice(0,32)}   // the server never sees real document names
+// ---------- Face ID / Touch ID: a passkey (WebAuthn with the PRF extension) unlocks the data key ----------
+// The passkey gives a secret only after Face ID/Touch ID; that secret wraps the data key, like the passcode does.
+// Passkeys sync through iCloud Keychain (or Google Password Manager), so one setup covers your other devices.
+async function axPkAvail(){try{if(!(window.PublicKeyCredential&&PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()))return false;
+  if(PublicKeyCredential.getClientCapabilities){const c=await PublicKeyCredential.getClientCapabilities();if(c&&c['extension:prf']===false)return false}return true}catch(e){return false}}
+const axBio=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)?'Face ID':/Mac/.test(navigator.userAgent)?'Touch ID':/Android/.test(navigator.userAgent)?'your fingerprint or face':'Face ID or Touch ID';
+async function axPkKek(prf,salt){const base=await crypto.subtle.importKey('raw',prf,'HKDF',false,['deriveKey']);return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt,info:ub('axis-passkey-v1')},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function axPkPrf(list,salt){const a=await navigator.credentials.get({publicKey:{challenge:axRand(32),rpId:location.hostname,allowCredentials:list.map(p=>({type:'public-key',id:ub64u(p.id)})),userVerification:'required',timeout:120000,extensions:{prf:{eval:{first:salt}}}}});
+  const r=a.getClientExtensionResults().prf;if(!r||!r.results||!r.results.first)throw {code:'fid_unavailable'};return {id:b64u(a.rawId),prf:new Uint8Array(r.results.first)}}
+async function axPkCreate(bundle,raw,me){const salt=bundle.pksalt?ub64u(bundle.pksalt):axRand(32);
+  const uid=new Uint8Array(await crypto.subtle.digest('SHA-256',ub('axis:'+me.sub))).slice(0,16);
+  const c=await navigator.credentials.create({publicKey:{rp:{name:'AXIS',id:location.hostname},user:{id:uid,name:me.email,displayName:me.name||me.email},challenge:axRand(32),
+    pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{residentKey:'preferred',userVerification:'required'},
+    excludeCredentials:(bundle.pk||[]).map(p=>({type:'public-key',id:ub64u(p.id)})),timeout:120000,extensions:{prf:{eval:{first:salt}}}}});
+  const x=c.getClientExtensionResults().prf||{};let prf=x.results&&x.results.first?new Uint8Array(x.results.first):null;const id=b64u(c.rawId);
+  if(!prf){if(x.enabled===false)throw {code:'fid_unavailable'};prf=(await axPkPrf([{id}],salt)).prf}   // some devices only give the secret on first use
+  const k=await axPkKek(prf,salt),i=axRand(12);
+  bundle.pksalt=b64u(salt);bundle.pk=(bundle.pk||[]).filter(p=>p.id!==id).concat({id,i:b64u(i),w:b64u(await crypto.subtle.encrypt({name:'AES-GCM',iv:i},k,raw)),label:axDeviceLabel(),at:Date.now()});return bundle}
+async function axPkUnwrap(bundle){const salt=ub64u(bundle.pksalt),r=await axPkPrf(bundle.pk,salt),e=bundle.pk.find(p=>p.id===r.id);if(!e)throw {code:'fid_failed'};
+  const k=await axPkKek(r.prf,salt);try{return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64u(e.i)},k,ub64u(e.w)))}catch(_){throw {code:'fid_failed'}}}
+// passcode, recovery code, or (left empty) Face ID
+async function axUnwrapAny(bundle,secret){secret=String(secret||'');
+  if(!secret.trim()){if(bundle.pk&&bundle.pk.length)return axPkUnwrap(bundle);throw {code:'wrong_any'}}
+  if(bundle.pass)try{return await axUnwrap(bundle.pass,secret)}catch(_){}
+  try{return await axUnwrap(bundle.rec,axNormRec(secret))}catch(_){}throw {code:'wrong_any'}}
+const axBundle=()=>{try{return JSON.parse((AXPEND&&AXPEND.me.keys)||(AXME&&AXME.keys)||'null')}catch(e){return null}};
 // keys live on this device only (IndexedDB, not exportable), per account
 const axNsFor=(uid,k)=>AXDEV.claimed===uid?k:k+'::'+uid;
 function axKdbOpen(name){return new Promise((ok,no)=>{const r=indexedDB.open(name,1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
@@ -3934,7 +3961,10 @@ async function axSignedIn(p){AXLOCKVIEW.busy=true;AXLOCKVIEW.msg='';axLock();
   try{const r=await p;AXPEND={s:r.s,me:r.me};
     if(!AXDEV.claimed&&axLegacyHas()&&!(AXDEV.declined||[]).includes(r.me.sub)){const yes=await axAskClaim(r.me.email);if(yes)AXDEV.claimed=r.me.sub;else AXDEV.declined=(AXDEV.declined||[]).concat(r.me.sub);axDevSave()}
     const kd=await axKeysFor(r.me.sub);
-    if(kd){AXKEYS=kd;await axFinish()}else if(r.me.keys){AXLOCKVIEW={v:'pass',msg:'',busy:false};axLock()}else{AXLOCKVIEW={v:'newpass',msg:'',busy:false};axLock()}}
+    if(kd){AXKEYS=kd;await axFinish();return}
+    const b=r.me.keys?JSON.parse(r.me.keys):null,fid=await axPkAvail();AXLOCKVIEW.fidOk=fid;
+    if(b){AXLOCKVIEW={v:b.pk&&b.pk.length?'fid':b.pass?'pass':'recover',msg:'',busy:false,fidOk:fid};axLock()}
+    else{AXLOCKVIEW={v:fid?'newsecure':'newpass',msg:'',busy:false,fidOk:fid,raw:null,bundle:null};axLock()}}
   catch(e){AXLOCKVIEW.busy=false;AXLOCKVIEW.v='in';AXLOCKVIEW.msg=axErrTxt(e);axLock()}}
 async function axFinish(){const me=AXPEND.me;
   await axStoreKeysFor(me.sub,AXKEYS);
@@ -3952,7 +3982,16 @@ function axLockHTML(){const V=AXLOCKVIEW,accts=AXDEV.accounts||[],msg=V.msg?`<p 
   if(!axCfg())return `<div class="axbox">${logo}<p>Family accounts aren’t connected on this device yet. Open the setup link a family administrator sent you, or open AXIS where it was set up.</p></div>`;
   if(V.v==='claim')return `<div class="axbox">${logo}<h2>Is the journal on this device yours?</h2><p>This device has AXIS data from before accounts (journal, tasks, recordings, photos). Choose <b>Yes</b> only if you’re the person who has been using AXIS here. It will be encrypted and moved into <b>${esc(V.email||'')}</b>, private to you.</p>
     <div class="axbtns"><button class="btn pri" data-ax="claim-yes">Yes, it’s mine</button><button class="btn" data-ax="claim-no">No, start fresh</button></div><p class="calnote">Choosing No leaves that data untouched on this device for its owner.</p></div>`;
-  if(V.v==='newpass')return `<div class="axbox">${logo}<h2>Create your AXIS passcode</h2><p>Your journal, recordings and reflections are encrypted on your device with this passcode before they’re saved. Nobody else can read them: not family administrators, not the account that runs AXIS.</p>
+  const bio=axBio(),B=axBundle()||{};
+  if(V.v==='newsecure')return `<div class="axbox">${logo}<h2>Protect your private data</h2><p>Your journal, recordings and reflections are encrypted on your device before they’re saved. Unlock them with ${bio}. Nobody else can read them: not family administrators, not the account that runs AXIS.</p>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="mkfid"${busy}>${V.busy?'Setting up…':'Use '+bio}</button><button class="lnkg" data-ax="v-newpass">Use a passcode instead</button></div>
+    <p class="calnote">You’ll only be asked the first time on each device. The passkey is saved in your iCloud Keychain (or Google Password Manager), so your other devices can use it too. You’ll also get a recovery code.</p></div>`;
+  if(V.v==='offerfid')return `<div class="axbox">${logo}<h2>Use ${bio} next time?</h2><p>Skip the passcode on your other devices: unlock with ${bio} instead. Your passcode keeps working too.</p>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="addfid"${busy}>Use ${bio}</button><button class="lnkg" data-ax="skipfid">Not now</button></div></div>`;
+  if(V.v==='fid')return `<div class="axbox">${logo}<h2>Unlock AXIS</h2><p>Use ${bio} to unlock your private data on this device. You’ll only be asked once here.</p>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="unlockfid"${busy}>${V.busy?'Unlocking…':'Unlock with '+bio}</button>${B.pass?'<button class="lnkg" data-ax="v-pass">Use passcode</button>':''}<button class="lnkg" data-ax="v-recover">Use recovery code</button></div>
+    <p class="calnote">On a computer without ${bio}, your browser can show a QR code to unlock with your phone.</p></div>`;
+  if(V.v==='newpass')return `<div class="axbox">${logo}<h2>${V.raw?'Choose a new passcode':'Create your AXIS passcode'}</h2><p>Your journal, recordings and reflections are encrypted on your device with this passcode before they’re saved. Nobody else can read them: not family administrators, not the account that runs AXIS.</p>
     <label><span class="lbl">Passcode <small class="muted">(at least 6 characters)</small></span><input type="password" data-axf="p1" autocomplete="new-password"></label>
     <label><span class="lbl">Type it again</span><input type="password" data-axf="p2" autocomplete="new-password"></label>${msg}
     <div class="axbtns"><button class="btn pri" data-ax="mkpass"${busy}>${V.busy?'Setting up…':'Continue'}</button></div><p class="calnote">You’ll enter it once on each new device. You’ll also get a recovery code in case you forget it.</p></div>`;
@@ -3960,10 +3999,9 @@ function axLockHTML(){const V=AXLOCKVIEW,accts=AXDEV.accounts||[],msg=V.msg?`<p 
     <p class="axrec" aria-label="Recovery code">${esc(V.rec||'')}</p><div class="chips"><button class="btn sm" data-ax="copyrec">Copy</button><button class="btn sm" data-ax="printrec">Print</button></div>
     <label class="axchk"><input type="checkbox" data-axf="saved"> I’ve saved my recovery code somewhere safe</label>${msg}<div class="axbtns"><button class="btn pri" data-ax="recdone"${busy}>Continue</button></div></div>`;
   if(V.v==='pass')return `<div class="axbox">${logo}<h2>Enter your AXIS passcode</h2><p>This unlocks your private data on this device.</p><label><span class="lbl">Passcode</span><input type="password" data-axf="p1" autocomplete="current-password"></label>${msg}
-    <div class="axbtns"><button class="btn pri" data-ax="unlock"${busy}>${V.busy?'Unlocking…':'Unlock'}</button><button class="lnkg" data-ax="v-recover">Forgot passcode?</button></div></div>`;
-  if(V.v==='recover')return `<div class="axbox">${logo}<h2>Use your recovery code</h2><label><span class="lbl">Recovery code</span><input data-axf="rc" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></label>
-    <label><span class="lbl">New passcode</span><input type="password" data-axf="p1" autocomplete="new-password"></label><label><span class="lbl">Type it again</span><input type="password" data-axf="p2" autocomplete="new-password"></label>${msg}
-    <div class="axbtns"><button class="btn pri" data-ax="recover"${busy}>Reset passcode</button><button class="lnkg" data-ax="v-pass">Back</button></div><p class="calnote">You’ll get a new recovery code too.</p></div>`;
+    <div class="axbtns"><button class="btn pri" data-ax="unlock"${busy}>${V.busy?'Unlocking…':'Unlock'}</button>${B.pk&&B.pk.length?`<button class="lnkg" data-ax="v-fid">Use ${bio}</button>`:''}<button class="lnkg" data-ax="v-recover">Forgot passcode?</button></div></div>`;
+  if(V.v==='recover')return `<div class="axbox">${logo}<h2>Use your recovery code</h2><label><span class="lbl">Recovery code</span><input data-axf="rc" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></label>${msg}
+    <div class="axbtns"><button class="btn pri" data-ax="recover"${busy}>Continue</button>${B.pk&&B.pk.length?`<button class="lnkg" data-ax="v-fid">Back</button>`:B.pass?'<button class="lnkg" data-ax="v-pass">Back</button>':''}</div><p class="calnote">Next you’ll set up ${bio} or a new passcode, and get a new recovery code.</p></div>`;
   if(V.v==='code')return `<div class="axbox">${logo}<h2>Sign in with a code</h2><p>On a device where you’re signed in, open More › Account &amp; family › <b>Sign in another device</b>. Type the 6-digit code here.</p>
     <label><span class="lbl">Code</span><input data-axf="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>${msg}<div class="axbtns"><button class="btn pri" data-ax="claimcode"${busy}>Sign in</button><button class="lnkg" data-ax="v-in">Back</button></div></div>`;
   return `<div class="axbox">${logo}<h2>${AXSYNC.st==='expired'?'Please sign in again':'Who’s using AXIS?'}</h2>
@@ -3973,9 +4011,12 @@ function axLockHTML(){const V=AXLOCKVIEW,accts=AXDEV.accounts||[],msg=V.msg?`<p 
     <p class="calnote">Sign in with your own Google account. On iPhone and iPad, Google may open a page and then bring you back; if you end up in Safari instead of the Home Screen app, use “Sign in another device” there to get a code.</p></div>`}
 const axVals=()=>{const FV={};document.querySelectorAll('#axlock [data-axf]').forEach(el=>FV[el.dataset.axf]=el.type==='checkbox'?el.checked:el.value);return FV};
 function axAskClaim(email){return new Promise(ok=>{AXLOCKVIEW={v:'claim',email,msg:'',busy:false,claimResolve:ok};axLock()})}
+async function axSaveNew(b,raw){const V=AXLOCKVIEW,rec=axRecoveryCode();b.v=1;b.rec=await axWrap(raw,axNormRec(rec));
+  await axCall('keys_put',{bundle:JSON.stringify(b)},AXPEND.s);AXPEND.me.keys=JSON.stringify(b);AXKEYS=await axImport(raw);raw.fill(0);
+  V.raw=null;V.bundle=null;V.busy=false;V.v='showrec';V.rec=rec;V.msg='';axLock()}
 const axPassOk=(a,b)=>!a||a.length<6?'Use at least 6 characters.':a!==b?'The two passcodes don’t match.':'';
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#axlock [data-ax]');if(!b)return;e.preventDefault();const a=b.dataset.ax,V=AXLOCKVIEW,FV=axVals();
-  if(a.startsWith('v-')){V.v=a.slice(2);V.msg='';axLock();return}
+  if(a.startsWith('v-')){V.v=a.slice(2);V.msg='';V.busy=false;V.gen=(V.gen||0)+1;axLock();return}
   if(a==='who'){V.hint=b.dataset.email;axLock();return}
   if(a==='claim-yes'||a==='claim-no'){const r=V.claimResolve;V.claimResolve=null;r&&r(a==='claim-yes');return}
   if(a==='copyrec'){try{await navigator.clipboard.writeText(V.rec);b.textContent='Copied'}catch(_){}return}
@@ -3984,15 +4025,25 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
   try{
     if(a==='claimcode'){const code=String(FV.code||'').replace(/\D/g,'');if(code.length!==6){V.msg='Enter the 6-digit code.';axLock();return}await axSignedIn(axCall('pair_claim',{code,label:axDeviceLabel()},false));return}
     if(a==='mkpass'){const bad=axPassOk(FV.p1,FV.p2);if(bad){V.msg=bad;axLock();return}V.busy=true;V.msg='';axLock();
-      const raw=axRand(64),rec=axRecoveryCode(),bundle={v:1,pass:await axWrap(raw,FV.p1),rec:await axWrap(raw,axNormRec(rec))};
-      await axCall('keys_put',{bundle:JSON.stringify(bundle)},AXPEND.s);AXKEYS=await axImport(raw);raw.fill(0);V.busy=false;V.v='showrec';V.rec=rec;V.msg='';axLock();return}
-    if(a==='recdone'){if(!FV.saved){V.msg='Please confirm you’ve saved it.';axLock();return}V.rec='';V.busy=true;axLock();await axFinish();return}
-    if(a==='unlock'){V.busy=true;V.msg='';axLock();const bundle=JSON.parse(AXPEND.me.keys);let raw;try{raw=await axUnwrap(bundle.pass,FV.p1)}catch(_){V.busy=false;V.msg=AXERR.wrong_pass;axLock();return}
+      const raw=V.raw||axRand(64),b=V.bundle||{v:1};b.pass=await axWrap(raw,FV.p1);await axSaveNew(b,raw);return}
+    if(a==='mkfid'){V.busy=true;V.msg='';axLock();const raw=V.raw||axRand(64),b=V.bundle||{v:1};
+      try{await axPkCreate(b,raw,AXPEND.me)}catch(err){V.busy=false;V.msg=axErrTxt(err);if(err&&err.code==='fid_unavailable'){V.v='newpass';V.fidOk=false}axLock();return}
+      await axSaveNew(b,raw);return}
+    if(a==='unlockfid'){V.busy=true;V.msg='';axLock();const g=V.gen;let raw;try{raw=await axPkUnwrap(axBundle())}catch(err){if(V.gen!==g||V.v!=='fid')return;V.busy=false;V.msg=axErrTxt(err);axLock();return}
+      if(V.gen!==g||V.v!=='fid'){raw.fill(0);return}
       AXKEYS=await axImport(raw);raw.fill(0);await axFinish();return}
-    if(a==='recover'){const bad=axPassOk(FV.p1,FV.p2);if(bad){V.msg=bad;axLock();return}V.busy=true;V.msg='';axLock();const bundle=JSON.parse(AXPEND.me.keys);let raw;
+    if(a==='addfid'){V.busy=true;V.msg='';axLock();const b=axBundle();try{await axPkCreate(b,V.raw,AXPEND.me);await axCall('keys_put',{bundle:JSON.stringify(b)},AXPEND.s)}
+      catch(err){V.busy=false;V.msg=axErrTxt(err);axLock();return}V.raw.fill(0);V.raw=null;await axFinish();return}
+    if(a==='skipfid'){if(V.raw){V.raw.fill(0);V.raw=null}V.busy=true;axLock();await axFinish();return}
+    if(a==='recdone'){if(!FV.saved){V.msg='Please confirm you’ve saved it.';axLock();return}V.rec='';V.busy=true;axLock();await axFinish();return}
+    if(a==='unlock'){V.busy=true;V.msg='';axLock();const bundle=axBundle();let raw;try{raw=await axUnwrap(bundle.pass,FV.p1)}catch(_){V.busy=false;V.msg=AXERR.wrong_pass;axLock();return}
+      AXKEYS=await axImport(raw);
+      if(!(bundle.pk&&bundle.pk.length)&&await axPkAvail()){V.raw=raw;V.busy=false;V.v='offerfid';V.msg='';axLock();return}   // offer Face ID for next time
+      raw.fill(0);await axFinish();return}
+    if(a==='recover'){V.busy=true;V.msg='';axLock();const bundle=axBundle();let raw;
       try{raw=await axUnwrap(bundle.rec,axNormRec(FV.rc))}catch(_){V.busy=false;V.msg=AXERR.wrong_rec;axLock();return}
-      const rec=axRecoveryCode();await axCall('keys_put',{bundle:JSON.stringify({v:1,pass:await axWrap(raw,FV.p1),rec:await axWrap(raw,axNormRec(rec))})},AXPEND.s);
-      AXKEYS=await axImport(raw);raw.fill(0);V.busy=false;V.v='showrec';V.rec=rec;axLock();return}
+      delete bundle.pass;   // the old passcode was forgotten; passkeys already set up keep working
+      V.raw=raw;V.bundle=bundle;V.busy=false;V.v=V.fidOk?'newsecure':'newpass';axLock();return}
   }catch(err){V.busy=false;V.msg=axErrTxt(err);axLock()}},true);
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('#axlock input')){const b=document.querySelector('#axlock .btn.pri');b&&b.click()}});
 // real content only — a fresh device creates a few empty starter records that shouldn't count
@@ -4081,8 +4132,12 @@ function axCard(){if(window.claude)return rc('mo-account',IC.layers,'Account & f
     <span class="lbl">Your color</span><div class="chips">${AXCOLORS.map(k=>`<button class="axsw" data-axa="color" data-k="${k}" style="background:${k}" aria-label="Color ${k}" aria-pressed="${(me.color||'#bda16b')===k}"></button>`).join('')}</div>
     <div class="chips" style="margin-top:10px"><button class="btn sm" data-axa="sync">Sync now</button><button class="btn sm" data-axa="pair">Sign in another device</button><button class="btn sm" data-axa="switch">Switch account</button><button class="btn sm" data-axa="out">Sign out</button><button class="btn sm" data-axa="outwipe">Sign out &amp; remove from this device</button></div>
     ${AXPAIR?`<div class="axpair"><p>On the other device, choose <b>Have a code from another device?</b> and type:</p><p class="axrec">${esc(AXPAIR.code)}</p><small class="muted">Works once, for 5 minutes. You’ll still need your passcode there.</small></div>`:''}
-    <details class="vomore"${AXCHG||AXDEVICES?' open':''}><summary>Passcode &amp; devices</summary><div class="chips" style="margin:8px 0"><button class="btn sm" data-axa="chpass">Change passcode</button><button class="btn sm" data-axa="newrec">New recovery code</button><button class="btn sm" data-axa="devices">Signed-in devices</button></div>
-      ${AXCHG?`<div class="axchg"><label class="mrf"><span class="lbl">Current passcode</span><input type="password" data-axk="cur"></label>${AXCHG==='pass'?`<label class="mrf"><span class="lbl">New passcode</span><input type="password" data-axk="p1"></label><label class="mrf"><span class="lbl">Type it again</span><input type="password" data-axk="p2"></label>`:''}<button class="btn sm pri" data-axa="dochg">${AXCHG==='pass'?'Change passcode':'Make a new recovery code'}</button>${AXNEWREC?`<p class="axrec">${esc(AXNEWREC)}</p><small class="muted">Save this now; it replaces your old recovery code.</small>`:''}</div>`:''}
+    ${(()=>{let KB={};try{KB=JSON.parse(me.keys||'{}')||{}}catch(_){}const hasFid=!!(KB.pk&&KB.pk.length),bio=axBio();
+      const doLbl={pass:KB.pass?'Change passcode':'Add passcode',rec:'Make a new recovery code',fid:'Set up '+bio};
+      return `<details class="vomore"${AXCHG||AXDEVICES?' open':''}><summary>Unlocking &amp; devices</summary>
+      <p class="calnote">Unlocks with: ${[hasFid?bio:'',KB.pass?'passcode':'','recovery code'].filter(Boolean).join(' · ')}</p>
+      <div class="chips" style="margin:8px 0">${hasFid?'':`<button class="btn sm" data-axa="chfid">Set up ${bio}</button>`}<button class="btn sm" data-axa="chpass">${KB.pass?'Change passcode':'Add a passcode'}</button><button class="btn sm" data-axa="newrec">New recovery code</button>${hasFid?`<button class="btn sm" data-axa="nofid">Turn off ${bio}</button>`:''}<button class="btn sm" data-axa="devices">Signed-in devices</button></div>
+      ${AXCHG?`<div class="axchg"><label class="mrf"><span class="lbl">${hasFid?'Leave empty to confirm with '+bio+', or type your passcode or recovery code':'Your current passcode or recovery code'}</span><input type="password" data-axk="cur" autocomplete="current-password"></label>${AXCHG==='pass'?`<label class="mrf"><span class="lbl">New passcode</span><input type="password" data-axk="p1" autocomplete="new-password"></label><label class="mrf"><span class="lbl">Type it again</span><input type="password" data-axk="p2" autocomplete="new-password"></label>`:''}<button class="btn sm pri" data-axa="dochg">${doLbl[AXCHG]}</button>${AXNEWREC?`<p class="axrec">${esc(AXNEWREC)}</p><small class="muted">Save this now; it replaces your old recovery code.</small>`:''}</div>`:''}`})()}
       ${AXDEVICES?AXDEVICES.map(d=>`<div class="axmem"><span><b>${esc(d.label)}</b><small>${d.current?'this device · ':''}last used ${esc(new Date(d.last).toLocaleDateString())}</small></span>${d.current?'':`<button class="chip sm" data-axa="revoke" data-k="${esc(d.sid)}">Sign out</button>`}</div>`).join(''):''}</details>
     <p class="calnote">🔒 Your private data is encrypted on this device before it’s saved. Use “remove from this device” on a shared iPad or computer; everything stays safe in your account.</p>
     <h3 class="vh3">Family</h3>${axFamilyHTML(adm)}`}
@@ -4116,11 +4171,16 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
       if(a==='outwipe'){if(AXQ.size||AXSYNC.st!=='ok'){capToast('Some changes haven’t reached your account yet. Connect to the internet and try again.',null);return}if(!arm('Tap again: remove my data from this device'))return}
       try{await axCall('signout')}catch(_){}if(a==='outwipe')await axWipeLocal();axSetAcct(null);location.reload();return}
     if(a==='color'){await axCall('profile',{color:b.dataset.k});AXME=Object.assign(AXME||{},{color:b.dataset.k});await axLoadFamily();return}
-    if(a==='chpass'||a==='newrec'){const k=a==='chpass'?'pass':'rec';AXCHG=AXCHG===k?null:k;AXNEWREC=null;redraw();return}
-    if(a==='dochg'){const v=k=>(document.querySelector(`[data-axk=${k}]`)||{}).value||'';const me=(await axCall('me')).me,bundle=JSON.parse(me.keys);let raw;
-      try{raw=await axUnwrap(bundle.pass,v('cur'))}catch(_){capToast(AXERR.wrong_pass,null);return}
-      if(AXCHG==='pass'){const bad=axPassOk(v('p1'),v('p2'));if(bad){capToast(bad,null);return}bundle.pass=await axWrap(raw,v('p1'));await axCall('keys_put',{bundle:JSON.stringify(bundle)});AXCHG=null;capToast('Passcode changed. Your recovery code still works.',null)}
-      else{const rec=axRecoveryCode();bundle.rec=await axWrap(raw,axNormRec(rec));await axCall('keys_put',{bundle:JSON.stringify(bundle)});AXNEWREC=rec}raw.fill(0);redraw();return}
+    if(a==='chpass'||a==='newrec'||a==='chfid'){const k=a==='chpass'?'pass':a==='newrec'?'rec':'fid';AXCHG=AXCHG===k?null:k;AXNEWREC=null;redraw();return}
+    if(a==='nofid'){if(!arm('Tap again: stop using '+axBio()))return;const me=(await axCall('me')).me,bundle=JSON.parse(me.keys);delete bundle.pk;delete bundle.pksalt;
+      await axCall('keys_put',{bundle:JSON.stringify(bundle)});AXME.keys=JSON.stringify(bundle);capToast(axBio()+' is off for AXIS. You can delete the AXIS passkey in your Passwords app.',null);redraw();return}
+    if(a==='dochg'){const v=k=>(document.querySelector(`[data-axk=${k}]`)||{}).value||'';if(AXCHG==='pass'){const bad=axPassOk(v('p1'),v('p2'));if(bad){capToast(bad,null);return}}
+      const me=(await axCall('me')).me,bundle=JSON.parse(me.keys);let raw;
+      try{raw=await axUnwrapAny(bundle,v('cur'))}catch(err){capToast(axErrTxt(err),null);return}
+      try{if(AXCHG==='pass'){bundle.pass=await axWrap(raw,v('p1'));AXCHG=null;capToast('Passcode saved. Your recovery code still works.',null)}
+        else if(AXCHG==='fid'){await axPkCreate(bundle,raw,me);AXCHG=null;capToast(axBio()+' is set up. Your other devices can unlock with it too.',null)}
+        else{const rec=axRecoveryCode();bundle.rec=await axWrap(raw,axNormRec(rec));AXNEWREC=rec}
+        await axCall('keys_put',{bundle:JSON.stringify(bundle)});AXME.keys=JSON.stringify(bundle)}catch(err){capToast(axErrTxt(err),null)}finally{raw.fill(0)}redraw();return}
     if(a==='devices'){AXDEVICES=(await axCall('sessions')).sessions;redraw();return}
     if(a==='revoke'){await axCall('session_revoke',{sid:b.dataset.k});AXDEVICES=(await axCall('sessions')).sessions;redraw();return}
     if(a==='invite'){const em=(document.querySelector('[data-axi=email]').value||'').trim(),role=document.querySelector('[data-axi=role]').value,ad=document.querySelector('[data-axi=admin]').checked;if(!/@/.test(em)){capToast(AXERR.bad_email,null);return}
