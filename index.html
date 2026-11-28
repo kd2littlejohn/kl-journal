@@ -564,7 +564,19 @@ const AXDEV=(()=>{try{return JSON.parse(localStorage.getItem('axis-device')||'{}
 const AXACCT=(()=>{try{return JSON.parse(localStorage.getItem('axis-acct')||'null')}catch(e){return null}})();   // signed-in account on this device
 const AXLOCKED=!!((AXDEV.accounts||[]).length&&!AXACCT);
 // The original on-device data belongs to whoever claimed it; every other account gets its own separate copy.
-const nsk=k=>AXLOCKED?k+'::locked':(!AXACCT||AXDEV.claimed===AXACCT.uid)?k:k+'::'+AXACCT.uid;
+// Google account ids are 21-digit numbers that Google Sheets rounds; ids differing only by that rounding are the same person.
+const axIdK=v=>{const t=String(v==null?'':v);return /^\d{16,}$/.test(t)?String(Number(t)):t};
+const axIdEq=(a,b)=>a!=null&&b!=null&&a!==''&&b!==''&&axIdK(a)===axIdK(b);
+(()=>{try{let ch=false;const K=v=>{const k=axIdK(v);if(k!==String(v))ch=true;return k};
+  if(AXDEV.claimed){const c=K(AXDEV.claimed);AXDEV.claimed=c;
+    // journal copies made under another form of the same id get merged back into the original (see axRepairIds)
+    for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i),m=k&&k.match(/^anchors-journal-v1::(.+)$/);if(m&&m[1]!=='locked'&&axIdEq(m[1],c)){AXDEV.mergeFrom=[...new Set((AXDEV.mergeFrom||[]).concat(m[1]))];ch=true}}}
+  if(AXDEV.accounts){const seen=new Set();AXDEV.accounts=AXDEV.accounts.map(a=>Object.assign({},a,{uid:K(a.uid)})).reverse().filter(a=>!seen.has(a.uid)&&seen.add(a.uid)).reverse()}
+  if(AXDEV.declined)AXDEV.declined=AXDEV.declined.map(K);
+  if(AXDEV.up)AXDEV.up=Object.fromEntries(Object.entries(AXDEV.up).map(([k,v])=>[K(k),v]));
+  if(AXACCT&&AXACCT.uid!=null){const u=K(AXACCT.uid);if(u!==String(AXACCT.uid)||ch){AXACCT.uid=u;localStorage.setItem('axis-acct',JSON.stringify(AXACCT))}}
+  if(ch)localStorage.setItem('axis-device',JSON.stringify(AXDEV))}catch(e){}})();
+const nsk=k=>AXLOCKED?k+'::locked':(!AXACCT||axIdEq(AXDEV.claimed,AXACCT.uid))?k:k+'::'+AXACCT.uid;
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
@@ -3888,7 +3900,7 @@ const AXERR={not_invited:'This Google account isn’t part of the family yet. As
 const axErrTxt=e=>{if(e&&e.name==='NotAllowedError')return AXERR.fid_cancel;if(e&&e.name==='InvalidStateError')return AXERR.fid_exists;if(e&&(e.name==='NotSupportedError'||e.name==='SecurityError'))return AXERR.fid_unavailable;const m=String(e&&(e.code||e.message)||e||'');return AXERR[m]||(/fetch|network|offline/i.test(m)?AXERR.bridge_offline:'Something went wrong ('+m.slice(0,80)+').')};
 const axDevSave=()=>{try{localStorage.setItem('axis-device',JSON.stringify(AXDEV))}catch(e){}};
 const axSetAcct=a=>{try{a?localStorage.setItem('axis-acct',JSON.stringify(a)):localStorage.removeItem('axis-acct')}catch(e){}};
-const axOwner=()=>!!(AXACCT&&AXDEV.claimed===AXACCT.uid);
+const axOwner=()=>!!(AXACCT&&axIdEq(AXDEV.claimed,AXACCT.uid));
 const axOn=()=>!!(AXACCT&&AXACCT.s&&AXKEYS&&axCfg()&&AXSYNC.st!=='expired');
 function axName(){const st=get('settings',setDef);return (AXME&&AXME.name)||(AXACCT&&AXACCT.name)||st.name||''}
 async function axCall(op,args,sess){const c=axCfg();if(!c)throw {code:'not_configured'};let r;
@@ -3943,7 +3955,7 @@ async function axUnwrapAny(bundle,secret){secret=String(secret||'');
   try{return await axUnwrap(bundle.rec,axNormRec(secret))}catch(_){}throw {code:'wrong_any'}}
 const axBundle=()=>{try{return JSON.parse((AXPEND&&AXPEND.me.keys)||(AXME&&AXME.keys)||'null')}catch(e){return null}};
 // keys live on this device only (IndexedDB, not exportable), per account
-const axNsFor=(uid,k)=>AXDEV.claimed===uid?k:k+'::'+uid;
+const axNsFor=(uid,k)=>axIdEq(AXDEV.claimed,uid)?k:k+'::'+uid;
 function axKdbOpen(name){return new Promise((ok,no)=>{const r=indexedDB.open(name,1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 async function axKeysFor(uid){try{const db=await axKdbOpen(axNsFor(uid,'axis-keys'));return await new Promise(ok=>{const q=db.transaction('k').objectStore('k').get('keys');q.onsuccess=()=>{ok(q.result||null);db.close()};q.onerror=()=>{ok(null);db.close()}})}catch(e){return null}}
 async function axStoreKeysFor(uid,keys){const db=await axKdbOpen(axNsFor(uid,'axis-keys'));await new Promise((ok,no)=>{const t=db.transaction('k','readwrite');t.objectStore('k').put(keys,'keys');t.oncomplete=ok;t.onerror=()=>no(t.error)});db.close()}
@@ -3959,7 +3971,8 @@ async function axGoogleButton(el,hint){const c=axCfg();if(!c||!el)return;try{awa
 const axDeviceLabel=()=>{const u=navigator.userAgent;return (/iPad/.test(u)?'iPad':/iPhone/.test(u)?'iPhone':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows PC':'Device')+(matchMedia('(display-mode: standalone)').matches?' · Home Screen':'')};
 async function axSignedIn(p){AXLOCKVIEW.busy=true;AXLOCKVIEW.msg='';axLock();
   try{const r=await p;AXPEND={s:r.s,me:r.me};
-    if(!AXDEV.claimed&&axLegacyHas()&&!(AXDEV.declined||[]).includes(r.me.sub)){const yes=await axAskClaim(r.me.email);if(yes)AXDEV.claimed=r.me.sub;else AXDEV.declined=(AXDEV.declined||[]).concat(r.me.sub);axDevSave()}
+    r.me.sub=axIdK(r.me.sub);
+    if(!AXDEV.claimed&&axLegacyHas()&&!(AXDEV.declined||[]).some(d=>axIdEq(d,r.me.sub))){const yes=await axAskClaim(r.me.email);if(yes)AXDEV.claimed=r.me.sub;else AXDEV.declined=(AXDEV.declined||[]).concat(r.me.sub);axDevSave()}
     const kd=await axKeysFor(r.me.sub);
     if(kd){AXKEYS=kd;await axFinish();return}
     const b=r.me.keys?JSON.parse(r.me.keys):null,fid=await axPkAvail();AXLOCKVIEW.fidOk=fid;
@@ -3968,20 +3981,20 @@ async function axSignedIn(p){AXLOCKVIEW.busy=true;AXLOCKVIEW.msg='';axLock();
   catch(e){AXLOCKVIEW.busy=false;AXLOCKVIEW.v='in';AXLOCKVIEW.msg=axErrTxt(e);axLock()}}
 async function axFinish(){const me=AXPEND.me;
   await axStoreKeysFor(me.sub,AXKEYS);
-  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>x.uid!==me.sub).concat({uid:me.sub,email:me.email,name:me.name||''});axDevSave();
-  axSetAcct({uid:me.sub,email:me.email,name:me.name||'',s:AXPEND.s,owner:!!me.owner});try{localStorage.removeItem('axis-nonce')}catch(_){}
+  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>!axIdEq(x.uid,me.sub)).concat({uid:me.sub,email:me.email,name:me.name||''});axDevSave();
+  axSetAcct({uid:axIdK(me.sub),email:me.email,name:me.name||'',s:AXPEND.s,owner:!!me.owner});try{localStorage.removeItem('axis-nonce')}catch(_){}
   history.replaceState(null,'',location.pathname+location.search.replace(/[?&]axsetup=[^&]*/,''));location.reload()}
 
 // ---------- Find my journal: every copy of the journal saved on this device (read-only until you choose) ----------
 function axJournalCopies(){const out=[],me=AXACCT&&AXACCT.uid,accts=AXDEV.accounts||[];
   for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!/^anchors-journal-v1(::.+)?$/.test(k))continue;let o={};try{o=JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){}
     const days=Object.keys(o).filter(x=>/^day-\d{4}-\d{2}-\d{2}$/.test(x)&&axReal(x,o[x])).sort(),items=Object.keys(o).filter(x=>axReal(x,o[x])).length,tag=k.split('::')[1]||'';
-    const who=u=>{const a=accts.find(x=>x.uid===u);return a?(a.name||a.email):'another account'};
+    const who=u=>{const a=accts.find(x=>axIdEq(x.uid,u));return a?(a.name||a.email):'another account'};
     const c={k,tag,days:days.length,first:days[0]?days[0].slice(4):'',last:days.length?days[days.length-1].slice(4):'',items,size:(localStorage.getItem(k)||'').length};
-    if(!tag){c.label='Journal from before accounts';c.note=!AXDEV.claimed?'not attached to an account yet':AXDEV.claimed===me?'attached to you':'attached to '+who(AXDEV.claimed);
-      c.canAttach=!!me&&AXDEV.claimed!==me&&(!AXDEV.claimed||!accts.some(a=>a.uid===AXDEV.claimed))}
+    if(!tag){c.label='Journal from before accounts';c.note=!AXDEV.claimed?'not attached to an account yet':axIdEq(AXDEV.claimed,me)?'attached to you':'attached to '+who(AXDEV.claimed);
+      c.canAttach=!!me&&!axIdEq(AXDEV.claimed,me)&&(!AXDEV.claimed||!accts.some(a=>axIdEq(a.uid,AXDEV.claimed)))}
     else if(tag==='locked'){c.label='Blank page shown while signed out';c.note='holds nothing of yours'}
-    else{c.label=tag===me?'Your account’s separate copy':'Copy for '+who(tag);c.note=tag===me?'what you see now':''}
+    else{c.label=axIdEq(tag,me)?'Your account’s separate copy':'Copy for '+who(tag);c.note=axIdEq(tag,me)?'what you see now':''}
     out.push(c)}
   return out.sort((a,b)=>b.items-a.items)}
 function axFindHTML(signedIn){const L=axJournalCopies(),fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'}):'';
@@ -3990,8 +4003,8 @@ function axFindHTML(signedIn){const L=axJournalCopies(),fmt=d=>d?new Date(d+'T12
     ${c.canAttach?(signedIn?`<button class="chip sm" data-axfind="attach">Make this mine</button>`:''):''}</div>`).join('')+
     (L.some(c=>c.canAttach)&&!signedIn?'<p class="calnote">Sign in, then open More › Account &amp; family › Find my journal to attach it to your account.</p>':'')}
 // attach the original journal to the signed-in account: nothing is deleted, anything made in the separate copy is merged in
-async function axAttachOriginal(){const me=AXACCT&&AXACCT.uid;if(!me||AXDEV.claimed===me)return;
-  if(AXDEV.claimed&&(AXDEV.accounts||[]).some(a=>a.uid===AXDEV.claimed))throw {code:'not_yours'};
+async function axAttachOriginal(){const me=AXACCT&&AXACCT.uid;if(!me||axIdEq(AXDEV.claimed,me))return;
+  if(AXDEV.claimed&&(AXDEV.accounts||[]).some(a=>axIdEq(a.uid,AXDEV.claimed)))throw {code:'not_yours'};
   try{flushAll()}catch(_){}
   const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}};
   const orig=read('anchors-journal-v1'),mine=read('anchors-journal-v1::'+me);
@@ -4137,7 +4150,7 @@ async function axStart(){
   if(setup){try{const c=JSON.parse(atob(setup.replace(/-/g,'+').replace(/_/g,'/')));if(/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(c.url)&&/\.apps\.googleusercontent\.com$/.test(c.clientId)){localStorage.setItem('axis-google',JSON.stringify({url:c.url,clientId:c.clientId}));if(!AXACCT){AXLOCKVIEW={v:'in',msg:'AXIS is connected. Sign in with your Google account.',busy:false};axLock()}}}catch(e){}}
   if(hc){history.replaceState(null,'',location.pathname+location.search);const nonce=localStorage.getItem('axis-nonce')||'';AXLOCKVIEW={v:'in',msg:'',busy:true};axLock();axSignedIn(axCall('auth_code',{code:hc,nonce,label:axDeviceLabel()},false));return}
   if(!AXACCT){if(AXLOCKED)axLock('in');return}
-  try{AXKEYS=await axKeysFor(AXACCT.uid);if(!AXKEYS){AXLOCKVIEW={v:'in',hint:AXACCT.email,msg:'Sign in again to unlock your data on this device.',busy:false};AXSYNC.st='expired';axLock();return}
+  try{await axRepairIds();AXKEYS=await axKeysFor(AXACCT.uid);if(!AXKEYS){AXLOCKVIEW={v:'in',hint:AXACCT.email,msg:'Sign in again to unlock your data on this device.',busy:false};AXSYNC.st='expired';axLock();return}
     const r=await axCall('me');AXME=r.me;AXSYNC.st='ok';
     if(AXME.name!==AXACCT.name||!!AXME.owner!==!!AXACCT.owner){AXACCT.name=AXME.name;AXACCT.owner=!!AXME.owner;axSetAcct(AXACCT)}
     const firstUp=axOwner()&&!(AXDEV.up||{})[AXACCT.uid];await axPull();
@@ -4147,6 +4160,18 @@ async function axStart(){
     setInterval(()=>{if(document.visibilityState==='visible'){axPull();axPush()}},60000);
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')axPull();else axPush()});
   }catch(e){if(AXSYNC.st!=='expired'){AXSYNC.st='error';AXSYNC.err=axErrTxt(e)}axPaintStatus()}}
+// One-time repair after the id-rounding bug: bring back anything written under another form of the same id.
+async function axRepairIds(){const from=(AXDEV.mergeFrom||[]).filter(x=>axIdEq(x,AXDEV.claimed));if(!from.length||!axOwner())return;
+  const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}};let n=0;
+  localStorage.setItem('anchors-journal-v1.before-repair',localStorage.getItem('anchors-journal-v1')||'{}');   // safety copy
+  for(const x of from){const k='anchors-journal-v1::'+x,o=read(k);
+    for(const key of Object.keys(o)){if(!axReal(key,o[key]))continue;cache[key]=cache[key]?mergeDoc(key,cache[key],o[key]):o[key];n++}
+    localStorage.setItem('anchors-journal-v1.merged-'+x,localStorage.getItem(k)||'{}');localStorage.removeItem(k);
+    // the most recent unlock keys for this account live under that copy's name
+    try{const db=await axKdbOpen('axis-keys::'+x),kd=await new Promise(ok=>{const q=db.transaction('k').objectStore('k').get('keys');q.onsuccess=()=>ok(q.result||null);q.onerror=()=>ok(null)});db.close();if(kd)await axStoreKeysFor(AXDEV.claimed,kd)}catch(_){}}
+  lsSave();delete AXDEV.mergeFrom;if(AXDEV.up)delete AXDEV.up[axIdK(AXACCT.uid)];axDevSave();   // everything is uploaded again with the current key
+  try{localStorage.removeItem('axis-pull')}catch(_){}
+  if(n)setTimeout(()=>capToast('Your journal is back. Anything you wrote while it was hidden has been added to it.',null),800)}
 async function axLoadFamily(){if(!axOn())return;try{AXFAM=await axCall('family');AXME=AXFAM.me||AXME}catch(e){}if(S.tab==='setup'||S.tab==='home'){const y=scrollY;render();scrollTo(0,y)}}
 
 // ---------- More › Account & family ----------
@@ -4227,13 +4252,13 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
     if(a==='legacyoff'){if(!arm('Tap again: turn off the old key'))return;await axCall('legacy_off');AXFAM.legacy=false;capToast('The old key is off. Every request now needs a Google sign-in.',null);redraw();return}
   }catch(err){capToast(axErrTxt(err),null)}},true);
 document.addEventListener('change',async e=>{const el=e.target;if(!el.dataset)return;
-  if(el.dataset.axp==='name'&&AXACCT){const v=el.value.trim().slice(0,60);if(!v)return;try{await axCall('profile',{name:v});AXME=Object.assign(AXME||{},{name:v});AXACCT.name=v;axSetAcct(AXACCT);const x=(AXDEV.accounts||[]).find(z=>z.uid===AXACCT.uid);if(x){x.name=v;axDevSave()}}catch(err){capToast(axErrTxt(err),null)}}
+  if(el.dataset.axp==='name'&&AXACCT){const v=el.value.trim().slice(0,60);if(!v)return;try{await axCall('profile',{name:v});AXME=Object.assign(AXME||{},{name:v});AXACCT.name=v;axSetAcct(AXACCT);const x=(AXDEV.accounts||[]).find(z=>axIdEq(z.uid,AXACCT.uid));if(x){x.name=v;axDevSave()}}catch(err){capToast(axErrTxt(err),null)}}
   if(el.dataset.axa==='minorai'&&AXFAM){try{const r=await axCall('family_settings',{allow_minor_ai:el.checked});AXFAM.settings=r.settings}catch(err){el.checked=!el.checked;capToast(axErrTxt(err),null)}}},true);
 async function axWipeLocal(){const keys=[LSKEY,nsk('kl-cap-draft'),nsk('kl-mr-state'),nsk('kl-mr-push'),nsk('kl-shiftdays'),nsk('kl-bridge'),nsk('axis-pull'),AXBK()];
   keys.forEach(k=>{try{localStorage.removeItem(k)}catch(_){}});
   try{(await IDB.open()).close()}catch(_){}try{(await IMGDB.open()).close()}catch(_){}
   for(const n of [nsk('kl-journal-audio'),nsk('kl-journal-images'),nsk('axis-keys')])try{indexedDB.deleteDatabase(n)}catch(_){}
-  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>x.uid!==AXACCT.uid);if(axOwner())delete (AXDEV.up||{})[AXACCT.uid];axDevSave()}
+  AXDEV.accounts=(AXDEV.accounts||[]).filter(x=>!axIdEq(x.uid,AXACCT.uid));if(axOwner())delete (AXDEV.up||{})[AXACCT.uid];axDevSave()}
 // "What should AXIS call you?" — names come from each person, never from the code
 function axNameCard(){if(axName())return '';return `<div class="card axname"><h2 style="margin:0 0 6px">What should AXIS call you?</h2><div class="qadd" style="grid-template-columns:minmax(0,1fr) auto"><input data-axn placeholder="Your first name" maxlength="60" aria-label="Your first name"><button class="btn sm pri" data-act="axname">Save</button></div></div>`}
 // which parts of AXIS this person sees
