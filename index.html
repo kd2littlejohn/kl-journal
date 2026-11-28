@@ -216,7 +216,7 @@ textarea{min-height:72px;resize:vertical}
 .q:first-of-type{margin-top:0}
 .rem{font-size:15px;color:var(--acc);text-align:center;margin:18px 0 6px;font-style:italic;font-family:Lora,serif}
 nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--nav);border-top:1px solid rgba(var(--acc-rgb),.18);z-index:6;padding-bottom:env(safe-area-inset-bottom)}
-nav.tabs .wrap{display:grid;grid-template-columns:repeat(6,1fr)}
+nav.tabs .wrap{display:grid;grid-auto-flow:column;grid-auto-columns:1fr}nav.tabs.n7 button{font-size:11.5px;letter-spacing:-.1px}nav.tabs.n7 button svg{width:21px;height:21px}
 nav.tabs button{min-height:60px;border:0;background:none;font-size:13px;font-weight:600;color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 nav.tabs button svg{width:22px;height:22px}
 nav.tabs button[aria-current=page]{color:var(--acc)}
@@ -526,7 +526,7 @@ h1.brand{letter-spacing:0;margin-right:0;line-height:1}
 .jtpl{margin:6px 0 4px}.jtpl .chips{margin-top:4px}.hqbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hqbtns .gbtn{margin:0}  .mrbx{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rtbar{display:block;width:100%;height:5px;border-radius:4px;background:rgba(var(--acc-rgb),.15);overflow:hidden;margin-top:4px}.rtbar i{display:block;height:100%;background:var(--gold)}.hrt{display:block;width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer}.hcust{margin-top:8px}
 
 #axlock{position:fixed;inset:0;z-index:80;background:radial-gradient(circle at 50% 30%,#201f1a,#141411 70%);overflow:auto;display:grid;place-items:start center;padding:max(24px,env(safe-area-inset-top)) 18px 40px}
-.axbox{width:min(420px,100%);margin-top:4vh}.famsw{max-width:520px}.famnav{display:flex;align-items:center;gap:10px;margin:12px 0 4px}.famnav b{flex:1;text-align:center;font-weight:600}.famfil{margin-top:10px;flex-wrap:wrap}.famdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;flex:none}.famev{display:flex;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--gline);border-radius:12px;padding:10px 12px;margin:6px 0;color:var(--cream);font:inherit;align-items:stretch}.famev.busy{background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(var(--acc-rgb),.07) 8px 16px),var(--card)}.fambars{display:flex;flex-direction:column;gap:3px;width:5px;flex:none}.fambars i{flex:1;border-radius:3px;min-height:8px}.famt{display:flex;flex-direction:column;gap:2px;min-width:0}.famt b{font-weight:600}.famt small{color:var(--mute,#9c917c);font-size:13px}.famdh{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:16px 0 4px}.famdh.now{color:var(--cream)}.famnone{margin:2px 0}.famwarn{color:var(--warn)}.famconf{margin:6px 0 0 18px;padding:0}.famgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}.famwd{text-align:center;font-size:12px;color:var(--mute,#9c917c)}.famcell{aspect-ratio:1/1.1;border:1px solid var(--gline);border-radius:10px;background:var(--card);color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px 2px;font:inherit;min-height:44px}.famcell.out{opacity:.4}.famcell.now{border-color:var(--gold)}.famcd{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center}.famcd i{width:7px;height:7px;border-radius:50%}.famcell small{font-size:10px;color:var(--mute,#9c917c)}.famwho{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.famp{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--gline);border-radius:20px;padding:4px 10px}.famp small{margin-left:6px;color:var(--mute,#9c917c)}.famkind{color:var(--gold);margin:8px 0 0}.famnotes{white-space:pre-wrap}.famtimes{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}nav.tabs button[hidden]{display:none!important}.famed .mrf{display:block;margin-top:10px}.wsprofs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:6px 0}.wsprof{display:flex;flex-direction:column;gap:4px;text-align:left;min-height:72px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit}.wsprof b{font-size:16px}.wsprof small{color:var(--mute);font-size:13px;line-height:1.35}.wsprof[aria-checked=true]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}.wsob .vh3{margin:18px 0 6px}.wsob .chips{flex-wrap:wrap}.wsshare .mrf{display:block;margin-top:10px}.wsshare .axchk{display:flex;gap:10px;align-items:center;margin-top:10px}.wsshare .axchk input,.wsob .axchk input,.mrf+.axchk input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--acc)}.hsecs{display:grid;gap:6px}.hsecrow{display:flex;align-items:center;justify-content:space-between;gap:8px}.hsecrow span{display:flex;gap:4px}.hsecrow .btn{min-width:44px}[data-wsnav]{width:22px!important;height:22px;min-height:0;accent-color:var(--acc)}label.axchk:has([data-wsnav]){display:flex;gap:10px;align-items:center}.lkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:6px}.lkopt{display:flex;gap:10px;align-items:center;text-align:left;min-height:60px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit}.lkopt[aria-checked=true]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}.lkopt small{display:block;color:var(--mute);font-size:12px;line-height:1.3}.lksw{display:grid;grid-template-columns:1fr 1fr;width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;position:relative;box-shadow:0 0 0 1px rgba(var(--ink-rgb),.2)}.lksw i{display:block}.lksw b{position:absolute;width:12px;height:12px;border-radius:50%;top:14px;box-shadow:0 0 0 1.5px rgba(255,255,255,.35)}.lksw b:nth-of-type(1){left:5px}.lksw b:nth-of-type(2){right:5px}.famppl{display:flex;gap:14px;overflow-x:auto;margin:14px 0 4px;padding-bottom:4px}.famav{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}.famavc{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#141411;font:700 15px Inter,system-ui,sans-serif;box-shadow:0 0 0 2px var(--card),0 0 0 3px rgba(var(--ink-rgb),.15)}.famav small{font-size:12.5px;color:var(--mute)}.famqa{margin-top:10px}.famev{min-height:56px}.famempty .chips{flex-wrap:wrap}html[data-mode=light] .famdot,html[data-mode=light] .fambars i,html[data-mode=light] .famcd i{box-shadow:0 0 0 1px rgba(var(--ink-rgb),.28)}.famed .axchk{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:600}.famed .axchk input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--gold)}.famdot{box-shadow:0 0 0 1.5px rgba(var(--bg-rgb),.55)}.famed select,.famed textarea{width:100%}.axrec{font:600 1.15rem/1.4 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:var(--gold,#BDA16B);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:center;word-break:break-all;user-select:all;margin:10px 0}.axg{display:flex;justify-content:center;min-height:44px;margin:14px 0 6px}.axpair,.axchg{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px}.axchg .mrf{display:block;margin-bottom:8px}#axlock label{display:block;margin-top:10px}#axlock input:not([type=checkbox]){width:100%}.axbox h2{font-family:Cinzel,Lora,serif;color:var(--acc2);font-size:20px;margin:18px 0 10px}.axbox label{display:block;margin:10px 0}.axbox input:not([type=checkbox]){width:100%}
+.axbox{width:min(420px,100%);margin-top:4vh}.famsw{max-width:520px}.famnav{display:flex;align-items:center;gap:10px;margin:12px 0 4px}.famnav b{flex:1;text-align:center;font-weight:600}.famfil{margin-top:10px;flex-wrap:wrap}.famdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;flex:none}.famev{display:flex;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--gline);border-radius:12px;padding:10px 12px;margin:6px 0;color:var(--cream);font:inherit;align-items:stretch}.famev.busy{background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(var(--acc-rgb),.07) 8px 16px),var(--card)}.fambars{display:flex;flex-direction:column;gap:3px;width:5px;flex:none}.fambars i{flex:1;border-radius:3px;min-height:8px}.famt{display:flex;flex-direction:column;gap:2px;min-width:0}.famt b{font-weight:600}.famt small{color:var(--mute,#9c917c);font-size:13px}.famdh{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:16px 0 4px}.famdh.now{color:var(--cream)}.famnone{margin:2px 0}.famwarn{color:var(--warn)}.famconf{margin:6px 0 0 18px;padding:0}.famgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}.famwd{text-align:center;font-size:12px;color:var(--mute,#9c917c)}.famcell{aspect-ratio:1/1.1;border:1px solid var(--gline);border-radius:10px;background:var(--card);color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px 2px;font:inherit;min-height:44px}.famcell.out{opacity:.4}.famcell.now{border-color:var(--gold)}.famcd{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center}.famcd i{width:7px;height:7px;border-radius:50%}.famcell small{font-size:10px;color:var(--mute,#9c917c)}.famwho{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.famp{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--gline);border-radius:20px;padding:4px 10px}.famp small{margin-left:6px;color:var(--mute,#9c917c)}.famkind{color:var(--gold);margin:8px 0 0}.famnotes{white-space:pre-wrap}.famtimes{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}nav.tabs button[hidden]{display:none!important}.famed .mrf{display:block;margin-top:10px}.hhsec{display:flex;gap:6px;overflow-x:auto;margin:12px 0 0;padding:3px;border:1px solid var(--gline);border-radius:14px;background:var(--card)}.hhsec button{flex:1 0 auto;min-height:42px;padding:0 12px;border:0;border-radius:11px;background:transparent;color:var(--ink);font:600 14px Inter,system-ui,sans-serif;white-space:nowrap}.hhsec button[aria-selected=true]{background:var(--acc);color:var(--acc-ink)}.hhbadge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--danger);color:#fff;font-size:11px;font-weight:700}.hhsec button[aria-selected=true] .hhbadge{background:var(--acc-ink);color:var(--acc)}.hhrow{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.hhrow:first-of-type{border-top:0}.hhrow .famt{flex:1;min-width:0}.hhrow.done .famt b{color:var(--mute);text-decoration:line-through;text-decoration-color:rgba(var(--ink-rgb),.35)}.hhrow .fambars{align-self:stretch}.hhact{display:flex;gap:6px;align-items:center;flex:none}.hhdo{border-color:var(--acc)!important;color:var(--acc)}.hhwhen{color:var(--ink)!important;opacity:.8}.hhrow input{width:100%;min-height:40px;margin:4px 0}.hhrow .cb{flex:none}.hhsum{display:flex;gap:16px;overflow-x:auto;margin:6px 0 4px}.hhsum div{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:64px}.hhsum b{font-size:15px}.hhsum small{font-size:12px;color:var(--mute);text-align:center}.famavc.sm{width:32px;height:32px;font-size:12px;flex:none}.hhadd{grid-template-columns:minmax(0,1fr) 72px auto!important;gap:6px;margin:10px 0 4px}.hhnote.pin{border-color:var(--acc)}.hhnote .chd small{color:var(--mute)}.famev.priv{border-style:dashed}.wsprofs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:6px 0}.wsprof{display:flex;flex-direction:column;gap:4px;text-align:left;min-height:72px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit}.wsprof b{font-size:16px}.wsprof small{color:var(--mute);font-size:13px;line-height:1.35}.wsprof[aria-checked=true]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}.wsob .vh3{margin:18px 0 6px}.wsob .chips{flex-wrap:wrap}.wsshare .mrf{display:block;margin-top:10px}.wsshare .axchk{display:flex;gap:10px;align-items:center;margin-top:10px}.wsshare .axchk input,.wsob .axchk input,.mrf+.axchk input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--acc)}.hsecs{display:grid;gap:6px}.hsecrow{display:flex;align-items:center;justify-content:space-between;gap:8px}.hsecrow span{display:flex;gap:4px}.hsecrow .btn{min-width:44px}[data-wsnav]{width:22px!important;height:22px;min-height:0;accent-color:var(--acc)}label.axchk:has([data-wsnav]){display:flex;gap:10px;align-items:center}.lkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:6px}.lkopt{display:flex;gap:10px;align-items:center;text-align:left;min-height:60px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit}.lkopt[aria-checked=true]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}.lkopt small{display:block;color:var(--mute);font-size:12px;line-height:1.3}.lksw{display:grid;grid-template-columns:1fr 1fr;width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;position:relative;box-shadow:0 0 0 1px rgba(var(--ink-rgb),.2)}.lksw i{display:block}.lksw b{position:absolute;width:12px;height:12px;border-radius:50%;top:14px;box-shadow:0 0 0 1.5px rgba(255,255,255,.35)}.lksw b:nth-of-type(1){left:5px}.lksw b:nth-of-type(2){right:5px}.famppl{display:flex;gap:14px;overflow-x:auto;margin:14px 0 4px;padding-bottom:4px}.famav{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}.famavc{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#141411;font:700 15px Inter,system-ui,sans-serif;box-shadow:0 0 0 2px var(--card),0 0 0 3px rgba(var(--ink-rgb),.15)}.famav small{font-size:12.5px;color:var(--mute)}.famqa{margin-top:10px}.famev{min-height:56px}.famempty .chips{flex-wrap:wrap}html[data-mode=light] .famdot,html[data-mode=light] .fambars i,html[data-mode=light] .famcd i{box-shadow:0 0 0 1px rgba(var(--ink-rgb),.28)}.famed .axchk{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:600}.famed .axchk input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--gold)}.famdot{box-shadow:0 0 0 1.5px rgba(var(--bg-rgb),.55)}.famed select,.famed textarea{width:100%}.axrec{font:600 1.15rem/1.4 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:var(--gold,#BDA16B);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:center;word-break:break-all;user-select:all;margin:10px 0}.axg{display:flex;justify-content:center;min-height:44px;margin:14px 0 6px}.axpair,.axchg{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px}.axchg .mrf{display:block;margin-bottom:8px}#axlock label{display:block;margin-top:10px}#axlock input:not([type=checkbox]){width:100%}.axbox h2{font-family:Cinzel,Lora,serif;color:var(--acc2);font-size:20px;margin:18px 0 10px}.axbox label{display:block;margin:10px 0}.axbox input:not([type=checkbox]){width:100%}
 .axlogo{display:flex;align-items:center;justify-content:center;gap:12px}.axlogo img{height:64px}.axlogo .axw{height:34px}.axtag{text-align:center;font-family:Lora,Georgia,serif;font-style:italic;color:var(--ink);opacity:.8;margin:6px 0 0}
 .axbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}.axmsg{color:var(--warn);margin:8px 0 0}.axchk{display:flex!important;gap:8px;align-items:center}.axwho{margin:0 0 4px}
 .axme,.axmem{display:flex;align-items:center;gap:10px;margin:8px 0}.axme small,.axmem small{display:block;color:var(--mute);font-size:12.5px}.axmem>span:nth-child(2){flex:1;min-width:0}.axdot{width:14px;height:14px;border-radius:50%;flex:none}
@@ -1601,10 +1601,10 @@ function mrPlan(){const p=mrPush(),s=mrState(),now=mrNow(),m=mrSet(),out=[];
     while(t<end&&g++<100){if(t>now+60000&&!mrQuietAt(t))out.push(t);t+=mrIntAt(t)}}}
   out.sort((x,y)=>x-y);let tk=[];try{tk=tkReminders().map(r=>r.at)}catch(e){}const res=[];out.forEach(t=>{if(!res.length||t-res[res.length-1]>=10*60000||tk.includes(t))res.push(t)});return res.slice(0,300)}
 let MRPT=null;
-function mrPushBody(op,args){return JSON.stringify(Object.assign({key:BRIDGE.key,op},args))}
+function mrPushBody(op,args){return JSON.stringify(Object.assign(axSess()?{s:AXACCT.s,op}:{key:BRIDGE.key,op},args))}
 function mrPushSync(seen){const p=mrPush();try{tkReminderCache()}catch(e){}if(!p.on||!bridgeOn())return;const vis=seen==null?document.visibilityState==='visible':seen,times=mrPlan(),sig=JSON.stringify(times)+vis;
   if(!vis){// leaving the app: send right away; a beacon survives the app being suspended
-    let ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(BRIDGE.url,new Blob([mrPushBody('pushplan',{device:mrDev(),times,seen:false})],{type:'text/plain;charset=utf-8'}))}catch(e){}
+    let ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(axSess()?axCfg().url:BRIDGE.url,new Blob([mrPushBody('pushplan',{device:mrDev(),times,seen:false})],{type:'text/plain;charset=utf-8'}))}catch(e){}
     if(!ok)bcall('pushplan',{device:mrDev(),times,seen:false}).catch(()=>{});p.sig=sig;p.last=mrNow();mrPushSave(p);return}
   if(p.sig===sig&&mrNow()-(p.last||0)<15*60000)return;
   clearTimeout(MRPT);MRPT=setTimeout(()=>{bcall('pushplan',{device:mrDev(),times,seen:true}).then(()=>{const q=mrPush();q.sig=sig;q.last=mrNow();q.err='';mrPushSave(q)})
@@ -2998,7 +2998,7 @@ function startCard(d){if(S.date!==today())return '';const h=startHere(d);if(!h)r
 // ----- inbox: quick capture from anywhere, sort later
 function inbox(){const b=get('inbox',{items:[]});b.items=b.items||[];return b.items}
 function inboxCard(){const it=inbox();if(!it.length)return '';
-  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}${vcStrip(x.img)}${x.voice?` <button class="lnkg" data-vview2="${esc(x.voice)}">▶ Voice note</button>`:''}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button><button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
+  return `<div class="card"><h2 style="font-size:18px">Inbox <small class="muted" style="font-family:Inter,sans-serif;font-size:13px">· ${it.length} to sort</small></h2>${it.map(x=>`<div class="inb"><span>${esc(x.t)}${vcStrip(x.img)}${x.voice?` <button class="lnkg" data-vview2="${esc(x.voice)}">▶ Voice note</button>`:''}</span><div class="chips"><button class="chip" data-inb="today" data-id="${esc(x.id)}">Task today</button><button class="chip" data-inb="task" data-id="${esc(x.id)}">Task later</button><button class="chip" data-inb="journal" data-id="${esc(x.id)}">Journal</button><button class="chip" data-inb="note" data-id="${esc(x.id)}">Study note</button><button class="chip" data-inb="org" data-id="${esc(x.id)}"><span class="orgbtn">${SPARK}Organize</span></button>${typeof famOn==='function'&&famOn()?`<button class="chip" data-inbfam="${esc(x.id)}">Family</button>`:''}<button class="chip" data-inb="del" data-id="${esc(x.id)}" aria-label="Delete">✕</button></div></div>`).join('')}<p class="calnote" style="margin-top:4px">Tap the gold + on any screen to jot something down. Sort it here when you have a minute.</p></div>`}
 function openCap(){const c=$('#cap');c.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-labelledby="caph"><h2 id="caph">Capture</h2><textarea id="cap-t" class="write wsm" placeholder="Whatever's on your mind, or add a photo or screenshot." aria-label="Inbox item"></textarea>${qcGrid()}<div id="cap-voice"></div><div id="cap-imgs" class="vqrow"></div><p class="calnote" id="cap-m" style="min-height:1.2em"></p><div class="chips"><button class="btn pri" data-cap="add">Add</button><button class="btn" data-cap="org"><span class="orgbtn">${SPARK}Organize</span></button><button class="btn" data-cap="close">Done</button></div></div>`;c.classList.remove('hide');vcPaintQ();voPaintCap();const t=$('#cap-t');if(!t.value){try{t.value=localStorage.getItem(nsk('kl-cap-draft'))||''}catch(e){}}grow(t);t.focus()}
 function closeCap(){if(VOREC)voRecStop(true);VOQ='';if(VCQ.length){VCQ.forEach(id=>vcDelete(id));VCQ=[]}$('#cap').classList.add('hide');if(S.tab==='home'||(S.tab==='today'&&(S.seg||'day')==='day')){const y=scrollY;render();scrollTo(0,y)}}
 
@@ -4302,7 +4302,7 @@ function axNameCard(){if(axName())return '';return `<div class="card axname"><h2
 const AXMODS=[['spiritual','Spiritual'],['move','Growth'],['sessions','Sessions'],['mreset','Focus']];
 function axModOn(k){const m=(get('settings',setDef).modules)||{};if(k==='shift')return shiftOn();return m[k]!=null?m[k]!==false:wsModDefault(k)}
 function axModsHTML(){return `<div class="card"><div class="chd"><h2>Show in AXIS</h2></div><p class="calnote" style="margin-top:0">Turn off what you don’t use. Nothing is deleted; turn it back on anytime.</p><div class="chips">${AXMODS.map(([k,l])=>`<button class="chip sm" data-axmod="${k}" aria-pressed="${axModOn(k)}">${axModOn(k)?'✓ ':''}${l}</button>`).join('')}</div></div>`}
-function axApplyMods(){document.querySelectorAll('nav.tabs button[data-tab]').forEach(b=>{const k=b.dataset.tab;b.hidden=k==='family'?!(wsNavFamily()&&famOn()):(k==='spiritual'||k==='move'||k==='journal')&&!axModOn(k)})}
+function axApplyMods(){document.querySelectorAll('nav.tabs button[data-tab]').forEach(b=>{const k=b.dataset.tab;b.hidden=k==='family'?!(wsNavFamily()&&famOn()):(k==='spiritual'||k==='move'||k==='journal')&&!axModOn(k)});const nv=document.querySelector('nav.tabs');if(nv)nv.classList.toggle('n7',[...nv.querySelectorAll('button[data-tab]')].filter(b=>!b.hidden).length>=7)}
 // ================= /AXIS Accounts =================
 // ================= AXIS Family =================
 // My AXIS / AXIS Family switch, and the joint family calendar.
@@ -4321,11 +4321,14 @@ const FAMKINDS=[['family','Family activity'],['worship','Family worship'],['appo
 const famKind=k=>(FAMKINDS.find(x=>x[0]===k)||FAMKINDS[0])[1];
 function famSave(){try{localStorage.setItem(nsk('axis-fam'),JSON.stringify(FAM))}catch(e){}}
 async function famLoad(force){if(!famOn())return;if(FAMLOAD)return FAMLOAD;if(!force&&Date.now()-FAM.at<60000)return;
+  try{hhLoad(force)}catch(_){}
   FAMLOAD=(async()=>{try{const [r,f]=await Promise.all([axCall('fam_events'),axCall('family').catch(()=>null)]);if(f){AXFAM=f;AXME=f.me||AXME}FAM={events:r.events||[],at:Date.now()};FAMERR='';famSave();try{tkReminderCache()}catch(_){}try{if(wsShare().on)setTimeout(()=>wsShareSync(),400)}catch(_){}}
     catch(e){FAMERR=axErrTxt(e)}finally{FAMLOAD=null}
     if(S.tab==='family'||S.tab==='home'){const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}})();return FAMLOAD}
 // the title of my own "busy only" events stays private to me (encrypted with the rest of my data)
 const famPriv=()=>get('famprivate',{t:{}});
+const famPrivEvents=()=>((famPriv().ev)||[]).map(e=>Object.assign({},e,{vis:'private',owner:axIdK(famMe()),who:[axIdK(famMe())]}));
+const famAll=()=>(FAM.events||[]).concat(famPrivEvents());
 const famTitle=ev=>ev.vis==='busy'?(axIdEq(ev.owner,famMe())?((famPriv().t||{})[ev.id]||'Busy (private)'):'Busy'):ev.title;
 
 // ---------- dates and repeats ----------
@@ -4333,7 +4336,7 @@ const famDT=s=>{const [d,t]=String(s).split('T'),[y,m,dd]=d.split('-').map(Numbe
 const famDay=s=>String(s).slice(0,10);
 const famDiff=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
 const famHM=s=>String(s).includes('T')?famDT(s).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'';
-function famRepeatsOn(ev,day){const b=famDay(ev.start),r=ev.recur;if(day<b)return false;if(!r)return day===b;if(r.until&&day>r.until)return false;
+function famRepeatsOn(ev,day){const b=famDay(ev.start),r=ev.recur;if(day<b)return false;if(!r)return day===b;if(r.until&&day>r.until)return false;if(r.skip&&r.skip.includes(day))return false;
   const n=r.n||1,diff=famDiff(b,day),D=parse(day),B=parse(b);
   if(r.f==='daily'||r.f==='days')return diff%n===0;
   if(r.f==='weekly'){const by=r.by&&r.by.length?r.by:[B.getDay()];if(!by.includes(D.getDay()))return false;const wk=Math.floor((diff+B.getDay())/7);return wk%n===0}
@@ -4347,13 +4350,13 @@ function famOcc(ev,from,to){const out=[],span=Math.max(0,famDiff(famDay(ev.start
     const last=ev.allday?addDays(d,span):famDay(ymd(new Date(e.getTime()-60000)));if(last<from)continue;out.push({ev,day:d,last,s,e})}
   return out}
 function famInRange(from,to){const sel=S.ff&&S.ff.length?S.ff:null,out=[];
-  (FAM.events||[]).forEach(ev=>{if(sel&&!(ev.who||[]).some(w=>sel.some(x=>axIdEq(x,w))))return;famOcc(ev,from,to).forEach(o=>out.push(o))});
+  famAll().forEach(ev=>{if(sel&&!(ev.who||[]).some(w=>sel.some(x=>axIdEq(x,w))))return;famOcc(ev,from,to).forEach(o=>out.push(o))});
   return out.sort((a,b)=>(a.ev.allday===b.ev.allday?a.s-b.s:a.ev.allday?-1:1))}
 const famOnDay=(list,d)=>list.filter(o=>o.day<=d&&o.last>=d);
 // people double-booked: timed occurrences of the same person that overlap
 function famConflicts(ev,ignoreId){const from=famDay(ev.start),to=ev.recur?(ev.recur.until&&ev.recur.until<addDays(from,120)?ev.recur.until:addDays(from,120)):famDay(ev.end);
   if(ev.allday)return [];const mine=famOcc(ev,from,to),out=[],seen=new Set();
-  (FAM.events||[]).forEach(o=>{if(o.id===ignoreId||o.allday)return;const people=(o.who||[]).filter(w=>(ev.who||[]).some(x=>axIdEq(x,w)));if(!people.length)return;
+  famAll().forEach(o=>{if(o.id===ignoreId||o.allday)return;const people=(o.who||[]).filter(w=>(ev.who||[]).some(x=>axIdEq(x,w)));if(!people.length)return;
     famOcc(o,from,to).forEach(b=>mine.forEach(a=>{if(a.s<b.e&&b.s<a.e){const k=o.id+b.day;if(seen.has(k))return;seen.add(k);out.push({ev:o,day:b.day,s:b.s,people})}}))});
   return out.sort((a,b)=>a.s-b.s)}
 const famConflictSet=list=>{const ids=new Set();for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){const a=list[i],b=list[j];if(a.ev.allday||b.ev.allday)continue;
@@ -4364,7 +4367,7 @@ function famRepeatText(r){if(!r)return '';const n=r.n||1,W=['Sun','Mon','Tue','W
 
 // ---------- reminders: shared events join the task reminders (in the app, and pushed when AXIS is closed) ----------
 function famReminders(){const out=[],now=Date.now(),me=famMe(),td=today();if(!me)return out;
-  (FAM.events||[]).forEach(ev=>{if(ev.vis!=='shared'||!ev.remind||ev.allday||!(ev.who||[]).some(w=>axIdEq(w,me))||(ev.rsvp||{})[axIdK(me)]==='no')return;
+  famAll().forEach(ev=>{if(ev.vis==='busy'||!ev.remind||ev.allday||!(ev.who||[]).some(w=>axIdEq(w,me))||(ev.rsvp||{})[axIdK(me)]==='no')return;
     famOcc(ev,td,addDays(td,7)).forEach(o=>{const at=o.s.getTime()-ev.remind*60000;if(at>now-60000)out.push({id:'fam-'+ev.id,at,t:('Family: '+ev.title).slice(0,120)})})});return out}
 if(typeof tkReminders==='function'){const _tk=tkReminders;tkReminders=function(){let a=[];try{a=_tk()}catch(e){}try{a=a.concat(famReminders())}catch(e){}return a.sort((x,y)=>x.at-y.at).slice(0,100)}}
 
@@ -4372,8 +4375,8 @@ if(typeof tkReminders==='function'){const _tk=tkReminders;tkReminders=function()
 function famSwitchHTML(){if(window.claude||!famOn())return '';const fam=S.tab==='family';
   return `<div class="seg3 famsw" role="group" aria-label="Workspace" style="grid-template-columns:1fr 1fr;margin:0 0 12px"><button data-famsw="mine" aria-pressed="${!fam}">My AXIS</button><button data-famsw="family" aria-pressed="${fam}">AXIS Family</button></div>`}
 // a glance at today's family plans on My AXIS
-function famTodayHTML(){if(!famOn()||!(FAM.events||[]).length)return '';const td=today(),list=famOnDay(famInRange(td,td),td).filter(o=>o.ev.vis==='shared'&&(o.ev.allday||o.e>new Date()));if(!list.length)return '';
-  return `<div class="card famglance"><div class="chd"><h2>Family today</h2><button class="lnkg" data-famsw="family">Open</button></div>${list.slice(0,4).map(o=>famRow(o,false)).join('')}</div>`}
+function famTodayHTML(){if(!famOn())return '';const td=today(),list=famOnDay(famInRange(td,td),td).filter(o=>o.ev.vis!=='busy'&&(o.ev.allday||o.e>new Date())),ch=typeof hhOccur==='function'?hhOccur(addDays(td,-7),td).filter(o=>!o.done&&hhMine(o.c,o.day)):[];if(!list.length&&!ch.length)return '';
+  return `<div class="card famglance"><div class="chd"><h2>Family today</h2><button class="lnkg" data-famsw="family">Open</button></div>${list.slice(0,4).map(o=>famRow(o,false)).join('')}${ch.length?`<button class="famev" data-famsw="family" data-hhgo="chores"><span class="fambars"><i style="background:var(--acc)"></i></span><span class="famt"><b>${ch.length} chore${ch.length===1?'':'s'} for you</b><small>${esc(ch.slice(0,3).map(o=>o.c.title).join(', '))}${ch.some(hhOverdue)?' · <span class="famwarn">some overdue</span>':''}</small></span></button>`:''}</div>`}
 
 // ---------- welcome, people and quick actions ----------
 const AXCOLORNAMES={'#bda16b':'Gold','#7fa7c9':'Sky','#c98f7f':'Clay','#8fbf8a':'Mint','#b59ad1':'Lilac','#d1b35a':'Mustard','#6fb8b0':'Teal','#d48aa8':'Pink','#e0915a':'Tangerine','#6f9bd8':'Cornflower','#a3b857':'Olive','#c48bd6':'Orchid'};
@@ -4385,7 +4388,7 @@ function famNextLine(){const me=famMe(),td=today(),now=new Date(),list=famInRang
 function famWelcomeHTML(){const ms=famMembers(),me=famMe(),mine=famMember(me),nm=axName(),col=(mine&&mine.color)||'#bda16b';
   return `<div class="card famwel"><h2 style="margin:0">${nm?'Welcome, '+esc(nm.split(' ')[0]):'Welcome to AXIS Family'}</h2><p class="muted" style="margin:4px 0 0">${esc(famNextLine())}</p>
     ${ms.length?`<div class="famppl" role="list" aria-label="Your family">${ms.map(m=>`<div class="famav" role="listitem"><span class="famavc" style="background:${esc(m.color||'#bda16b')}" aria-hidden="true">${esc(famInitials(m))}</span><small>${esc(famFirst(m))}${axIdEq(m.sub,me)?' (you)':''}</small></div>`).join('')}</div>`:''}
-    <div class="chips famqa"><button class="btn sm pri" data-famnew="">＋ Add event</button><button class="btn sm" data-famv="week">This week</button><button class="btn sm" data-famcol aria-expanded="${!!S.fcol}"><span class="famdot" style="background:${esc(col)}"></span>Your color</button></div>
+    <div class="chips famqa"><button class="btn sm pri" data-famnew="">＋ Add event</button><button class="btn sm" data-hhcap="">✨ Suggest from a note</button><button class="btn sm" data-famcol aria-expanded="${!!S.fcol}"><span class="famdot" style="background:${esc(col)}"></span>Your color</button></div>
     ${S.fcol?`<div class="famcolp"><p class="calnote" style="margin:10px 0 6px">Your color marks your events on the family calendar. It’s separate from your app theme, so you can use any theme with any color.</p>
       <div class="chips" role="radiogroup" aria-label="Your calendar color">${AXCOLORS.map(k=>`<button class="axsw" role="radio" data-famcolk="${k}" style="background:${k}" aria-label="${esc(AXCOLORNAMES[k]||k)}" aria-checked="${col===k}" aria-pressed="${col===k}"></button>`).join('')}</div></div>`:''}</div>`}
 // starting points when the calendar is empty (all editable before saving)
@@ -4396,6 +4399,8 @@ function vFamily(){if(!famOn())return `<div class="card"><h2>AXIS Family</h2><p 
   famLoad();if(!AXFAM)axLoadFamily();
   if(S.fedit)return famEditorHTML();
   if(S.fopen)return famDetailHTML();
+  if(S.hhcap||S.hhedit)return hhView();
+  if(S.fsec&&S.fsec!=='calendar')return famWelcomeHTML()+hhSecBar()+hhView();
   const v=S.fv||'agenda',d=S.fd||today();
   const seg=`<div class="seg3" role="group" aria-label="Calendar view" style="grid-template-columns:repeat(4,1fr)">${[['agenda','Agenda'],['day','Day'],['week','Week'],['month','Month']].map(([k,l])=>`<button data-famv="${k}" aria-pressed="${v===k}">${l}</button>`).join('')}</div>`;
   const ms=famMembers(),sel=S.ff||[];
@@ -4404,14 +4409,14 @@ function vFamily(){if(!famOn())return `<div class="card"><h2>AXIS Family</h2><p 
   const nav=`<div class="famnav"><button class="btn sm" data-famnav="-1" aria-label="Earlier">‹</button><b>${esc(lbl)}</b><button class="btn sm" data-famnav="1" aria-label="Later">›</button>${d!==today()?'<button class="lnkg" data-famnav="0">Today</button>':''}</div>`;
   const body=v==='month'?famMonthHTML(d):v==='week'?famWeekHTML(d):v==='day'?famDayHTML(d):famAgendaHTML(d);
   const st=FAMERR?`<p class="calnote">⚠ ${esc(FAMERR)}${FAM.at?' · showing what was saved '+esc(new Date(FAM.at).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})):''}</p>`:'';
-  return `${famWelcomeHTML()}<div class="card famhub"><div class="chd"><h2>Family calendar</h2><button class="btn sm pri" data-famnew="${esc(v==='day'?d:'')}">＋ Event</button></div>${seg}${chips}${nav}${st}${body}</div>
+  return `${famWelcomeHTML()}${hhSecBar()}<div class="card famhub"><div class="chd"><h2>Family calendar</h2><button class="btn sm pri" data-famnew="${esc(v==='day'?d:'')}">＋ Event</button></div>${seg}${chips}${nav}${st}${body}</div>
     <p class="calnote">Shared events are visible to everyone in the family. “Busy only” shows others just the time. Private plans stay in My AXIS.</p>`}
 const famWeekStart=d=>addDays(d,-parse(d).getDay());
 function famRow(o,showDay,cset){const ev=o.ev,busy=ev.vis==='busy',who=ev.who||[],me=famMe(),ans=(ev.rsvp||{})[axIdK(me)];
   const time=ev.allday?'All day':esc(o.s.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))+(o.day!==o.last?' → '+esc(fmtDate(o.last,{weekday:'short'})):'');
   const bars=who.slice(0,5).map(w=>`<i style="background:${esc(famColor(w))}"></i>`).join('');
   const conflict=cset&&cset.has(ev.id+o.day);
-  return `<button class="famev${busy?' busy':''}" data-famopen="${esc(ev.id)}" data-day="${esc(o.day)}"><span class="fambars">${bars}</span><span class="famt">${showDay?`<small>${esc(fmtDate(o.day,{weekday:'short',month:'short',day:'numeric'}))}</small>`:''}<small>${time}${ev.recur?' · ↻':''}${conflict?' · <b class="famwarn">overlaps</b>':''}</small><b>${esc(famTitle(ev))}</b>
+  return `<button class="famev${busy?' busy':''}${ev.vis==='private'?' priv':''}" data-famopen="${esc(ev.id)}" data-day="${esc(o.day)}"><span class="fambars">${bars}</span><span class="famt">${showDay?`<small>${esc(fmtDate(o.day,{weekday:'short',month:'short',day:'numeric'}))}</small>`:''}<small>${time}${ev.recur?' · ↻':''}${conflict?' · <b class="famwarn">overlaps</b>':''}</small><b>${ev.vis==='private'?'🔒 ':''}${esc(famTitle(ev))}</b>
     <small>${busy?esc(famName(ev.owner)):esc(who.map(famName).join(', '))}${ev.driver?' · 🚗 '+esc(famName(ev.driver)):''}${!busy&&ev.location?' · '+esc(ev.location):''}${!busy&&who.some(w=>axIdEq(w,me))&&!ans?' · <b>reply?</b>':''}</small></span></button>`}
 function famAgendaHTML(d){const to=addDays(d,30),list=famInRange(d,to),cset=famConflictSet(list);if(!list.length)return famEmptyHTML('Nothing on the family calendar in the next 30 days.');
   let out='',last='';list.forEach(o=>{const day=o.day<d?d:o.day;if(day!==last){out+=`<h3 class="famdh">${esc(day===today()?'Today':day===addDays(today(),1)?'Tomorrow':fmtDate(day,{weekday:'long',month:'short',day:'numeric'}))}</h3>`;last=day}out+=famRow(o,false,cset)});return out}
@@ -4425,8 +4430,8 @@ function famMonthHTML(d){const first=d.slice(0,8)+'01',start=famWeekStart(first)
   return `<div class="famgrid">${['S','M','T','W','T','F','S'].map(x=>`<span class="famwd">${x}</span>`).join('')}${cells}</div>`}
 
 // ---------- one event ----------
-function famFind(id){return (FAM.events||[]).find(e=>e.id===id)}
-const famCanEdit=ev=>!ev.auto&&(axIdEq(ev.owner,famMe())||(!ev.lock&&famIsAdmin()&&ev.vis==='shared'));
+function famFind(id){return famAll().find(e=>e.id===id)}
+const famCanEdit=ev=>ev.vis==='private'||!ev.auto&&(axIdEq(ev.owner,famMe())||(!ev.lock&&famIsAdmin()&&ev.vis==='shared'));
 function famDetailHTML(){const ev=famFind(S.fopen.id);if(!ev){S.fopen=null;return vFamily()}
   const o=famOcc(ev,S.fopen.day,S.fopen.day)[0],me=famMe(),busy=ev.vis==='busy',ans=(ev.rsvp||{})[axIdK(me)],invited=(ev.who||[]).some(w=>axIdEq(w,me));
   const when=ev.allday?(famDay(ev.start)===famDay(ev.end)?fmtDate(o?o.day:famDay(ev.start)):fmtDate(o?o.day:famDay(ev.start),{month:'short',day:'numeric'})+' – '+fmtDate(o?o.last:famDay(ev.end),{month:'short',day:'numeric'}))+' · all day'
@@ -4443,22 +4448,23 @@ function famDetailHTML(){const ev=famFind(S.fopen.id);if(!ev){S.fopen=null;retur
     ${ev.remind?`<p class="calnote">Reminder ${ev.remind>=1440?'1 day':ev.remind>=60?ev.remind/60+' hour'+(ev.remind>60?'s':''):ev.remind+' minutes'} before, for everyone invited.</p>`:''}
     ${conf.length?`<p class="famwarn">⚠ Overlaps with ${conf.map(c=>esc(famTitle(c.ev))+' ('+esc(c.people.map(famName).join(', '))+')').join('; ')}</p>`:''}
     ${invited?`<span class="lbl">Your answer</span><div class="chips">${['yes','maybe','no'].map(k=>`<button class="chip sm" data-famrsvp="${k}" aria-pressed="${ans===k}">${L[k]}</button>`).join('')}</div>`:''}`}
-    <div class="chips" style="margin-top:12px">${famCanEdit(ev)?`<button class="btn sm" data-famedit="${esc(ev.id)}">Edit</button><button class="btn sm" data-famdel="${esc(ev.id)}">Delete</button>`:''}<button class="btn sm" data-famics="${esc(ev.id)}">Add to my calendar (.ics)</button></div>
+    ${ev.vis==='private'?'<p class="calnote">🔒 Private: only you can see this.</p>':''}
+    <div class="chips" style="margin-top:12px">${famCanEdit(ev)?`<button class="btn sm" data-famedit="${esc(ev.id)}">${ev.recur?'Edit series':'Edit'}</button>${ev.recur?`<button class="btn sm" data-famskip="${esc(ev.id)}">Skip this date</button>`:''}<button class="btn sm" data-famdel="${esc(ev.id)}">Delete</button>`:''}<button class="btn sm" data-famics="${esc(ev.id)}">Add to my calendar (.ics)</button></div>
     <p class="calnote">${ev.auto==='shift'?(axIdEq(ev.owner,me)?'Shared automatically from your schedule. Change your schedule or what’s shared in More › Settings › Schedule.':'Shared automatically from '+esc(famName(ev.owner))+'’s work schedule.'):'Added by '+esc(famName(ev.by||ev.owner))+'.'+(famCanEdit(ev)&&!axIdEq(ev.owner,me)?' You can edit it as a family administrator.':'')}</p></div>`}
 
 // ---------- editor ----------
 function famBlank(day){const d=day||S.fd||today(),me=famMe();return {title:'',kind:'family',vis:'shared',allday:false,date:d,endDate:d,t1:'18:00',t2:'19:00',who:me?[axIdK(me)]:[],driver:'',location:'',notes:'',rf:'',rn:2,by:[parse(d).getDay()],until:'',remind:0}}
-function famToForm(ev){const f=famBlank(famDay(ev.start));Object.assign(f,{id:ev.id,title:famTitle(ev)==='Busy (private)'?'':famTitle(ev),kind:ev.kind||'family',vis:ev.vis,allday:!!ev.allday,date:famDay(ev.start),endDate:famDay(ev.end),
+function famToForm(ev){const f=famBlank(famDay(ev.start));Object.assign(f,{skip:(ev.recur||{}).skip||[],id:ev.id,title:famTitle(ev)==='Busy (private)'?'':famTitle(ev),kind:ev.kind||'family',vis:ev.vis,allday:!!ev.allday,date:famDay(ev.start),endDate:famDay(ev.end),
   t1:String(ev.start).slice(11)||'18:00',t2:String(ev.end).slice(11)||'19:00',who:(ev.who||[]).map(axIdK),driver:ev.driver||'',location:ev.location||'',notes:ev.notes||'',remind:ev.remind||0});
   if(ev.recur){f.rf=ev.recur.f;f.rn=ev.recur.n||2;f.by=ev.recur.by&&ev.recur.by.length?ev.recur.by:[parse(f.date).getDay()];f.byTouched=true;f.until=ev.recur.until||''}return f}
-function famEditorHTML(){const f=S.fedit,ms=famMembers(),me=famMe(),busy=f.vis==='busy',W=['S','M','T','W','T','F','S'];
+function famEditorHTML(){const f=S.fedit,ms=famMembers(),me=famMe(),busy=f.vis!=='shared',W=['S','M','T','W','T','F','S'];
   const memChip=(m,on,attr)=>`<button class="chip sm" ${attr}="${esc(axIdK(m.sub))}" aria-pressed="${on}"><span class="famdot" style="background:${esc(m.color||'#bda16b')}"></span>${esc(m.name||(m.email||'').split('@')[0]||'Member')}${axIdEq(m.sub,me)?' (you)':''}</button>`;
   const step=S.fstep;
   if(step&&step.kind==='confirm')return `<div class="card famed"><h2>Before you save</h2>${step.html}<div class="chips" style="margin-top:12px"><button class="btn sm pri" data-famok="1">${esc(step.ok)}</button><button class="btn sm" data-famok="0">Go back</button></div></div>`;
   return `<div class="card famed"><button class="lnkg" data-famcancel>‹ Cancel</button><h2 style="margin:8px 0">${f.id?'Edit event':'New family event'}</h2>
-    <span class="lbl">Who can see it</span><div class="seg3" style="grid-template-columns:1fr 1fr" role="group" aria-label="Visibility"><button data-famvis="shared" aria-pressed="${!busy}">Shared with family</button><button data-famvis="busy" aria-pressed="${busy}">Busy only</button></div>
-    <p class="calnote">${busy?'The family sees “Busy” at this time. The title stays private on your devices.':'Everyone in the family can see this event.'}</p>
-    <label class="mrf"><span class="lbl">${busy?'Title (only you see it)':'Title'}</span><input data-ff="title" value="${esc(f.title)}" maxlength="120" placeholder="${busy?'e.g. Doctor':'e.g. Family worship'}"></label>
+    <span class="lbl">Who can see it</span><div class="seg3" style="grid-template-columns:repeat(3,1fr)" role="group" aria-label="Visibility"><button data-famvis="shared" aria-pressed="${f.vis==='shared'}">Shared</button><button data-famvis="busy" aria-pressed="${f.vis==='busy'}">Busy only</button><button data-famvis="private" aria-pressed="${f.vis==='private'}">Private</button></div>
+    <p class="calnote">${f.vis==='private'?'Only you can see this. It stays on your devices (encrypted) and still helps AXIS spot your conflicts.':busy?'The family sees “Busy” at this time. The title stays private on your devices.':'Everyone in the family can see this event.'}</p>
+    <label class="mrf"><span class="lbl">${f.vis==='busy'?'Title (only you see it)':'Title'}</span><input data-ff="title" value="${esc(f.title)}" maxlength="120" placeholder="${busy?'e.g. Doctor':'e.g. Family worship'}"></label>
     ${busy?'':`<label class="mrf"><span class="lbl">Type</span><select data-ff="kind">${FAMKINDS.map(([k,l])=>`<option value="${k}"${f.kind===k?' selected':''}>${l}</option>`).join('')}</select></label>`}
     <label class="axchk"><input type="checkbox" data-ff="allday"${f.allday?' checked':''}> All day</label>
     <div class="famtimes"><label class="mrf"><span class="lbl">${f.allday?'Starts':'Date'}</span><input type="date" data-ff="date" value="${esc(f.date)}"></label>
@@ -4475,13 +4481,17 @@ function famEditorHTML(){const f=S.fedit,ms=famMembers(),me=famMe(),busy=f.vis==
     ${S.fmsg?`<p class="axmsg">${esc(S.fmsg)}</p>`:''}
     <div class="chips" style="margin-top:12px"><button class="btn pri" data-famsave>${f.id?'Save changes':'Add to family calendar'}</button></div></div>`}
 function famReadForm(){const f=S.fedit;document.querySelectorAll('#main [data-ff]').forEach(el=>{const k=el.dataset.ff;f[k]=el.type==='checkbox'?el.checked:el.value});return f}
-function famFormToEvent(f){const ev={vis:f.vis,title:(f.title||'').trim(),allday:!!f.allday,who:f.vis==='busy'?[axIdK(famMe())]:f.who,kind:f.kind,driver:f.driver,location:f.location,notes:f.notes,remind:Number(f.remind)||0};
+function famFormToEvent(f){const ev={vis:f.vis,title:(f.title||'').trim(),allday:!!f.allday,who:f.vis!=='shared'?[axIdK(famMe())]:f.who,kind:f.kind,driver:f.driver,location:f.location,notes:f.notes,remind:Number(f.remind)||0};
   if(f.id)ev.id=f.id;
   if(f.allday){ev.start=f.date;ev.end=f.endDate&&f.endDate>=f.date?f.endDate:f.date}
   else{ev.start=f.date+'T'+f.t1;ev.end=(f.t2<=f.t1?addDays(f.date,1):f.date)+'T'+f.t2}   // ending at or before the start time means it runs past midnight
-  if(f.rf){ev.recur={f:f.rf,n:f.rf==='days'?Math.max(2,Math.min(60,parseInt(f.rn,10)||2)):1};if(f.rf==='weekly')ev.recur.by=f.byTouched&&f.by.length?f.by:[parse(f.date).getDay()];if(f.until)ev.recur.until=f.until}
+  if(f.rf){ev.recur={f:f.rf,n:f.rf==='days'?Math.max(2,Math.min(60,parseInt(f.rn,10)||2)):1};if(f.skip&&f.skip.length)ev.recur.skip=f.skip;if(f.rf==='weekly')ev.recur.by=f.byTouched&&f.by.length?f.by:[parse(f.date).getDay()];if(f.until)ev.recur.until=f.until}
   return ev}
-async function famSubmit(ev,f){const r=await axCall('fam_event_put',{event:ev});const saved=r.event;
+async function famSubmit(ev,f){if(ev.vis==='private'){const p=famPriv();p.ev=(p.ev||[]).filter(x=>x.id!==ev.id);const saved=Object.assign({},ev,{id:ev.id||'pv_'+uid(),title:ev.title||'Private'});delete saved.vis;delete saved.who;p.ev.push(saved);save('famprivate');
+    if(f.id&&!String(f.id).startsWith('pv_')){await axCall('fam_event_del',{id:f.id});FAM.events=FAM.events.filter(e=>e.id!==f.id);famSave()}
+    S.fedit=null;S.fstep=null;S.fmsg='';S.fopen={id:saved.id,day:famDay(saved.start)};capToast('Saved privately.',null);return}
+  if(f.id&&String(f.id).startsWith('pv_')){const p=famPriv();p.ev=(p.ev||[]).filter(x=>x.id!==f.id);save('famprivate');delete ev.id}
+  const r=await axCall('fam_event_put',{event:ev});const saved=r.event;
   if(ev.vis==='busy'){const p=famPriv();p.t=p.t||{};p.t[saved.id]=f.title||'';save('famprivate')}
   FAM.events=(FAM.events||[]).filter(e=>e.id!==saved.id).concat(saved);famSave();try{tkReminderCache()}catch(_){}
   S.fedit=null;S.fstep=null;S.fmsg='';S.fopen={id:saved.id,day:famDay(saved.start)};capToast(ev.id?'Event updated.':'Added to the family calendar.',null);famLoad(true)}
@@ -4492,14 +4502,18 @@ function famIcs(ev){const p=s=>String(s).replace(/[-:]/g,''),esc2=s=>String(s||'
   return 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//AXIS//Family//EN\r\nBEGIN:VEVENT\r\nUID:'+ev.id+'@axis\r\nDTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z\r\nDTSTART'+dt(ev.start,ev.allday)+'\r\nDTEND'+dt(end,ev.allday)+'\r\n'+rr+'SUMMARY:'+esc2(famTitle(ev))+'\r\n'+(ev.location?'LOCATION:'+esc2(ev.location)+'\r\n':'')+(ev.notes?'DESCRIPTION:'+esc2(ev.notes)+'\r\n':'')+'END:VEVENT\r\nEND:VCALENDAR\r\n'}
 
 // ---------- taps ----------
-document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.closest('[data-famsw],[data-famv],[data-famf],[data-famnav],[data-famday],[data-famopen],[data-famback],[data-famnew],[data-famedit],[data-famdel],[data-famrsvp],[data-famics],[data-famcancel],[data-famvis],[data-famwho],[data-famby],[data-famsave],[data-famok],[data-famcol],[data-famcolk],[data-famsug]');
+document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.closest('[data-famsw],[data-famv],[data-famf],[data-famnav],[data-famday],[data-famopen],[data-famback],[data-famnew],[data-famedit],[data-famdel],[data-famrsvp],[data-famics],[data-famcancel],[data-famvis],[data-famwho],[data-famby],[data-famsave],[data-famok],[data-famcol],[data-famcolk],[data-famsug],[data-famskip]');
   if(!t||!document.getElementById('main').contains(t))return;e.preventDefault();const D=t.dataset,y=scrollY,redraw=(top)=>{render();scrollTo(0,top?0:y)};
   if(S.fedit&&!('famsave' in D)&&!('famok' in D)&&!('famcancel' in D))famReadForm();
   try{
+    if('famskip' in D){if(!t.dataset.armed){t.dataset.armed=1;t.textContent='Tap again: skip '+fmtDate(S.fopen.day,{month:'short',day:'numeric'});return}const ev=famFind(D.famskip),day=S.fopen.day,rec=Object.assign({},ev.recur,{skip:((ev.recur||{}).skip||[]).concat(day)});
+      if(ev.vis==='private'){const p=famPriv();p.ev=(p.ev||[]).map(x=>x.id===ev.id?Object.assign({},x,{recur:rec}):x);save('famprivate')}
+      else{const r=await axCall('fam_event_put',{event:Object.assign({},ev,{recur:rec})});FAM.events=FAM.events.map(x=>x.id===ev.id?r.event:x);famSave()}
+      S.fopen=null;capToast('Skipped just '+fmtDate(day,{weekday:'short',month:'short',day:'numeric'})+'. The rest of the series stays.',null);redraw(true);return}
     if('famcol' in D){S.fcol=!S.fcol;redraw();return}
     if('famcolk' in D){const k=D.famcolk;await axCall('profile',{color:k});AXME=Object.assign(AXME||{},{color:k});const m=famMember(famMe());if(m)m.color=k;S.fcol=false;capToast('Your calendar color is updated for the whole family.',null);redraw();famLoad(true);return}
     if('famsug' in D){const x=FAMSUG[Number(D.famsug)],f=famBlank(S.fv==='day'?S.fd:addDays(today(),1));Object.assign(f,{title:x[0],kind:x[1],t1:x[2],t2:x[3],rf:x[4]});if(x[5]){f.by=x[5];f.byTouched=true}S.fedit=f;S.fstep=null;S.fmsg='';redraw(true);return}
-    if('famsw' in D){S.tab=D.famsw==='family'?'family':'home';if(S.tab==='home')S.date=today();S.fedit=null;S.fopen=null;redraw(true);return}
+    if('famsw' in D){if(t.dataset.hhgo)S.fsec=t.dataset.hhgo;S.tab=D.famsw==='family'?'family':'home';if(S.tab==='home')S.date=today();S.fedit=null;S.fopen=null;redraw(true);return}
     if('famv' in D){S.fv=D.famv;redraw();return}
     if('famf' in D){const s=D.famf;if(!s)S.ff=[];else{S.ff=S.ff||[];S.ff=S.ff.some(x=>axIdEq(x,s))?S.ff.filter(x=>!axIdEq(x,s)):S.ff.concat(s)}redraw();return}
     if('famnav' in D){const v=S.fv||'agenda',d=S.fd||today(),n=Number(D.famnav);if(!n)S.fd=today();else if(v==='month'){const x=parse(d);x.setDate(1);x.setMonth(x.getMonth()+n);S.fd=ymd(x)}else S.fd=addDays(d,n*(v==='day'?1:v==='week'?7:30));redraw();return}
@@ -4516,10 +4530,10 @@ document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.c
       if(f.vis==='shared'&&!f.title.trim()){S.fmsg='Give the event a title.';redraw();return}
       if(!f.date){S.fmsg='Pick a date.';redraw();return}
       if(f.vis==='shared'&&!f.who.length)f.who=[axIdK(me)];
-      const ev=famFormToEvent(f);
+      const ev=famFormToEvent(f);if(ev.id&&String(ev.id).startsWith('pv_')&&ev.vis!=='private')delete ev.id;
       if(ev.allday&&ev.end<ev.start){S.fmsg='The end date is before the start.';redraw();return}
       // explicit approval before involving or assigning anyone else, and a heads-up about overlaps
-      const old=f.id?famFind(f.id):null,oldWho=old?(old.who||[]):[],others=ev.vis==='shared'?ev.who.filter(w=>!axIdEq(w,me)&&!oldWho.some(x=>axIdEq(x,w))):[],newDriver=ev.driver&&!axIdEq(ev.driver,me)&&!(old&&axIdEq(old.driver,ev.driver));
+      const old=f.id?famFind(f.id):null,oldWho=old&&old.vis!=='private'?(old.who||[]):[],others=ev.vis==='shared'?ev.who.filter(w=>!axIdEq(w,me)&&!oldWho.some(x=>axIdEq(x,w))):[],newDriver=ev.driver&&!axIdEq(ev.driver,me)&&!(old&&axIdEq(old.driver,ev.driver));
       const conf=famConflicts(Object.assign({},ev,{who:ev.vis==='busy'?[axIdK(me)]:ev.who}),f.id).slice(0,6);
       if(others.length||newDriver||conf.length){S.fstep={kind:'confirm',ok:'Save',ev,f,html:
         (others.length?`<p>You’re adding <b>${esc(others.map(famName).join(', '))}</b> to this event. They’ll see it in AXIS Family and can reply.</p>`:'')+
@@ -4529,7 +4543,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.c
     if('famok' in D){const st=S.fstep;S.fstep=null;if(D.famok==='1'&&st){t.textContent='Saving…';await famSubmit(st.ev,st.f)}redraw(true);return}
     if('famrsvp' in D){const r=await axCall('fam_rsvp',{id:S.fopen.id,answer:D.famrsvp});FAM.events=(FAM.events||[]).map(x=>x.id===r.event.id?r.event:x);famSave();try{tkReminderCache()}catch(_){}redraw();return}
     if('famdel' in D){if(!t.dataset.armed){t.dataset.armed=1;t.textContent='Tap again to delete';setTimeout(()=>{if(t.isConnected){delete t.dataset.armed;t.textContent='Delete'}},3500);return}
-      await axCall('fam_event_del',{id:D.famdel});FAM.events=(FAM.events||[]).filter(x=>x.id!==D.famdel);famSave();S.fopen=null;capToast('Event deleted.',null);redraw(true);return}
+      if(String(D.famdel).startsWith('pv_')){const p=famPriv();p.ev=(p.ev||[]).filter(x=>x.id!==D.famdel);save('famprivate')}else await axCall('fam_event_del',{id:D.famdel});FAM.events=(FAM.events||[]).filter(x=>x.id!==D.famdel);famSave();S.fopen=null;capToast('Event deleted.',null);redraw(true);return}
     if('famics' in D){const ev=famFind(D.famics);if(!ev)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([famIcs(ev)],{type:'text/calendar'}));a.download=(famTitle(ev).replace(/[^\w ]+/g,'').trim()||'event')+'.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);return}
   }catch(err){S.fstep=null;capToast(err&&err.code==='not_allowed'?'Only the person who added this (or a family administrator, for shared events) can change it.':axErrTxt(err),null);redraw()}},true);
 document.addEventListener('change',e=>{const el=e.target;if(!S.fedit||!el.dataset||!el.dataset.ff||!document.getElementById('main').contains(el))return;famReadForm();if(['allday','rf'].includes(el.dataset.ff)){const y=scrollY;render();scrollTo(0,y)}},true);
@@ -4651,6 +4665,7 @@ function wsCard(){const pr=wsProfile(),own=wsOwnerDefaults(),d=wsDetailOf();
     <p class="calnote">You can also hide or reorder each section at the bottom of Today.</p>
     <span class="lbl" style="display:block;margin-top:14px">Tab bar</span><label class="axchk"><input type="checkbox" data-wsnav="family" ${wsNavFamily()?'checked':''}> Show AXIS Family in the tab bar</label>
     <p class="calnote">Reflect, Spiritual and Growth appear in the tab bar when they’re turned on above.</p>
+    ${axModOn('mreset')?'':`<span class="lbl" style="display:block;margin-top:14px">Reminders on this device</span>${mrPushSection()}`}
     ${own?'':'<div class="chips" style="margin-top:10px"><button class="btn sm" data-wsrerun>Run setup again</button></div>'}`;
   return rc('mo-ws',IC.layers,'Your workspace',WSPROFILES[pr].name+' · '+({simple:'Simple',standard:'Standard',detailed:'Detailed'})[d]+' Today',body,false)}
 
@@ -4721,6 +4736,243 @@ function wsShareWatch(){try{if(!wsShare().on||!shiftOn()||!famOn())return;const 
 // keep shared shifts current: after the calendar loads, after schedule changes, and once in a while
 setInterval(()=>{if(document.visibilityState==='visible'&&wsShare().on)wsShareSync()},120000);
 // ================= /AXIS Workspaces =================
+// ================= AXIS Household =================
+// Chores (with turns and an optional allowance), shared shopping lists, the family board, goals/projects/trips,
+// and "Suggest from a note" (Family Intelligence). Everything shared lives on the family's Apps Script; the server
+// decides who may assign, approve, pay, edit or see allowance money. Nothing is shared or assigned without approval.
+let HH=(()=>{try{return JSON.parse(localStorage.getItem(nsk('axis-hh'))||'null')||{items:[],at:0}}catch(e){return {items:[],at:0}}})();
+let HHLOAD=null,HHERR='';
+const hhSave=()=>{try{localStorage.setItem(nsk('axis-hh'),JSON.stringify(HH))}catch(e){}};
+const hhOf=t=>(HH.items||[]).filter(x=>x.type===t);
+const hhFind=id=>(HH.items||[]).find(x=>x.id===id);
+function hhUpsert(it){HH.items=(HH.items||[]).filter(x=>x.id!==it.id).concat(it);hhSave()}
+async function hhLoad(force){if(!famOn())return;if(HHLOAD)return HHLOAD;if(!force&&Date.now()-HH.at<60000)return;
+  HHLOAD=(async()=>{try{const r=await axCall('fam_items');HH={items:r.items||[],at:Date.now()};HHERR='';hhSave();try{tkReminderCache()}catch(_){}}catch(e){HHERR=axErrTxt(e)}finally{HHLOAD=null}
+    if(S.tab==='family'||S.tab==='home'){const busy=document.activeElement&&main.contains(document.activeElement)&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(!busy){const y=scrollY;render();scrollTo(0,y)}}})();return HHLOAD}
+const money=c=>'$'+(Math.round(c)/100).toFixed(2);
+const hhWinL={any:'Any time',morning:'Morning',afternoon:'Afternoon',evening:'Evening'};
+
+// ---------- chores: when, whose turn, done? ----------
+function hhOn(c,day){if(c.paused||day<c.start)return false;if(!c.recur)return day===c.start;return famRepeatsOn({start:c.start,recur:c.recur},day)}
+function hhOrd(c,day){let n=0;for(let d=c.start;d<day;d=addDays(d,1)){if(hhOn(c,d))n++;if(n>2000)break}return n}
+function hhWho(c,day){if(c.mode==='anyone')return [];if(c.mode==='rotate'&&c.who.length)return [c.who[hhOrd(c,day)%c.who.length]];return c.who||[]}
+const hhDone=(cid,day)=>hhOf('done').find(x=>x.chore===cid&&x.day===day);
+const hhMine=(c,day)=>{const me=famMe();return c.mode==='anyone'||hhWho(c,day).some(w=>axIdEq(w,me))};
+function hhOccur(from,to){const out=[];hhOf('chore').forEach(c=>{for(let d=from;d<=to;d=addDays(d,1))if(hhOn(c,d))out.push({c,day:d,who:hhWho(c,d),done:hhDone(c.id,d)})});return out.sort((a,b)=>a.day<b.day?-1:a.day>b.day?1:0)}
+const hhOverdue=o=>!o.done&&o.day<today();
+function hhBalance(sub){const k=axIdK(sub);const earned=hhOf('done').filter(d=>d.ok&&axIdEq(d.by,k)).reduce((a,d)=>a+(d.amount||0),0),paid=hhOf('pay').filter(p=>axIdEq(p.sub,k)).reduce((a,p)=>a+p.amount,0);return {earned,paid,owed:earned-paid}}
+const hhAllowanceOn=()=>hhOf('chore').some(c=>c.amount>0)||hhOf('pay').length>0;
+// chore reminders join the push schedule for the person whose turn it is
+function hhReminders(){const out=[],now=Date.now(),td=today(),H={morning:'08:00',afternoon:'15:30',evening:'19:00',any:'17:00'};
+  hhOccur(td,addDays(td,2)).forEach(o=>{if(!o.c.remind||o.done||!hhMine(o.c,o.day))return;const at=new Date(o.day+'T'+H[o.c.win||'any']).getTime();if(at>now-60000)out.push({id:'chore-'+o.c.id,at,t:('Chore: '+o.c.title).slice(0,120)})});return out}
+if(typeof tkReminders==='function'){const _t=tkReminders;tkReminders=function(){let a=[];try{a=_t()}catch(e){}try{a=a.concat(hhReminders())}catch(e){}return a.sort((x,y)=>x.at-y.at).slice(0,100)}}
+
+// ---------- hub sections ----------
+const HHSECS=[['calendar','Calendar'],['chores','Chores'],['lists','Lists'],['board','Board'],['goals','Goals']];
+function hhSecBar(){const s=S.fsec||'calendar',due=hhOccur(addDays(today(),-7),today()).filter(o=>!o.done&&hhMine(o.c,o.day)).length,unseen=hhOf('note').filter(n=>!(n.seen||[]).some(x=>axIdEq(x,famMe()))&&!axIdEq(n.owner,famMe())).length;
+  return `<div class="hhsec" role="tablist" aria-label="AXIS Family">${HHSECS.map(([k,l])=>`<button role="tab" data-hhsec="${k}" aria-selected="${s===k}">${l}${k==='chores'&&due?` <b class="hhbadge">${due}</b>`:''}${k==='board'&&unseen?` <b class="hhbadge">${unseen}</b>`:''}</button>`).join('')}</div>`}
+function hhView(){hhLoad();const s=S.fsec;if(S.hhedit)return hhEditorHTML();if(S.hhcap)return hhCapHTML();
+  const st=HHERR?`<p class="calnote">⚠ ${esc(HHERR)}</p>`:'';
+  return st+(s==='chores'?hhChoresHTML():s==='lists'?hhListsHTML():s==='board'?hhBoardHTML():hhGoalsHTML())}
+
+// ---------- Chores ----------
+function hhChoreRow(o,opts={}){const c=o.c,me=famMe(),mine=hhMine(c,o.day),d=o.done,od=hhOverdue(o);
+  const who=c.mode==='anyone'?'Anyone':o.who.map(famName).join(', ');
+  const st=d?(d.ok?`✓ Done by ${esc(famName(d.by))}`:`Waiting for a parent’s check · ${esc(famName(d.by))}`):od?'<b class="famwarn">Overdue</b>':'';
+  const btn=d?((axIdEq(d.by,me)&&!d.ok)||famIsAdmin()?`<button class="chip sm" data-hhundo="${esc(c.id)}" data-day="${o.day}">Undo</button>`:''):(mine||famIsAdmin())?`<button class="chip sm hhdo" data-hhdone="${esc(c.id)}" data-day="${o.day}">${mine?'Done':'Mark done'}</button>`:'';
+  return `<div class="hhrow${d?' done':''}"><span class="fambars">${(c.mode==='anyone'?[]:o.who).slice(0,3).map(w=>`<i style="background:${esc(famColor(w))}"></i>`).join('')||'<i style="background:var(--line)"></i>'}</span>
+    <span class="famt">${opts.day?`<small>${esc(o.day===today()?'Today':fmtDate(o.day,{weekday:'short',month:'short',day:'numeric'}))}</small>`:''}<b>${esc(c.title)}</b><small>${esc(who)} · ${esc(hhWinL[c.win||'any'])}${c.amount&&(famIsAdmin()||mine)?' · '+money(c.amount):''}${st?' · '+st:''}</small>${c.details&&opts.details?`<small class="hhwhen">Done when: ${esc(c.details)}</small>`:''}</span>
+    <span class="hhact">${btn}${famIsAdmin()&&opts.edit?`<button class="lnkg" data-hhedit="${esc(c.id)}">Edit</button>`:''}</span></div>`}
+function hhChoresHTML(){const td=today(),me=famMe(),adm=famIsAdmin(),past=hhOccur(addDays(td,-7),td),mineNow=past.filter(o=>hhMine(o.c,o.day)&&(o.day===td||!o.done));
+  const check=adm?hhOf('done').filter(d=>!d.ok).map(d=>({d,c:hhFind(d.chore)})).filter(x=>x.c):[];
+  const week=hhOccur(td,addDays(td,6)),ws=famWeekStart(td),wk=hhOccur(ws,addDays(ws,6));
+  const people=famMembers();
+  const sum=people.map(m=>{const mine=wk.filter(o=>o.c.mode!=='anyone'&&o.who.some(w=>axIdEq(w,m.sub))&&o.day<=td),dn=mine.filter(o=>o.done).length;return {m,n:mine.length,dn,od:mine.filter(hhOverdue).length}}).filter(x=>x.n);
+  return `${check.length?`<div class="card"><div class="chd"><h2>Needs your check</h2><small>${check.length}</small></div>${check.map(({d,c})=>`<div class="hhrow"><span class="famt"><b>${esc(c.title)}</b><small>${esc(famName(d.by))} · ${esc(fmtDate(d.day,{weekday:'short',month:'short',day:'numeric'}))}${c.details?' · Done when: '+esc(c.details):''}</small></span><span class="hhact"><button class="chip sm hhdo" data-hhok="${esc(d.id)}">Looks good</button><button class="lnkg" data-hhnot="${esc(d.id)}">Not yet</button></span></div>`).join('')}</div>`:''}
+  <div class="card"><div class="chd"><h2>Your chores</h2>${adm?'<button class="btn sm pri" data-hhnew="chore">＋ Chore</button>':''}</div>
+    ${mineNow.length?mineNow.map(o=>hhChoreRow(o,{day:o.day!==td,details:true})).join(''):'<p class="calnote">Nothing for you right now. 🎉</p>'}</div>
+  <div class="card"><div class="chd"><h2>This week for everyone</h2></div>
+    ${sum.length?`<div class="hhsum">${sum.map(x=>`<div><span class="famavc" style="background:${esc(x.m.color||'#bda16b')}">${esc(famInitials(x.m))}</span><b>${x.dn} of ${x.n}</b><small>${esc(famFirst(x.m))}${x.od?` · <span class="famwarn">${x.od} overdue</span>`:''}</small></div>`).join('')}</div>`:''}
+    ${week.length?(()=>{let out='',last='';week.forEach(o=>{if(o.day!==last){out+=`<h3 class="famdh">${esc(o.day===td?'Today':fmtDate(o.day,{weekday:'long',month:'short',day:'numeric'}))}</h3>`;last=o.day}out+=hhChoreRow(o,{edit:true})});return out})():`<p class="calnote">No chores yet.${adm?' Add one with ＋ Chore: who does it, how often, and what “done” looks like.':' A parent can add chores here.'}</p>`}</div>
+  ${hhAllowanceOn()?hhAllowanceHTML():''}`}
+function hhAllowanceHTML(){const adm=famIsAdmin(),me=famMe(),ms=famMembers().filter(m=>adm?true:axIdEq(m.sub,me));
+  const rows=ms.map(m=>({m,b:hhBalance(m.sub)})).filter(x=>x.b.earned||x.b.paid);
+  return `<div class="card"><div class="chd"><h2>Allowance</h2></div>${rows.length?rows.map(({m,b})=>`<div class="hhrow"><span class="famavc sm" style="background:${esc(m.color||'#bda16b')}">${esc(famInitials(m))}</span><span class="famt"><b>${esc(famFirst(m))}: ${money(b.owed)} to pay</b><small>Earned ${money(b.earned)} · paid ${money(b.paid)}</small></span>${adm&&b.owed>0?`<span class="hhact"><button class="chip sm" data-hhpay="${esc(axIdK(m.sub))}" data-amt="${b.owed}">Record ${money(b.owed)} paid</button></span>`:''}</div>`).join(''):'<p class="calnote">Nothing earned yet.</p>'}
+    <p class="calnote">Counts approved chores that have an amount. ${adm?'Only you, the other parent and each person can see their own allowance.':'Only you and your parents can see this.'}</p></div>`}
+
+// ---------- Lists ----------
+function hhListsHTML(){const lists=hhOf('shoplist').sort((a,b)=>a.created-b.created),cur=lists.find(l=>l.id===S.hhlist)||lists[0];
+  if(!lists.length)return `<div class="card"><h2>Shopping lists</h2><p class="calnote">Share a list with the whole family. Anyone can add things and check them off at the store.</p><div class="chips">${['Groceries','Household','Target run'].map(n=>`<button class="chip sm" data-hhnewlist="${n}">＋ ${n}</button>`).join('')}</div></div>`;
+  const items=hhOf('shop').filter(i=>i.list===cur.id),open=items.filter(i=>!i.done).sort((a,b)=>a.created-b.created),done=items.filter(i=>i.done);
+  return `<div class="card"><div class="chd"><h2>Lists</h2><button class="lnkg" data-hhnewlist="">＋ New list</button></div>
+    <div class="chips">${lists.map(l=>`<button class="chip sm" data-hhlist="${esc(l.id)}" aria-pressed="${l.id===cur.id}">${esc(l.name)} <small>${hhOf('shop').filter(i=>i.list===l.id&&!i.done).length}</small></button>`).join('')}</div>
+    <div class="qadd hhadd"><input data-hhitem placeholder="Add to ${esc(cur.name)}" maxlength="120" aria-label="New item"><input data-hhqty placeholder="Qty" maxlength="20" aria-label="Quantity"><button class="btn sm pri" data-hhadd="${esc(cur.id)}">Add</button></div>
+    ${open.map(i=>`<div class="hhrow"><button class="cb" data-hhtick="${esc(i.id)}" aria-label="Got it: ${esc(i.text)}"><span></span></button><span class="famt"><b>${esc(i.text)}${i.qty?' · '+esc(i.qty):''}</b><small>Added by ${esc(famName(i.by))}</small></span><span class="hhact"><button class="x" data-hhdel="${esc(i.id)}" aria-label="Remove ${esc(i.text)}">✕</button></span></div>`).join('')||'<p class="calnote">All done. Add what you need above.</p>'}
+    ${done.length?`<details class="vomore"><summary>${done.length} checked off</summary>${done.map(i=>`<div class="hhrow done"><button class="cb" data-hhtick="${esc(i.id)}" aria-label="Put back: ${esc(i.text)}"><span>✓</span></button><span class="famt"><b>${esc(i.text)}</b><small>Got it: ${esc(famName(i.doneBy))}</small></span></div>`).join('')}<div class="chips"><button class="btn sm" data-hhclear="${esc(cur.id)}">Clear checked items</button></div></details>`:''}
+    ${axIdEq(cur.owner,famMe())||famIsAdmin()?`<div class="chips" style="margin-top:10px"><button class="lnkg" data-hhdellist="${esc(cur.id)}">Delete this list</button></div>`:''}</div>`}
+
+// ---------- Board ----------
+function hhBoardHTML(){const me=famMe(),td=today(),notes=hhOf('note').filter(n=>!n.until||n.until>=td).sort((a,b)=>(b.pinned-a.pinned)||(b.created-a.created));
+  setTimeout(()=>notes.filter(n=>!(n.seen||[]).some(x=>axIdEq(x,me))&&!axIdEq(n.owner,me)).forEach(n=>axCall('fam_ack',{id:n.id}).then(r=>hhUpsert(r.item)).catch(()=>{})),400);
+  return `<div class="card"><h2>Family board</h2><textarea data-hhpost rows="2" maxlength="1000" placeholder="Share an update with the family" aria-label="New announcement"></textarea>
+    <div class="chips" style="margin-top:6px"><label class="mrf" style="flex:1"><span class="lbl">Show until <small class="muted">(optional)</small></span><input type="date" data-hhuntil></label><button class="btn sm pri" data-hhpostgo>Post</button></div></div>
+    ${notes.map(n=>`<div class="card hhnote${n.pinned?' pin':''}"><div class="chd"><small>${n.pinned?'📌 ':''}${esc(famName(n.owner))} · ${esc(new Date(n.created).toLocaleDateString([],{month:'short',day:'numeric'}))}${n.until?' · until '+esc(fmtDate(n.until,{month:'short',day:'numeric'})):''}</small>
+      <span class="hhact">${famIsAdmin()?`<button class="lnkg" data-hhpin="${esc(n.id)}">${n.pinned?'Unpin':'Pin'}</button>`:''}${axIdEq(n.owner,me)||famIsAdmin()?`<button class="lnkg" data-hhdel="${esc(n.id)}">Delete</button>`:''}</span></div>
+      <p class="famnotes" style="margin:6px 0">${esc(n.text)}</p><small class="muted">Seen by ${esc((n.seen||[]).filter(x=>!axIdEq(x,n.owner)).map(famName).join(', ')||'no one yet')}</small></div>`).join('')||'<p class="calnote">No announcements yet.</p>'}`}
+
+// ---------- Goals, projects and trips ----------
+const HHKIND={goal:'Goal',project:'Project',trip:'Trip'};
+function hhGoalsHTML(){const gs=hhOf('goal').sort((a,b)=>b.created-a.created),me=famMe();
+  if(S.hhgoal){const g=hhFind(S.hhgoal);if(g)return hhGoalDetail(g);S.hhgoal=null}
+  return `<div class="card"><div class="chd"><h2>Goals &amp; projects</h2><button class="btn sm pri" data-hhnew="goal">＋ New</button></div>
+    ${gs.map(g=>{const n=g.steps.length,dn=g.steps.filter(x=>x.done).length;return `<button class="famev" data-hhgoal="${esc(g.id)}"><span class="fambars">${g.who.slice(0,4).map(w=>`<i style="background:${esc(famColor(w))}"></i>`).join('')||'<i style="background:var(--line)"></i>'}</span><span class="famt"><small>${HHKIND[g.kind]}${g.start?' · '+esc(fmtDate(g.start,{month:'short',day:'numeric'}))+(g.end?' – '+esc(fmtDate(g.end,{month:'short',day:'numeric'})):''):''}</small><b>${esc(g.title)}</b><small>${n?dn+' of '+n+' steps':'No steps yet'} · ${esc(g.who.map(famName).join(', ')||famName(g.owner))}</small>${n?`<span class="rtbar"><i style="width:${Math.round(dn/n*100)}%"></i></span>`:''}</span></button>`}).join('')||'<p class="calnote">Plan something together: a family goal, a home project, or a trip with a checklist.</p>'}</div>`}
+function hhGoalDetail(g){const me=famMe(),can=axIdEq(g.owner,me)||famIsAdmin(),inv=can||g.who.some(w=>axIdEq(w,me));
+  return `<div class="card"><button class="lnkg" data-hhgoalback>‹ Goals &amp; projects</button><h2 style="margin:8px 0 2px">${esc(g.title)}</h2>
+    <p class="muted" style="margin:0">${HHKIND[g.kind]}${g.start?' · '+esc(fmtDate(g.start,{month:'short',day:'numeric',year:'numeric'}))+(g.end?' – '+esc(fmtDate(g.end,{month:'short',day:'numeric',year:'numeric'})):''):''}</p>
+    <div class="famwho">${g.who.map(w=>`<span class="famp"><span class="famdot" style="background:${esc(famColor(w))}"></span>${esc(famName(w))}</span>`).join('')}</div>
+    ${g.notes?`<p class="famnotes">${esc(g.notes)}</p>`:''}
+    <span class="lbl">Steps</span>${g.steps.map(s=>`<div class="hhrow${s.done?' done':''}"><button class="cb" data-hhstep="${esc(s.id)}" data-done="${s.done?0:1}" ${inv?'':'disabled'} aria-label="${s.done?'Not done':'Done'}: ${esc(s.t)}"><span>${s.done?'✓':''}</span></button><span class="famt"><b>${esc(s.t)}</b>${s.who?`<small>${esc(famName(s.who))}</small>`:''}${s.done&&s.doneBy?`<small>Done by ${esc(famName(s.doneBy))}</small>`:''}</span></div>`).join('')||'<p class="calnote">No steps yet.</p>'}
+    ${inv?`<div class="qadd" style="grid-template-columns:minmax(0,1fr) auto;margin-top:8px"><input data-hhstepnew placeholder="Add a step" maxlength="200" aria-label="New step"><button class="btn sm" data-hhstepadd>Add</button></div>`:''}
+    <div class="chips" style="margin-top:12px">${can?`<button class="btn sm" data-hhedit="${esc(g.id)}">Edit</button><button class="btn sm" data-hhdel="${esc(g.id)}">Delete</button>`:''}${g.kind==='trip'&&g.start?`<button class="btn sm" data-hhtripcal="${esc(g.id)}">Add to family calendar</button>`:''}</div></div>`}
+
+// ---------- editors (chores and goals) ----------
+function hhBlankChore(){return {type:'chore',title:'',details:'',mode:'fixed',who:[],rf:'weekly',rn:2,by:[parse(today()).getDay()],start:today(),win:'any',amount:'',check:false,remind:true}}
+function hhBlankGoal(){return {type:'goal',kind:'goal',title:'',who:[axIdK(famMe())],start:'',end:'',notes:'',steps:[],newsteps:''}}
+function hhToForm(it){if(it.type==='chore'){const f=hhBlankChore();Object.assign(f,{id:it.id,title:it.title,details:it.details,mode:it.mode,who:it.who.slice(),start:it.start,win:it.win,amount:it.amount?(it.amount/100).toFixed(2):'',check:it.check,remind:it.remind,paused:it.paused});
+    f.rf=it.recur?it.recur.f:'';f.rn=it.recur&&it.recur.n||2;f.by=it.recur&&it.recur.by&&it.recur.by.length?it.recur.by:[parse(it.start).getDay()];return f}
+  return Object.assign(hhBlankGoal(),{id:it.id,kind:it.kind,title:it.title,who:it.who.slice(),start:it.start,end:it.end,notes:it.notes,steps:it.steps.slice()})}
+function hhEditorHTML(){const f=S.hhedit,ms=famMembers(),me=famMe(),W=['S','M','T','W','T','F','S'];
+  if(S.hhstep)return `<div class="card famed"><h2>Before you save</h2>${S.hhstep.html}<div class="chips" style="margin-top:12px"><button class="btn sm pri" data-hhok2="1">Save</button><button class="btn sm" data-hhok2="0">Go back</button></div></div>`;
+  const chip=(m,on,attr)=>`<button class="chip sm" ${attr}="${esc(axIdK(m.sub))}" aria-pressed="${on}"><span class="famdot" style="background:${esc(m.color||'#bda16b')}"></span>${esc(famFirst(m))}${axIdEq(m.sub,me)?' (you)':''}</button>`;
+  if(f.type==='chore')return `<div class="card famed"><button class="lnkg" data-hhcancel>‹ Cancel</button><h2 style="margin:8px 0">${f.id?'Edit chore':'New chore'}</h2>
+    <label class="mrf"><span class="lbl">Chore</span><input data-hf="title" value="${esc(f.title)}" maxlength="120" placeholder="e.g. Empty the dishwasher"></label>
+    <label class="mrf"><span class="lbl">Done when <small class="muted">(what finished looks like)</small></span><input data-hf="details" value="${esc(f.details)}" maxlength="500" placeholder="e.g. Dishes put away, counters wiped"></label>
+    <span class="lbl">Who</span><div class="seg3" role="radiogroup" aria-label="How it’s shared">${[['fixed','Same person'],['rotate','Take turns'],['anyone','Anyone']].map(([k,l])=>`<button data-hhmode="${k}" aria-pressed="${f.mode===k}">${l}</button>`).join('')}</div>
+    ${f.mode==='anyone'?'<p class="calnote">Whoever gets to it first marks it done.</p>':`<div class="chips" style="margin-top:8px">${ms.map(m=>chip(m,f.who.some(x=>axIdEq(x,m.sub)),'data-hhwho')).join('')}</div>${f.mode==='rotate'?`<p class="calnote">Turns go in this order: ${esc(f.who.map(famName).join(' → ')||'pick people above')}.</p>`:''}`}
+    <label class="mrf"><span class="lbl">How often</span><select data-hf="rf"><option value="">Just once</option><option value="daily"${f.rf==='daily'?' selected':''}>Every day</option><option value="weekly"${f.rf==='weekly'?' selected':''}>Every week</option><option value="days"${f.rf==='days'?' selected':''}>Every few days</option><option value="monthly"${f.rf==='monthly'?' selected':''}>Every month</option></select></label>
+    ${f.rf==='weekly'?`<div class="chips">${W.map((x,i)=>`<button class="chip sm" data-hhby="${i}" aria-pressed="${f.by.includes(i)}" aria-label="${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][i]}">${x}</button>`).join('')}</div>`:''}
+    ${f.rf==='days'?`<label class="mrf"><span class="lbl">Every how many days?</span><input type="number" min="2" max="60" data-hf="rn" value="${esc(f.rn)}" inputmode="numeric"></label>`:''}
+    <div class="famtimes"><label class="mrf"><span class="lbl">${f.rf?'Starting':'On'}</span><input type="date" data-hf="start" value="${esc(f.start)}"></label><label class="mrf"><span class="lbl">Time of day</span><select data-hf="win">${Object.entries(hhWinL).map(([k,l])=>`<option value="${k}"${f.win===k?' selected':''}>${l}</option>`).join('')}</select></label></div>
+    <label class="mrf"><span class="lbl">Allowance for each time <small class="muted">(optional)</small></span><input data-hf="amount" value="${esc(f.amount)}" inputmode="decimal" placeholder="$0.00"></label>
+    <label class="axchk"><input type="checkbox" data-hf="check" ${f.check?'checked':''}> A parent checks it before it counts</label>
+    <label class="axchk"><input type="checkbox" data-hf="remind" ${f.remind?'checked':''}> Remind whoever’s turn it is</label>
+    ${f.id?`<label class="axchk"><input type="checkbox" data-hf="paused" ${f.paused?'checked':''}> Paused</label>`:''}
+    ${S.hhmsg?`<p class="axmsg">${esc(S.hhmsg)}</p>`:''}
+    <div class="chips" style="margin-top:12px"><button class="btn pri" data-hhsave>${f.id?'Save changes':'Add chore'}</button>${f.id?`<button class="btn" data-hhdel="${esc(f.id)}">Delete</button>`:''}</div></div>`;
+  return `<div class="card famed"><button class="lnkg" data-hhcancel>‹ Cancel</button><h2 style="margin:8px 0">${f.id?'Edit':'New goal, project or trip'}</h2>
+    <div class="seg3" role="radiogroup" aria-label="Kind">${Object.entries(HHKIND).map(([k,l])=>`<button data-hhkind="${k}" aria-pressed="${f.kind===k}">${l}</button>`).join('')}</div>
+    <label class="mrf"><span class="lbl">Title</span><input data-hf="title" value="${esc(f.title)}" maxlength="120" placeholder="${f.kind==='trip'?'e.g. Beach week':f.kind==='project'?'e.g. Repaint the garage':'e.g. Read 20 books this year'}"></label>
+    <span class="lbl">Who’s involved</span><div class="chips">${ms.map(m=>chip(m,f.who.some(x=>axIdEq(x,m.sub)),'data-hhwho')).join('')}</div>
+    <div class="famtimes"><label class="mrf"><span class="lbl">${f.kind==='trip'?'Leave':'Start'} <small class="muted">(optional)</small></span><input type="date" data-hf="start" value="${esc(f.start)}"></label><label class="mrf"><span class="lbl">${f.kind==='trip'?'Return':'Finish by'} <small class="muted">(optional)</small></span><input type="date" data-hf="end" value="${esc(f.end)}"></label></div>
+    <label class="mrf"><span class="lbl">Notes</span><textarea data-hf="notes" rows="2" maxlength="2000">${esc(f.notes)}</textarea></label>
+    ${f.id?'':`<label class="mrf"><span class="lbl">Steps <small class="muted">(one per line)</small></span><textarea data-hf="newsteps" rows="3" placeholder="${f.kind==='trip'?'Book a place\nPack\nArrange pet care':'First step\nNext step'}">${esc(f.newsteps)}</textarea></label>`}
+    ${S.hhmsg?`<p class="axmsg">${esc(S.hhmsg)}</p>`:''}
+    <div class="chips" style="margin-top:12px"><button class="btn pri" data-hhsave>${f.id?'Save changes':'Create'}</button></div></div>`}
+function hhRead(){const f=S.hhedit;document.querySelectorAll('#main [data-hf]').forEach(el=>{f[el.dataset.hf]=el.type==='checkbox'?el.checked:el.value});return f}
+function hhItemFromForm(f){if(f.type==='chore'){const it={type:'chore',title:f.title.trim(),details:f.details.trim(),mode:f.mode,who:f.mode==='anyone'?[]:f.who,start:f.start||today(),win:f.win,amount:Math.round(parseFloat(String(f.amount).replace(/[^0-9.]/g,''))*100)||0,check:!!f.check,remind:!!f.remind,paused:!!f.paused};
+    if(f.rf){it.recur={f:f.rf,n:f.rf==='days'?Math.max(2,Math.min(60,parseInt(f.rn,10)||2)):1};if(f.rf==='weekly')it.recur.by=f.by.length?f.by:[parse(it.start).getDay()]}if(f.id)it.id=f.id;return it}
+  const it={type:'goal',kind:f.kind,title:f.title.trim(),who:f.who,start:f.start,end:f.end,notes:f.notes,steps:f.id?f.steps:String(f.newsteps||'').split('\n').map(t=>t.trim()).filter(Boolean).map(t=>({t}))};if(f.id)it.id=f.id;return it}
+
+// ---------- Family Intelligence: suggestions from a note (runs on this device) ----------
+const HHDAYS=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'],HHMON=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+const HHCHORE=/\b(clean|wash|vacuum|mow|take out|takes out|feed|walk the|tidy|empty|load|unload|fold|dust|sweep|mop|trash|garbage|recycling|dishes|laundry|bathroom|bedroom|room|yard|rake|weed|water the)\b/i;
+const HHSHOP=/^(?:please\s+)?(?:buy|get|grab|pick up|we need|need|we'?re out of|out of|add)\b\s*/i;
+function hhDate(s){const t=s.toLowerCase(),td=today();let d='',tm='',all=false;
+  if(/\btoday\b|\btonight\b/.test(t))d=td;else if(/\btomorrow\b/.test(t))d=addDays(td,1);
+  else{const w=HHDAYS.findIndex(x=>new RegExp('\\b'+x.slice(0,3)+'(?:'+x.slice(3)+')?\\b').test(t));if(w>=0){let n=(w-parse(td).getDay()+7)%7;if(n===0)n=7;if(/\bnext\b/.test(t)&&n<7)n+=0;d=addDays(td,n)}}
+  const m=t.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\b/);if(m){let y=Number(td.slice(0,4));let x=`${y}-${String(HHMON.indexOf(m[1])+1).padStart(2,'0')}-${m[2].padStart(2,'0')}`;if(x<td)x=`${y+1}`+x.slice(4);d=x}
+  const m2=t.match(/\b(\d{1,2})\/(\d{1,2})\b/);if(m2&&!m){let y=Number(td.slice(0,4)),x=`${y}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;if(x<td)x=`${y+1}`+x.slice(4);d=x}
+  const tt=t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)\b/)||t.match(/\b(?:at\s+)(\d{1,2}):(\d{2})\b/);
+  if(tt){let h=Number(tt[1]),mi=Number(tt[2]||0);const ap=(tt[3]||'').replace(/\./g,'');if(ap==='pm'&&h<12)h+=12;if(ap==='am'&&h===12)h=0;if(!ap&&h<7)h+=12;tm=String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0')}
+  else if(/\bnoon\b/.test(t))tm='12:00';
+  if(d&&!tm)all=true;return {d,tm,all}}
+function hhRecur(s){const t=s.toLowerCase();if(/\bevery\s*day\b|\bdaily\b|\beach day\b/.test(t))return {f:'daily',n:1};const by=HHDAYS.map((x,i)=>new RegExp('\\b(every|on)\\s+'+x+'s?\\b|\\b'+x+'s\\b').test(t)?i:-1).filter(i=>i>=0);
+  if(by.length)return {f:'weekly',n:1,by};if(/\bevery\s*week\b|\bweekly\b/.test(t))return {f:'weekly',n:1};if(/\bevery\s*month\b|\bmonthly\b/.test(t))return {f:'monthly',n:1};return null}
+function hhPeople(s){return famMembers().filter(m=>{const n=famFirst(m).toLowerCase();return n.length>1&&new RegExp('\\b'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:\'s)?\\b','i').test(s)}).map(m=>axIdK(m.sub))}
+const hhClean=s=>s.replace(/\b(every\s*(day|week|month)|daily|weekly|monthly|each day|(every|on)\s+(sun|mon|tues|wednes|thurs|fri|satur)days?|today|tonight|tomorrow|(this|next)\s+\w+day|(at\s+)?\d{1,2}(:\d{2})?\s*(am|pm|a\.m\.|p\.m\.)|on\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}|\d{1,2}\/\d{1,2})\b/gi,'').replace(/\s{2,}/g,' ').replace(/^[\s,:;-]+|[\s,:;.-]+$/g,'').trim();
+function hhSuggest(text){const out=[],me=axIdK(famMe());
+  String(text||'').split(/\n|;|(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean).forEach(line=>{
+    if(HHSHOP.test(line)&&!/\b(at|by)\s+\d/.test(line)&&!hhDate(line).d){line.replace(HHSHOP,'').replace(/\b(from|at) the (store|grocery store)\b/i,'').split(/,|\band\b|\+/).map(x=>x.replace(/^(some|a|an|more)\s+/i,'').replace(/[.!?]+$/,'').trim()).filter(x=>x&&x.length<60).forEach(x=>out.push({k:'shop',text:x.charAt(0).toUpperCase()+x.slice(1),on:true}));return}
+    const who=hhPeople(line),rec=hhRecur(line),dt=hhDate(line);
+    if(HHCHORE.test(line)&&(who.length||rec)&&!dt.tm){const title=hhClean(line.replace(new RegExp('^('+famMembers().map(m=>famFirst(m)).join('|')+')\\s*(should|needs to|has to|will|can|to|:|,)?\\s*','i'),'')).replace(/^(please|should|needs to|has to)\s+/i,'');
+      out.push({k:'chore',title:title.charAt(0).toUpperCase()+title.slice(1),who:who.filter(w=>w!==''),recur:rec,start:dt.d||today(),on:famIsAdmin()});return}
+    if(dt.d){const title=hhClean(line);out.push({k:'event',title:title.charAt(0).toUpperCase()+title.slice(1)||'Event',date:dt.d,time:dt.tm,all:dt.all,who:who.length?who:[me],recur:rec,on:true});return}
+    const rm=line.match(/^remind\s+(?:everyone|us|the family|all)\s+(?:to|that|about)\s+(.*)$/i);
+    out.push({k:'note',text:rm?('Reminder: '+rm[1]):line,on:!!rm})});
+  return out}
+function hhCapHTML(){const C=S.hhcap;
+  return `<div class="card famed"><button class="lnkg" data-hhcapx>‹ Back</button><h2 style="margin:8px 0 4px">Suggest from a note</h2>
+    <p class="calnote" style="margin-top:0">Type or say what’s going on, or bring in something from your Inbox (voice notes and screenshots land there). AXIS suggests family events, chores, shopping items and announcements. Nothing is shared until you pick and approve it. This runs on your device.</p>
+    <textarea data-hhcapt rows="4" maxlength="3000" placeholder="e.g. Dentist for Teen Tuesday at 3:30. We need milk, eggs and bread. Teen takes out the trash every Monday.">${esc(C.text||'')}</textarea>
+    <div class="chips" style="margin-top:6px">${typeof voSR==='function'&&voSR()?'<button class="chip sm" data-hhmic>🎤 Speak</button>':''}${(inbox()||[]).slice(-4).map(x=>`<button class="chip sm" data-hhinb="${esc(x.id)}">＋ ${esc(x.t.slice(0,28))}${x.t.length>28?'…':''}</button>`).join('')}<button class="btn sm pri" data-hhthink>Suggest</button></div>
+    ${C.sug?(C.sug.length?`<h3 class="vh3">Suggestions</h3>${C.sug.map((x,i)=>`<div class="hhrow"><button class="cb" data-hhsug="${i}" aria-pressed="${x.on}" aria-label="Use this suggestion"><span>${x.on?'✓':''}</span></button><span class="famt"><small>${{shop:'Shopping item',chore:'Chore',event:'Family event',note:'Announcement'}[x.k]}${x.k==='chore'&&!famIsAdmin()?' · a parent has to add chores; this will be posted on the board instead':''}</small>
+        <input data-hhsugt="${i}" value="${esc(x.k==='shop'||x.k==='note'?x.text:x.title)}" aria-label="Edit suggestion">
+        <small>${x.k==='event'?esc(fmtDate(x.date,{weekday:'short',month:'short',day:'numeric'}))+(x.time?' · '+esc(fmtTm(x.time)):' · all day')+' · '+esc(x.who.map(famName).join(', ')):x.k==='chore'?esc(x.who.map(famName).join(', ')||'Anyone')+(x.recur?' · '+esc(famRepeatText(x.recur)):''):x.k==='shop'?'Goes on '+esc((hhOf('shoplist')[0]||{name:'a new Groceries list'}).name):''}</small></span></div>`).join('')}
+      <div class="chips" style="margin-top:10px"><button class="btn pri" data-hhapply>Add the ones I picked</button></div>`:'<p class="calnote">Nothing to suggest from that. Try adding a day, a time, a name or “we need …”.</p>'):''}</div>`}
+async function hhApplySug(list){const me=axIdK(famMe());let n=0;
+  for(const x of list){
+    if(x.k==='shop'){let L=hhOf('shoplist')[0];if(!L){L=(await axCall('fam_item_put',{item:{type:'shoplist',name:'Groceries'}})).item;hhUpsert(L)}hhUpsert((await axCall('fam_item_put',{item:{type:'shop',list:L.id,text:x.text}})).item);n++}
+    else if(x.k==='note'||(x.k==='chore'&&!famIsAdmin())){const text=x.k==='note'?x.text:('Can '+(x.who.length?x.who.map(famName).join(' and '):'someone')+' '+x.title.charAt(0).toLowerCase()+x.title.slice(1)+'?');hhUpsert((await axCall('fam_item_put',{item:{type:'note',text}})).item);n++}
+    else if(x.k==='chore'){hhUpsert((await axCall('fam_item_put',{item:{type:'chore',title:x.title,mode:x.who.length?'fixed':'anyone',who:x.who,recur:x.recur,start:x.start,win:'any',remind:true}})).item);n++}
+    else if(x.k==='event'){const ev={vis:'shared',title:x.title,kind:'family',allday:x.all,who:x.who,recur:x.recur};if(x.all){ev.start=x.date;ev.end=x.date}else{ev.start=x.date+'T'+x.time;const e=famDT(ev.start);e.setHours(e.getHours()+1);ev.end=ymd(e)+'T'+String(e.getHours()).padStart(2,'0')+':'+String(e.getMinutes()).padStart(2,'0')}
+      const r=await axCall('fam_event_put',{event:ev});FAM.events=(FAM.events||[]).concat(r.event);famSave();n++}}
+  return n}
+
+// ---------- taps ----------
+document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.closest('[data-hhsec],[data-hhdone],[data-hhundo],[data-hhok],[data-hhnot],[data-hhnew],[data-hhedit],[data-hhcancel],[data-hhmode],[data-hhwho],[data-hhby],[data-hhkind],[data-hhsave],[data-hhok2],[data-hhdel],[data-hhpay],[data-hhnewlist],[data-hhlist],[data-hhadd],[data-hhtick],[data-hhclear],[data-hhdellist],[data-hhpostgo],[data-hhpin],[data-hhgoal],[data-hhgoalback],[data-hhstep],[data-hhstepadd],[data-hhtripcal],[data-hhcap],[data-hhcapx],[data-hhthink],[data-hhsug],[data-hhapply],[data-hhinb],[data-hhmic],[data-inbfam]');
+  if(!t||!document.getElementById('main').contains(t))return;e.preventDefault();const D=t.dataset,y=scrollY,redraw=top=>{render();scrollTo(0,top?0:y)};
+  if(S.hhedit&&!('hhsave' in D)&&!('hhcancel' in D)&&!('hhok2' in D))hhRead();
+  if(S.hhcap){const ta=document.querySelector('[data-hhcapt]');if(ta)S.hhcap.text=ta.value;document.querySelectorAll('[data-hhsugt]').forEach(el=>{const x=S.hhcap.sug&&S.hhcap.sug[+el.dataset.hhsugt];if(x){if(x.k==='shop'||x.k==='note')x.text=el.value;else x.title=el.value}})}
+  try{
+    if(D.inbfam){const x=(inbox()||[]).find(z=>z.id===D.inbfam);S.tab='family';S.hhcap={text:x?x.t:''};S.hhcap.sug=hhSuggest(S.hhcap.text);redraw(true);return}
+    if(D.hhsec){S.fsec=D.hhsec;S.fopen=null;S.fedit=null;S.hhedit=null;S.hhcap=null;S.hhgoal=null;redraw();return}
+    if(D.hhdone){t.textContent='…';const r=await axCall('fam_chore_done',{chore:D.hhdone,day:D.day});hhUpsert(r.item);capToast(r.item.ok?'Nice work! ✓':'Done. A parent will check it.',null);redraw();return}
+    if(D.hhundo){await axCall('fam_chore_done',{chore:D.hhundo,day:D.day,undo:true});HH.items=HH.items.filter(x=>!(x.type==='done'&&x.chore===D.hhundo&&x.day===D.day));hhSave();redraw();return}
+    if(D.hhok){hhUpsert((await axCall('fam_chore_ok',{id:D.hhok})).item);redraw();return}
+    if(D.hhnot){await axCall('fam_chore_ok',{id:D.hhnot,ok:false});HH.items=HH.items.filter(x=>x.id!==D.hhnot);hhSave();capToast('Sent back. It shows as not done again.',null);redraw();return}
+    if(D.hhnew){S.hhedit=D.hhnew==='chore'?hhBlankChore():hhBlankGoal();S.hhmsg='';S.hhstep=null;redraw(true);return}
+    if(D.hhedit){const it=hhFind(D.hhedit);if(it){S.hhedit=hhToForm(it);S.hhmsg='';S.hhstep=null}redraw(true);return}
+    if('hhcancel' in D){S.hhedit=null;S.hhstep=null;redraw(true);return}
+    if(D.hhmode){S.hhedit.mode=D.hhmode;redraw();return}
+    if(D.hhkind){S.hhedit.kind=D.hhkind;redraw();return}
+    if(D.hhwho){const f=S.hhedit,s=D.hhwho;f.who=f.who.some(x=>axIdEq(x,s))?f.who.filter(x=>!axIdEq(x,s)):f.who.concat(s);redraw();return}
+    if(D.hhby){const f=S.hhedit,i=+D.hhby;f.by=f.by.includes(i)?f.by.filter(x=>x!==i):f.by.concat(i).sort();redraw();return}
+    if('hhsave' in D){const f=hhRead();S.hhmsg='';if(!f.title.trim()){S.hhmsg='Give it a name.';redraw();return}
+      if(f.type==='chore'&&f.mode!=='anyone'&&!f.who.length){S.hhmsg='Pick who does it, or choose “Anyone”.';redraw();return}
+      const it=hhItemFromForm(f),old=f.id?hhFind(f.id):null,me=famMe(),added=(it.who||[]).filter(w=>!axIdEq(w,me)&&!(old&&old.who.some(x=>axIdEq(x,w))));
+      if(added.length){S.hhstep={it,html:it.type==='chore'?`<p>You’re assigning <b>${esc(it.title)}</b> to <b>${esc(added.map(famName).join(', '))}</b>. They’ll see it in their chores${it.remind?' and get reminders':''}.</p>`:`<p>You’re adding <b>${esc(added.map(famName).join(', '))}</b> to <b>${esc(it.title)}</b>. They’ll see it in AXIS Family and can tick off steps.</p>`};redraw(true);return}
+      t.textContent='Saving…';hhUpsert((await axCall('fam_item_put',{item:it})).item);S.hhedit=null;capToast('Saved.',null);redraw(true);return}
+    if(D.hhok2){const st=S.hhstep;S.hhstep=null;if(D.hhok2==='1'&&st){t.textContent='Saving…';hhUpsert((await axCall('fam_item_put',{item:st.it})).item);S.hhedit=null;capToast('Saved and shared.',null)}redraw(true);return}
+    if(D.hhdel){if(!t.dataset.armed){t.dataset.armed=1;const o=t.textContent;t.textContent=o.length>2?'Tap again to delete':'?';setTimeout(()=>{if(t.isConnected){delete t.dataset.armed;t.textContent=o}},3500);return}
+      await axCall('fam_item_del',{id:D.hhdel});HH.items=HH.items.filter(x=>x.id!==D.hhdel);hhSave();if(S.hhedit&&S.hhedit.id===D.hhdel)S.hhedit=null;if(S.hhgoal===D.hhdel)S.hhgoal=null;redraw();return}
+    if(D.hhpay){if(!t.dataset.armed){t.dataset.armed=1;t.textContent='Tap again: '+money(+D.amt)+' paid';return}hhUpsert((await axCall('fam_pay',{sub:D.hhpay,amount:+D.amt,note:'Paid '+today()})).item);capToast('Recorded.',null);redraw();return}
+    if(D.hhnewlist!=null){const nm=D.hhnewlist||prompt('Name the list','Groceries');if(!nm)return;const r=await axCall('fam_item_put',{item:{type:'shoplist',name:nm}});hhUpsert(r.item);S.hhlist=r.item.id;redraw();return}
+    if(D.hhlist){S.hhlist=D.hhlist;redraw();return}
+    if(D.hhadd){const i=document.querySelector('[data-hhitem]'),q=document.querySelector('[data-hhqty]');const v=(i.value||'').trim();if(!v){i.focus();return}const r=await axCall('fam_item_put',{item:{type:'shop',list:D.hhadd,text:v,qty:(q.value||'').trim()}});hhUpsert(r.item);redraw();const ni=document.querySelector('[data-hhitem]');if(ni)ni.focus();return}
+    if(D.hhtick){const it=hhFind(D.hhtick);if(!it)return;hhUpsert((await axCall('fam_item_put',{item:Object.assign({},it,{done:!it.done})})).item);redraw();return}
+    if(D.hhclear){for(const it of hhOf('shop').filter(i=>i.list===D.hhclear&&i.done)){await axCall('fam_item_del',{id:it.id});HH.items=HH.items.filter(x=>x.id!==it.id)}hhSave();redraw();return}
+    if(D.hhdellist){if(!t.dataset.armed){t.dataset.armed=1;t.textContent='Tap again: delete the list and its items';return}await axCall('fam_item_del',{id:D.hhdellist});HH.items=HH.items.filter(x=>x.id!==D.hhdellist&&x.list!==D.hhdellist);hhSave();S.hhlist=null;redraw();return}
+    if('hhpostgo' in D){const ta=document.querySelector('[data-hhpost]'),u=document.querySelector('[data-hhuntil]');const v=(ta.value||'').trim();if(!v){ta.focus();return}hhUpsert((await axCall('fam_item_put',{item:{type:'note',text:v,until:u&&u.value||''}})).item);capToast('Posted to the family board.',null);redraw();return}
+    if(D.hhpin){const n=hhFind(D.hhpin);hhUpsert((await axCall('fam_item_put',{item:Object.assign({},n,{pinned:!n.pinned})})).item);redraw();return}
+    if(D.hhgoal){S.hhgoal=D.hhgoal;redraw(true);return}
+    if('hhgoalback' in D){S.hhgoal=null;redraw(true);return}
+    if(D.hhstep){hhUpsert((await axCall('fam_step',{id:S.hhgoal,step:D.hhstep,done:D.done==='1'})).item);redraw();return}
+    if('hhstepadd' in D){const i=document.querySelector('[data-hhstepnew]');const v=(i.value||'').trim();if(!v)return;hhUpsert((await axCall('fam_step',{id:S.hhgoal,add:v})).item);redraw();return}
+    if(D.hhtripcal){const g=hhFind(D.hhtripcal);S.fsec='calendar';S.fedit=Object.assign(famBlank(g.start),{title:g.title,kind:'family',allday:true,date:g.start,endDate:g.end||g.start,who:g.who.length?g.who.slice():[axIdK(famMe())]});S.fstep=null;S.fmsg='';redraw(true);return}
+    if('hhcap' in D){S.hhcap={text:D.hhcap||''};redraw(true);return}
+    if('hhcapx' in D){S.hhcap=null;redraw(true);return}
+    if(D.hhinb){const x=(inbox()||[]).find(z=>z.id===D.hhinb);if(x){S.hhcap.text=((S.hhcap.text||'')+'\n'+x.t).trim()}redraw();return}
+    if('hhmic' in D){const SR=voSR();if(!SR)return;const r=new SR();r.lang=navigator.language||'en-US';r.interimResults=false;t.textContent='Listening…';r.onresult=ev=>{const txt=[...ev.results].map(x=>x[0].transcript).join(' ');S.hhcap.text=((S.hhcap.text||'')+' '+txt).trim();redraw()};r.onerror=()=>{t.textContent='🎤 Speak'};r.onend=()=>{t.textContent='🎤 Speak'};r.start();return}
+    if('hhthink' in D){S.hhcap.sug=hhSuggest(S.hhcap.text);redraw();return}
+    if(D.hhsug){const x=S.hhcap.sug[+D.hhsug];x.on=!x.on;redraw();return}
+    if('hhapply' in D){const pick=S.hhcap.sug.filter(x=>x.on);if(!pick.length){capToast('Pick at least one suggestion.',null);return}
+      const me=famMe(),others=[...new Set(pick.flatMap(x=>(x.who||[]).filter(w=>!axIdEq(w,me))))];
+      if(others.length&&!t.dataset.armed){t.dataset.armed=1;t.textContent='Tap again: this involves '+others.map(famName).join(', ');return}
+      t.textContent='Adding…';const n=await hhApplySug(pick);S.hhcap=null;capToast('Added '+n+' item'+(n===1?'':'s')+' to AXIS Family.',null);hhLoad(true);famLoad(true);redraw(true);return}
+  }catch(err){S.hhstep=null;capToast(err&&err.code==='not_admin'?'Only a parent can do that.':err&&err.code==='not_assigned'?'That chore isn’t yours this time.':axErrTxt(err),null);redraw()}},true);
+document.addEventListener('change',e=>{const el=e.target;if(!S.hhedit||!el.dataset||!el.dataset.hf||!document.getElementById('main').contains(el))return;hhRead();if(el.dataset.hf==='rf'){const y=scrollY;render();scrollTo(0,y)}},true);
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches&&e.target.matches('[data-hhitem],[data-hhqty],[data-hhstepnew]')){e.preventDefault();const b=document.querySelector(e.target.matches('[data-hhstepnew]')?'[data-hhstepadd]':'[data-hhadd]');b&&b.click()}});
+// ================= /AXIS Household =================
 
 async function start(){
   render();
